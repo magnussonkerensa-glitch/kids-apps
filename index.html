@@ -1,352 +1,375 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
-    <link rel="icon" type="image/png" href="/favicon.png" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400..900;1,400..900&display=swap"
-      rel="stylesheet"
-    />
-    <title>Family Dashboard</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Architects+Daughter&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Fira+Code:wght@300..700&family=Geist+Mono:wght@100..900&family=Geist:wght@100..900&family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&family=IBM+Plex+Sans:ital,wght@0,100..700;1,100..700&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Lora:ital,wght@0,400..700;1,400..700&family=Merriweather:ital,opsz,wght@0,18..144,300..900;1,18..144,300..900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Outfit:wght@100..900&family=Oxanium:wght@200..800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Roboto:ital,wght@0,100..900;1,100..900&family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&family=Space+Grotesk:wght@300..700&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap"
-      rel="stylesheet"
-    />
-    <script type="module" crossorigin src="./assets/index-DSM-H1h9.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-C9ocsp76.css">
-  </head>
-  <body>
-    <div id="root"></div>
-  <script data-pplx-inline-edit>
-(function () {
-  if (window === window.top) return;
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Atlas Chronicles</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold: #f0b429;
+  --gold2: #e09010;
+  --dark: #080c18;
+  --dark2: #0d1428;
+  --dark3: #111930;
+  --star: rgba(255,255,255,0.7);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Nunito',sans-serif;
+  background:var(--dark);
+  color:#eee;
+  min-height:100vh;
+  overflow-x:hidden;
+}
 
-  const allowedParentOrigins = ["https://www.perplexity.ai","https://perplexity.ai","https://testing.perplexity.ai","https://staging.perplexity.ai","https://*.preview.i.perplexity.ai","http://localhost:3000","http://127.0.0.1:3000","http://localhost:5173","http://127.0.0.1:5173"];
-  const MAX_FONT_BYTES = 500 * 1024;
-  const MAX_TOTAL_FONT_BYTES = 2 * 1024 * 1024;
-  let scrollForwarding = false;
-  let scrollRaf = 0;
-  let trustedTopOrigin = null;
+/* ── STAR FIELD ── */
+.stars{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.star{position:absolute;border-radius:50%;background:white;animation:twinkle var(--d,3s) var(--delay,0s) infinite alternate ease-in-out}
+@keyframes twinkle{from{opacity:.1;transform:scale(.7)}to{opacity:.8;transform:scale(1)}}
 
-  // Allow entries like "https://*.preview.i.perplexity.ai" — the wildcard
-  // matches a single DNS label (no dots), so "https://*.foo" cannot stretch
-  // across multiple labels.
-  function matchesAllowedOrigin(origin) {
-    if (!origin) return false;
-    for (const entry of allowedParentOrigins) {
-      if (!entry.includes("*")) {
-        if (entry === origin) return true;
-        continue;
-      }
-      const pattern = new RegExp(
-        "^" +
-          entry.replace(/[.+?^${}()|[\]\\]/g, "\\$&").replace(/\*/g, "[^.]+") +
-          "$",
-      );
-      if (pattern.test(origin)) return true;
-    }
-    return false;
-  }
+/* ── HERO ── */
+.hero{
+  position:relative;z-index:1;
+  min-height:100vh;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:40px 24px;
+  text-align:center;
+}
+.hero-glow{
+  position:absolute;top:30%;left:50%;transform:translate(-50%,-50%);
+  width:700px;height:700px;border-radius:50%;
+  background:radial-gradient(circle,rgba(240,180,41,0.08) 0%,transparent 70%);
+  pointer-events:none;
+}
+.globe{font-size:clamp(64px,12vw,120px);margin-bottom:20px;animation:float 4s ease-in-out infinite;display:block;line-height:1}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+.hero-title{
+  font-family:'Cinzel',serif;
+  font-size:clamp(2.2rem,8vw,5rem);
+  font-weight:700;
+  color:var(--gold);
+  letter-spacing:4px;
+  line-height:1.1;
+  margin-bottom:12px;
+  text-shadow:0 0 40px rgba(240,180,41,0.3);
+}
+.hero-sub{
+  font-family:'Nunito',sans-serif;
+  font-size:clamp(1rem,2.5vw,1.3rem);
+  color:rgba(255,255,255,0.55);
+  font-weight:600;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  margin-bottom:40px;
+}
+.explorer-cards{
+  display:flex;gap:16px;flex-wrap:wrap;justify-content:center;margin-bottom:48px;
+}
+.explorer-card{
+  background:rgba(255,255,255,0.05);
+  border:2px solid rgba(255,255,255,0.1);
+  border-radius:20px;
+  padding:20px 28px;
+  text-align:center;
+  min-width:140px;
+  transition:all .25s;
+  cursor:default;
+  backdrop-filter:blur(10px);
+}
+.explorer-card:hover{
+  border-color:var(--gold);
+  background:rgba(240,180,41,0.08);
+  transform:translateY(-4px);
+  box-shadow:0 8px 30px rgba(240,180,41,0.15);
+}
+.ec-emoji{font-size:2.5rem;margin-bottom:8px;display:block}
+.ec-name{font-family:'Cinzel',serif;font-size:1.1rem;color:var(--gold);font-weight:600;margin-bottom:4px}
+.ec-level{font-size:0.72rem;color:rgba(255,255,255,0.4);letter-spacing:.5px}
+.scroll-hint{
+  color:rgba(255,255,255,0.3);
+  font-size:0.8rem;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  animation:bounce 2s ease-in-out infinite;
+}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
 
-  // Trust decision: when the sender is same-origin-visible (event.origin is a
-  // real origin like https://www.perplexity.ai) we trust event.origin directly.
-  // When event.origin is "null" (opaque broker srcdoc), we fall back to the
-  // broker's stamped `parentOrigin` to identify the top window. The fallback
-  // is claim-only — we rely on the browser's native `targetOrigin` enforcement
-  // on the response path (see postToTrustedTop) to ensure replies can't be
-  // delivered to anyone but the actual top window of that claimed origin.
-  function getTrustedParentOrigin(event) {
-    const forwardedParentOrigin =
-      typeof event.data.parentOrigin === "string" ? event.data.parentOrigin : null;
-    const parentOrigin = event.origin === "null" ? forwardedParentOrigin : event.origin;
-    return matchesAllowedOrigin(parentOrigin) ? parentOrigin : null;
-  }
+/* ── CHAPTERS SECTION ── */
+.chapters-section{
+  position:relative;z-index:1;
+  padding:80px 24px;
+  max-width:1100px;
+  margin:0 auto;
+}
+.section-title{
+  font-family:'Cinzel',serif;
+  font-size:clamp(1.4rem,4vw,2.2rem);
+  color:var(--gold);
+  text-align:center;
+  margin-bottom:8px;
+  letter-spacing:3px;
+}
+.section-sub{
+  text-align:center;
+  color:rgba(255,255,255,0.35);
+  font-size:0.85rem;
+  margin-bottom:48px;
+  letter-spacing:1px;
+}
+.chapters-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+  gap:20px;
+}
+.chapter-card{
+  background:linear-gradient(135deg,var(--dark2),var(--dark3));
+  border:1px solid rgba(255,255,255,0.07);
+  border-radius:18px;
+  padding:24px;
+  text-decoration:none;
+  color:inherit;
+  display:block;
+  transition:all .25s;
+  position:relative;
+  overflow:hidden;
+}
+.chapter-card::before{
+  content:'';
+  position:absolute;inset:0;
+  background:linear-gradient(135deg,var(--accent-color,rgba(240,180,41,0.06)),transparent);
+  opacity:0;
+  transition:opacity .25s;
+}
+.chapter-card:hover{
+  border-color:var(--accent-color,var(--gold));
+  transform:translateY(-4px);
+  box-shadow:0 12px 40px rgba(0,0,0,0.4);
+}
+.chapter-card:hover::before{opacity:1}
+.chapter-card:hover .chapter-arrow{opacity:1;transform:translateX(4px)}
+.ch-header{display:flex;align-items:flex-start;gap:14px;margin-bottom:12px}
+.ch-emoji{font-size:2.2rem;flex-shrink:0;margin-top:2px}
+.ch-num{
+  font-family:'Cinzel',serif;
+  font-size:0.65rem;
+  color:rgba(255,255,255,0.3);
+  letter-spacing:2px;
+  text-transform:uppercase;
+  margin-bottom:3px;
+}
+.ch-title{
+  font-family:'Cinzel',serif;
+  font-size:1.05rem;
+  color:var(--accent-color,var(--gold));
+  font-weight:600;
+  line-height:1.2;
+}
+.ch-desc{
+  font-size:0.8rem;
+  color:rgba(255,255,255,0.45);
+  line-height:1.6;
+  margin-bottom:14px;
+}
+.ch-ks-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.ch-ks{
+  font-size:0.62rem;
+  font-weight:800;
+  padding:3px 8px;
+  border-radius:20px;
+  border:1px solid;
+  letter-spacing:.5px;
+}
+.ch-ks.ks1{background:rgba(129,199,132,0.1);border-color:rgba(129,199,132,0.3);color:#81c784}
+.ch-ks.ks2{background:rgba(144,202,249,0.1);border-color:rgba(144,202,249,0.3);color:#90caf9}
+.ch-ks.ks3{background:rgba(240,180,41,0.1);border-color:rgba(240,180,41,0.3);color:#f0b429}
+.chapter-arrow{
+  position:absolute;bottom:22px;right:22px;
+  color:rgba(255,255,255,0.2);
+  font-size:1.2rem;
+  opacity:0;
+  transition:all .2s;
+}
+.ch-save{
+  font-size:0.62rem;
+  color:rgba(255,255,255,0.2);
+  font-family:monospace;
+  margin-top:6px;
+}
 
-  // All responses go to window.top with targetOrigin = the allowlisted origin.
-  // An attacker that iframes us inside their own null-origin broker can claim
-  // any parentOrigin they like, but the browser will drop the reply whenever
-  // the real top's origin doesn't match — so the screenshot never leaves.
-  function postToTrustedTop(message) {
-    if (!trustedTopOrigin) return;
-    try {
-      window.top.postMessage(message, trustedTopOrigin);
-    } catch (_error) {}
-  }
+/* ── INSTRUCTIONS SECTION ── */
+.how-section{
+  position:relative;z-index:1;
+  background:linear-gradient(180deg,transparent,rgba(240,180,41,0.03),transparent);
+  padding:80px 24px;
+}
+.how-inner{max-width:860px;margin:0 auto}
+.how-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px;margin-top:40px}
+.how-card{
+  background:rgba(255,255,255,0.03);
+  border:1px solid rgba(255,255,255,0.07);
+  border-radius:16px;
+  padding:24px;
+  text-align:center;
+}
+.how-icon{font-size:2rem;margin-bottom:12px;display:block}
+.how-title{font-family:'Cinzel',serif;color:var(--gold);font-size:1rem;margin-bottom:8px}
+.how-desc{font-size:0.82rem;color:rgba(255,255,255,0.5);line-height:1.65}
 
-  function inlineAll(original, clone) {
-    if (original.nodeType !== 1 || clone.nodeType !== 1) return;
+/* ── FOOTER ── */
+footer{
+  position:relative;z-index:1;
+  text-align:center;
+  padding:40px 24px;
+  color:rgba(255,255,255,0.2);
+  font-size:0.78rem;
+  border-top:1px solid rgba(255,255,255,0.06);
+}
+footer span{color:var(--gold);opacity:.6}
 
-    try {
-      const computedStyle = getComputedStyle(original);
-      // cssText on a computed style is the serialized declaration in modern
-      // Chromium/Safari — a single read beats enumerating ~400 longhand
-      // properties. Firefox returns "" here, so we fall back on empty.
-      const serialized = computedStyle.cssText;
-      if (serialized) {
-        clone.style.cssText = serialized;
-      } else {
-        const parts = new Array(computedStyle.length);
-        for (let index = 0; index < computedStyle.length; index += 1) {
-          const property = computedStyle[index];
-          parts[index] = `${property}:${computedStyle.getPropertyValue(property)};`;
-        }
-        clone.style.cssText = parts.join("");
-      }
-    } catch (_error) {}
+/* ── RESPONSIVE ── */
+@media(max-width:600px){
+  .chapters-grid{grid-template-columns:1fr}
+  .explorer-cards{gap:10px}
+  .explorer-card{min-width:110px;padding:14px 18px}
+}
+</style>
+</head>
+<body>
 
-    const originalChildren = original.children;
-    const clonedChildren = clone.children;
-    for (
-      let index = 0;
-      index < originalChildren.length && index < clonedChildren.length;
-      index += 1
-    ) {
-      inlineAll(originalChildren[index], clonedChildren[index]);
-    }
-  }
+<!-- STAR FIELD -->
+<div class="stars" id="stars"></div>
 
-  function extractFontUrl(srcValue) {
-    const matches = [
-      ...srcValue.matchAll(
-        /url\(["']?([^"')]+)["']?\)(?:\s*format\(["']?([^"')]+)["']?\))?/gi,
-      ),
-    ];
-    if (matches.length === 0) return null;
-    const woff2 = matches.find((m) => m[2] && m[2].toLowerCase().includes("woff2"));
-    if (woff2) return woff2[1];
-    const woff = matches.find((m) => m[2] && m[2].toLowerCase().includes("woff"));
-    if (woff) return woff[1];
-    return matches[0][1];
-  }
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-glow"></div>
+  <span class="globe">🌍</span>
+  <h1 class="hero-title">The Atlas Chronicles</h1>
+  <p class="hero-sub">A World to Explore · 12 Chapters · 3 Explorers</p>
 
-  // Cache resolved font URL -> data URI across captures. Fonts on a page
-  // essentially never change, and a batch run emits multiple captures back to
-  // back — without this we'd refetch + re-base64 every time.
-  const fontDataUriCache = new Map();
-  const SRC_DECLARATION_RE = /src\s*:\s*[^;}]+/i;
+  <div class="explorer-cards">
+    <div class="explorer-card">
+      <span class="ec-emoji">🦉</span>
+      <div class="ec-name">Owl</div>
+      <div class="ec-level">Age 12 · KS3</div>
+    </div>
+    <div class="explorer-card">
+      <span class="ec-emoji">🐻</span>
+      <div class="ec-name">Cub</div>
+      <div class="ec-level">Age 9 · KS2</div>
+    </div>
+    <div class="explorer-card">
+      <span class="ec-emoji">🌿</span>
+      <div class="ec-name">Bay</div>
+      <div class="ec-level">Age 7 · KS1</div>
+    </div>
+  </div>
 
-  async function fetchAsDataUri(url) {
-    if (fontDataUriCache.has(url)) return fontDataUriCache.get(url);
-    let dataUri = null;
-    try {
-      const response = await fetch(url, { mode: "cors", credentials: "omit" });
-      if (response.ok) {
-        const blob = await response.blob();
-        if (blob.size <= MAX_FONT_BYTES) {
-          dataUri = await new Promise((resolve) => {
-            const reader = new FileReader();
-            reader.onloadend = () =>
-              resolve(typeof reader.result === "string" ? reader.result : null);
-            reader.onerror = () => resolve(null);
-            reader.readAsDataURL(blob);
-          });
-        }
-      }
-    } catch (_error) {
-      dataUri = null;
-    }
-    fontDataUriCache.set(url, dataUri);
-    return dataUri;
-  }
+  <p class="scroll-hint">↓ &nbsp; choose your chapter &nbsp; ↓</p>
+</section>
 
-  function collectFontFaceRuleTexts() {
-    const rules = [];
-    for (const sheet of document.styleSheets) {
-      let cssRules;
-      try {
-        cssRules = sheet.cssRules;
-      } catch (_error) {
-        continue;
-      }
-      if (!cssRules) continue;
-      for (const rule of cssRules) {
-        const cssText = rule.cssText || "";
-        if (cssText.startsWith("@font-face")) rules.push(cssText);
-      }
-    }
-    return rules;
-  }
+<!-- CHAPTERS -->
+<section class="chapters-section">
+  <h2 class="section-title">All 12 Chapters</h2>
+  <p class="section-sub">Click any chapter to begin · Progress saves automatically · All three explorers in every chapter</p>
 
-  async function buildInlinedFontCss() {
-    const ruleTexts = collectFontFaceRuleTexts();
-    if (ruleTexts.length === 0) return null;
+  <div class="chapters-grid" id="chapters"></div>
+</section>
 
-    const resolved = ruleTexts.map((cssText) => {
-      if (!SRC_DECLARATION_RE.test(cssText)) return null;
-      const srcMatch = cssText.match(/src\s*:\s*([^;}]+)[;}]/i);
-      if (!srcMatch) return null;
-      const url = extractFontUrl(srcMatch[1]);
-      if (!url) return null;
-      try {
-        return { cssText, url: new URL(url, document.baseURI).href };
-      } catch (_error) {
-        return null;
-      }
-    });
+<!-- HOW IT WORKS -->
+<section class="how-section">
+  <div class="how-inner">
+    <h2 class="section-title">How It Works</h2>
+    <p class="section-sub">Everything you need to know in three steps</p>
+    <div class="how-grid">
+      <div class="how-card">
+        <span class="how-icon">👤</span>
+        <div class="how-title">Choose Your Explorer</div>
+        <div class="how-desc">Each chapter has three depths — Owl (KS3), Cub (KS2) and Bay (KS1). Same story, same adventure, calibrated for each age.</div>
+      </div>
+      <div class="how-card">
+        <span class="how-icon">📖</span>
+        <div class="how-title">Read the Story</div>
+        <div class="how-desc">Atlas travels the world. Every chapter is a new place, a new era, a new idea. 4–5 pages of real narrative per chapter — facts wrapped in adventure.</div>
+      </div>
+      <div class="how-card">
+        <span class="how-icon">🎮</span>
+        <div class="how-title">Explore, Play & Learn</div>
+        <div class="how-desc">Clickable explorers, interactive games, maths challenges using real data, writing tasks and a quiz. Progress saves in your browser automatically.</div>
+      </div>
+      <div class="how-card">
+        <span class="how-icon">🇵🇹</span>
+        <div class="how-title">Home in Every Chapter</div>
+        <div class="how-desc">Portugal is woven through all 12 chapters — from tectonic plates under Lisbon to the 1755 earthquake, from da Gama sailing from Belém to Portugal's renewable energy revolution.</div>
+      </div>
+    </div>
+  </div>
+</section>
 
-    const dataUris = await Promise.all(
-      resolved.map((entry) => (entry ? fetchAsDataUri(entry.url) : Promise.resolve(null))),
-    );
+<footer>
+  <p>The Atlas Chronicles &nbsp;·&nbsp; <span>🌍 Owl · Cub · Bay</span> &nbsp;·&nbsp; Built with love in Portugal</p>
+  <p style="margin-top:8px;font-size:0.7rem;opacity:.5">"I have been everywhere. And I have been home the whole time." — Atlas</p>
+</footer>
 
-    const inlined = [];
-    let totalBytes = 0;
-    for (let index = 0; index < resolved.length; index += 1) {
-      const entry = resolved[index];
-      const dataUri = dataUris[index];
-      if (!entry || !dataUri) continue;
-      const approxBytes = dataUri.length * 0.75;
-      if (totalBytes + approxBytes > MAX_TOTAL_FONT_BYTES) break;
-      totalBytes += approxBytes;
-      inlined.push(entry.cssText.replace(SRC_DECLARATION_RE, `src: url("${dataUri}")`));
-    }
-    return inlined.length > 0 ? inlined.join("\n") : null;
-  }
+<script>
+// ── GENERATE STARS ──
+const starsEl = document.getElementById('stars');
+for(let i=0;i<180;i++){
+  const s=document.createElement('div');
+  s.className='star';
+  const size=Math.random()*2.5+0.5;
+  s.style.cssText=`
+    width:${size}px;height:${size}px;
+    top:${Math.random()*100}%;left:${Math.random()*100}%;
+    --d:${2+Math.random()*4}s;
+    --delay:${Math.random()*4}s;
+    opacity:${Math.random()*.6+.1}
+  `;
+  starsEl.appendChild(s);
+}
 
-  function stripExternal(clone) {
-    const images = clone.querySelectorAll("img");
-    for (let index = 0; index < images.length; index += 1) {
-      const src = images[index].getAttribute("src");
-      if (src && !src.startsWith("data:")) images[index].removeAttribute("src");
-    }
+// ── CHAPTER DATA ──
+const CHAPTERS = [
+  { num:1, emoji:"🌍", title:"The World Wakes Up", desc:"Continents, oceans, Pangaea and the first view of Earth as a system. Where does the world begin?", color:"#64b5f6", file:"chapter1.html", save:"atlas_geo_v1" },
+  { num:2, emoji:"🏙️", title:"Cities of the World", desc:"Capitals, currencies, monuments and the geography of how humans organise themselves into cities.", color:"#ce93d8", file:"chapter2.html", save:"atlas_ch2_v1" },
+  { num:3, emoji:"🌿", title:"Into the Wild", desc:"Biomes, terrains and climate zones — from the Amazon rainforest to the Sahara desert to your own backyard.", color:"#81c784", file:"chapter3.html", save:"atlas_ch3_v1" },
+  { num:4, emoji:"🌊", title:"Rivers and Oceans", desc:"The water cycle, the world's great rivers, the oceans and the trade routes that connected civilisations.", color:"#4dd0e1", file:"chapter4.html", save:"atlas_ch4_v1" },
+  { num:5, emoji:"🏔️", title:"Mountains & Plates", desc:"Tectonic plates, volcanoes, earthquakes and mountains — and why Lisbon sits on a fault line.", color:"#ff7043", file:"chapter5.html", save:"atlas_ch5_v1" },
+  { num:6, emoji:"🗣️", title:"Languages, Cultures & Migration", desc:"7,159 languages, the word saudade, and how humans have always moved across the Earth.", color:"#b388ff", file:"chapter6.html", save:"atlas_ch6_v1" },
+  { num:7, emoji:"🏺", title:"The Ancient World", desc:"Egypt, Greece and Rome — three civilisations that built the world we live in. Portugal was there.", color:"#ffd54f", file:"chapter7.html", save:"atlas_ch7_v1" },
+  { num:8, emoji:"⛵", title:"Age of Explorers", desc:"Portugal's own chapter. Da Gama, Magellan, the caravel and how one small country changed the world.", color:"#90caf9", file:"chapter8.html", save:"atlas_ch8_v1" },
+  { num:9, emoji:"🌐", title:"Empires & Colonies", desc:"The truth about empires — the scale, the slave trade, the resistance, and why it still matters today.", color:"#80cbc4", file:"chapter9.html", save:"atlas_ch9_v1" },
+  { num:10, emoji:"💣", title:"The Modern World", desc:"WW1, WW2, the Holocaust, the Cold War and the Universal Declaration of Human Rights.", color:"#90caf9", file:"chapter10.html", save:"atlas_ch10_v1" },
+  { num:11, emoji:"🌱", title:"Climate & Our Future", desc:"The most important chapter. The science, the solutions, Portugal's renewable revolution — and hope.", color:"#80cbc4", file:"chapter11.html", save:"atlas_ch11_v1" },
+  { num:12, emoji:"🇵🇹", title:"Atlas Comes Home", desc:"Portugal from north to south, east to Azores. The grand finale — everything connects here.", color:"#f0b429", file:"chapter12.html", save:"atlas_ch12_v1" }
+];
 
-    const elements = clone.querySelectorAll("*");
-    for (let index = 0; index < elements.length; index += 1) {
-      const style = elements[index].style.cssText;
-      if (style && style.includes("url(")) {
-        elements[index].style.cssText = style.replace(
-          /url\(["']?(?!data:)[^)"']*["']?\)/gi,
-          "none",
-        );
-      }
-    }
-  }
-
-  function emitScroll() {
-    scrollRaf = 0;
-    if (!scrollForwarding) return;
-    postToTrustedTop({
-      type: "INLINE_EDIT_SCROLL",
-      scrollX: window.scrollX,
-      scrollY: window.scrollY,
-    });
-  }
-
-  window.addEventListener(
-    "scroll",
-    function () {
-      if (!scrollForwarding || scrollRaf) return;
-      scrollRaf = requestAnimationFrame(emitScroll);
-    },
-    { passive: true, capture: true },
-  );
-
-  async function handleCaptureRequest(event) {
-    const requestId = event.data.requestId;
-    const scrollX = window.scrollX;
-    const scrollY = window.scrollY;
-    const width = window.innerWidth;
-    const height = window.innerHeight;
-
-    function postResult(dataUrl) {
-      postToTrustedTop({
-        type: "INLINE_EDIT_SCREENSHOT_RESULT",
-        requestId,
-        dataUrl,
-        scrollX,
-        scrollY,
-      });
-    }
-
-    try {
-      // Wait for any pending web fonts to resolve so both inline metrics and
-      // the @font-face inlining below see the same loaded faces.
-      if (document.fonts && document.fonts.ready) {
-        try {
-          await document.fonts.ready;
-        } catch (_error) {}
-      }
-
-      const clone = document.documentElement.cloneNode(true);
-      inlineAll(document.documentElement, clone);
-
-      const removedNodes = clone.querySelectorAll("script,link[rel=\"stylesheet\"],style");
-      for (let index = 0; index < removedNodes.length; index += 1) {
-        removedNodes[index].remove();
-      }
-
-      stripExternal(clone);
-
-      // Re-embed web fonts as data-URI @font-face rules so the SVG rasterizer
-      // can resolve them — external font URLs aren't fetched during
-      // foreignObject rendering, which would otherwise force a fallback face
-      // and change text metrics.
-      const inlinedFontCss = await buildInlinedFontCss();
-      if (inlinedFontCss) {
-        const styleEl = document.createElement("style");
-        styleEl.textContent = inlinedFontCss;
-        const head = clone.querySelector("head");
-        if (head) head.appendChild(styleEl);
-        else clone.insertBefore(styleEl, clone.firstChild);
-      }
-
-      const html = new XMLSerializer().serializeToString(clone);
-      const svg =
-        `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}">` +
-        '<foreignObject width="100%" height="100%">' +
-        `<div xmlns="http://www.w3.org/1999/xhtml" style="width:${width}px;height:${height}px;overflow:hidden">` +
-        `<div style="position:relative;left:-${scrollX}px;top:-${scrollY}px">` +
-        html +
-        "</div></div></foreignObject></svg>";
-      const svgUrl = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
-      const image = new Image();
-      image.onload = function () {
-        const canvas = document.createElement("canvas");
-        canvas.width = width;
-        canvas.height = height;
-        canvas.getContext("2d").drawImage(image, 0, 0);
-        postResult(canvas.toDataURL("image/png"));
-      };
-      image.onerror = function () {
-        postResult(null);
-      };
-      image.src = svgUrl;
-    } catch (_error) {
-      postResult(null);
-    }
-  }
-
-  window.addEventListener("message", function (event) {
-    if (!event.data) return;
-    // Only accept messages from the direct parent frame. Blocks sibling /
-    // unrelated-window postMessage senders that could otherwise reach us.
-    if (event.source !== window.parent) return;
-
-    const trustedParentOrigin = getTrustedParentOrigin(event);
-    if (!trustedParentOrigin) return;
-    trustedTopOrigin = trustedParentOrigin;
-
-    if (event.data.type === "INLINE_EDIT_SCROLL_START") {
-      scrollForwarding = true;
-      emitScroll();
-      return;
-    }
-
-    if (event.data.type === "INLINE_EDIT_SCROLL_STOP") {
-      scrollForwarding = false;
-      if (scrollRaf) cancelAnimationFrame(scrollRaf);
-      scrollRaf = 0;
-      return;
-    }
-
-    if (event.data.type !== "INLINE_EDIT_CAPTURE_REQUEST") return;
-
-    handleCaptureRequest(event);
-  });
-})();
-
-
-</script></body>
+const grid = document.getElementById('chapters');
+CHAPTERS.forEach((ch,i) => {
+  const card = document.createElement('a');
+  card.href = ch.file;
+  card.className = 'chapter-card';
+  card.style.setProperty('--accent-color', ch.color);
+  card.style.animationDelay = `${i * 0.05}s`;
+  card.innerHTML = `
+    <div class="ch-header">
+      <span class="ch-emoji">${ch.emoji}</span>
+      <div>
+        <div class="ch-num">Chapter ${ch.num}</div>
+        <div class="ch-title">${ch.title}</div>
+      </div>
+    </div>
+    <p class="ch-desc">${ch.desc}</p>
+    <div class="ch-ks-row">
+      <span class="ch-ks ks1">🌿 Bay KS1</span>
+      <span class="ch-ks ks2">🐻 Cub KS2</span>
+      <span class="ch-ks ks3">🦉 Owl KS3</span>
+    </div>
+    <div class="chapter-arrow">→</div>
+  `;
+  grid.appendChild(card);
+});
+</script>
+</body>
 </html>

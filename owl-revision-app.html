@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OWL Revision App</title>
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&display=swap" rel="stylesheet">
+  <style>
+    :root, [data-theme="light"] {
+      --text-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+      --text-sm: clamp(0.875rem, 0.8rem + 0.35vw, 1rem);
+      --text-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+      --text-lg: clamp(1.125rem, 1rem + 0.75vw, 1.5rem);
+      --text-xl: clamp(1.5rem, 1.2rem + 1.25vw, 2.25rem);
+      --space-1: 0.25rem; --space-2: 0.5rem; --space-3: 0.75rem; --space-4: 1rem;
+      --space-5: 1.25rem; --space-6: 1.5rem; --space-8: 2rem; --space-10: 2.5rem;
+      --space-12: 3rem; --space-16: 4rem;
+      --color-bg: #f7f6f2; --color-surface: #f9f8f5; --color-surface-2: #fbfbf9;
+      --color-surface-offset: #edeae5; --color-border: #d4d1ca; --color-divider: #dcd9d5;
+      --color-text: #28251d; --color-text-muted: #7a7974; --color-text-faint: #bab9b4;
+      --color-text-inverse: #f9f8f4; --color-primary: #01696f; --color-primary-hover: #0c4e54;
+      --color-primary-highlight: #cedcd8; --color-success: #437a22; --color-error: #a12c7b;
+      --radius-sm: 0.375rem; --radius-md: 0.5rem; --radius-lg: 0.75rem; --radius-xl: 1rem; --radius-full: 9999px;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,.06); --shadow-md: 0 8px 24px rgba(0,0,0,.08);
+      --transition: 180ms cubic-bezier(0.16, 1, 0.3, 1);
+      --font-body: 'Satoshi', Inter, sans-serif;
+    }
+    [data-theme="dark"] {
+      --color-bg: #171614; --color-surface: #1c1b19; --color-surface-2: #201f1d;
+      --color-surface-offset: #22211f; --color-border: #393836; --color-divider: #262523;
+      --color-text: #cdccca; --color-text-muted: #979592; --color-text-faint: #5a5957;
+      --color-text-inverse: #171614; --color-primary: #4f98a3; --color-primary-hover: #227f8b;
+      --color-primary-highlight: #313b3b; --color-success: #6daa45; --color-error: #d163a7;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,.2); --shadow-md: 0 8px 24px rgba(0,0,0,.35);
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; }
+    body {
+      font-family: var(--font-body);
+      font-size: var(--text-base);
+      line-height: 1.55;
+      background: var(--color-bg);
+      color: var(--color-text);
+    }
+    button, input, textarea, select { font: inherit; }
+    a, button, input, textarea, select { transition: all var(--transition); }
+    .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+    .app-shell {
+      min-height: 100dvh;
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      background: var(--color-bg);
+    }
+    .sidebar {
+      border-right: 1px solid var(--color-border);
+      background: var(--color-surface);
+      padding: var(--space-6);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-6);
+    }
+    .brand {
+      display: flex; align-items: center; justify-content: space-between; gap: var(--space-3);
+    }
+    .brand-lockup { display:flex; align-items:center; gap: var(--space-3); }
+    .logo {
+      width: 40px; height: 40px; border-radius: var(--radius-md);
+      display:grid; place-items:center; background: var(--color-primary-highlight); color: var(--color-primary);
+    }
+    .logo svg { width: 24px; height: 24px; }
+    .brand h1 { font-size: var(--text-lg); line-height: 1.1; margin: 0; }
+    .brand p { font-size: var(--text-xs); color: var(--color-text-muted); margin: 0; }
+    .theme-toggle, .mobile-toggle {
+      width: 44px; height: 44px; border-radius: var(--radius-full); border: 1px solid var(--color-border);
+      background: var(--color-surface-2); color: var(--color-text);
+      display:grid; place-items:center;
+    }
+    .panel {
+      background: var(--color-surface-2);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-xl);
+      padding: var(--space-5);
+      box-shadow: var(--shadow-sm);
+    }
+    .panel h2, .panel h3 { margin: 0 0 var(--space-3); font-size: var(--text-sm); text-transform: uppercase; letter-spacing: .08em; color: var(--color-text-muted); }
+    .stack { display:flex; flex-direction:column; gap: var(--space-4); }
+    .subject-grid { display:grid; gap: var(--space-2); }
+    .chip {
+      display:flex; align-items:center; justify-content:space-between; gap: var(--space-3);
+      border: 1px solid var(--color-border); border-radius: var(--radius-lg);
+      padding: .85rem 1rem; background: transparent; color: var(--color-text); text-align:left;
+    }
+    .chip.active { background: var(--color-primary-highlight); border-color: color-mix(in oklab, var(--color-primary) 35%, var(--color-border)); color: var(--color-primary); }
+    .mini { font-size: var(--text-xs); color: var(--color-text-muted); }
+    .main {
+      padding: var(--space-6);
+      display: grid;
+      gap: var(--space-6);
+      align-content: start;
+    }
+    .topbar {
+      display:flex; align-items:center; justify-content:space-between; gap: var(--space-4);
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-xl);
+      padding: var(--space-4) var(--space-5);
+      position: sticky; top: var(--space-4); z-index: 5;
+    }
+    .topbar h2 { margin:0; font-size: var(--text-xl); line-height:1.05; }
+    .topbar p { margin: .2rem 0 0; color: var(--color-text-muted); font-size: var(--text-sm); }
+    .topbar-actions { display:flex; gap: var(--space-3); align-items:center; }
+    .btn {
+      min-height: 44px; border-radius: var(--radius-full); border: 1px solid transparent; padding: 0 1rem;
+      display:inline-flex; align-items:center; justify-content:center; gap:.5rem; cursor:pointer;
+      font-size: var(--text-sm); font-weight: 600;
+    }
+    .btn-primary { background: var(--color-primary); color: var(--color-text-inverse); }
+    .btn-primary:hover { background: var(--color-primary-hover); }
+    .btn-secondary { background: var(--color-surface-2); color: var(--color-text); border-color: var(--color-border); }
+    .hero-grid { display:grid; grid-template-columns: 1.6fr 1fr; gap: var(--space-6); }
+    .study-card {
+      background: linear-gradient(135deg, var(--color-surface), var(--color-surface-2));
+      border: 1px solid var(--color-border); border-radius: var(--radius-xl); padding: var(--space-6); box-shadow: var(--shadow-md);
+    }
+    .pill { display:inline-flex; align-items:center; gap:.4rem; padding:.45rem .8rem; border-radius: var(--radius-full); background: var(--color-primary-highlight); color: var(--color-primary); font-size: var(--text-xs); font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
+    .study-card h3 { font-size: clamp(1.8rem, 1.4rem + 1.5vw, 2.4rem); line-height: 1.05; margin: var(--space-4) 0 var(--space-3); }
+    .study-card p { max-width: 60ch; color: var(--color-text-muted); margin: 0 0 var(--space-5); }
+    .metrics { display:grid; grid-template-columns: repeat(3,1fr); gap: var(--space-4); }
+    .metric { background: var(--color-surface-2); border:1px solid var(--color-border); border-radius: var(--radius-lg); padding: var(--space-4); }
+    .metric strong { display:block; font-size: var(--text-xl); line-height:1.1; }
+    .metric span { font-size: var(--text-xs); color: var(--color-text-muted); text-transform: uppercase; letter-spacing: .05em; }
+    .queue, .flashcard, .quiz-card {
+      background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-xl); padding: var(--space-5);
+    }
+    .section-title { display:flex; align-items:center; justify-content:space-between; gap: var(--space-3); margin-bottom: var(--space-4); }
+    .section-title h3 { margin:0; font-size: var(--text-lg); }
+    .section-title p { margin:0; font-size: var(--text-sm); color: var(--color-text-muted); }
+    .task-list, .topic-list { display:grid; gap: var(--space-3); }
+    .task-item, .topic-item {
+      display:flex; align-items:flex-start; justify-content:space-between; gap: var(--space-3);
+      padding: var(--space-4); border:1px solid var(--color-border); border-radius: var(--radius-lg); background: var(--color-surface-2);
+    }
+    .task-item.done { opacity:.7; }
+    .task-item.done .task-text { text-decoration: line-through; }
+    .check {
+      width: 22px; height: 22px; border-radius: 50%; border:1.5px solid var(--color-border); margin-top: 2px; flex: 0 0 auto;
+      display:grid; place-items:center; background: transparent;
+    }
+    .task-item.done .check { background: var(--color-success); border-color: var(--color-success); color: white; }
+    .task-main { display:flex; gap: var(--space-3); }
+    .task-text { font-weight:600; }
+    .task-meta, .topic-item span { font-size: var(--text-xs); color: var(--color-text-muted); }
+    .flashcard {
+      min-height: 260px; display:flex; flex-direction:column; justify-content:space-between; gap: var(--space-4);
+    }
+    .card-face { padding: var(--space-5); border-radius: var(--radius-lg); background: var(--color-surface-2); border:1px dashed var(--color-border); min-height: 140px; }
+    .card-face .label { font-size: var(--text-xs); color: var(--color-text-muted); text-transform: uppercase; letter-spacing: .06em; }
+    .card-face .content { font-size: var(--text-lg); margin-top: var(--space-3); font-weight: 600; }
+    .row { display:flex; gap: var(--space-3); flex-wrap:wrap; }
+    .quiz-options { display:grid; gap: var(--space-3); margin-top: var(--space-4); }
+    .option {
+      width:100%; text-align:left; padding: var(--space-4); border-radius: var(--radius-lg); border:1px solid var(--color-border); background: var(--color-surface-2);
+    }
+    .option.correct { border-color: color-mix(in oklab, var(--color-success) 60%, var(--color-border)); background: color-mix(in oklab, var(--color-success) 12%, var(--color-surface-2)); }
+    .option.wrong { border-color: color-mix(in oklab, var(--color-error) 55%, var(--color-border)); background: color-mix(in oklab, var(--color-error) 10%, var(--color-surface-2)); }
+    .progress-bar { height: 10px; background: var(--color-surface-offset); border-radius: var(--radius-full); overflow:hidden; }
+    .progress-bar span { display:block; height:100%; background: var(--color-primary); border-radius: inherit; }
+    .hidden { display:none !important; }
+    @media (max-width: 980px) {
+      .app-shell { grid-template-columns: 1fr; }
+      .sidebar { position: fixed; inset: 0 auto 0 0; width: min(88vw, 320px); transform: translateX(-105%); z-index: 20; box-shadow: var(--shadow-md); }
+      .sidebar.open { transform: translateX(0); }
+      .main { padding: var(--space-4); }
+      .hero-grid { grid-template-columns: 1fr; }
+      .metrics { grid-template-columns: 1fr; }
+      .mobile-toggle { display:grid; }
+    }
+    @media (min-width: 981px) {
+      .mobile-toggle { display:none; }
+    }
+  </style>
+</head>
+<body>
+  <a class="sr-only" href="#main">Skip to content</a>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="brand-lockup">
+          <div class="logo" aria-label="OWL logo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M4 17c1.5-4.8 5-7.2 8-7.2s6.5 2.4 8 7.2"/>
+              <circle cx="9" cy="10" r="1.6"/>
+              <circle cx="15" cy="10" r="1.6"/>
+              <path d="M10.5 14h3"/>
+              <path d="M7 6.4 9.5 8"/>
+              <path d="M17 6.4 14.5 8"/>
+            </svg>
+          </div>
+          <div>
+            <h1>OWL</h1>
+            <p>Revision planner</p>
+          </div>
+        </div>
+        <button class="theme-toggle" data-theme-toggle aria-label="Switch theme">
+          <span aria-hidden="true">◐</span>
+        </button>
+      </div>
+
+      <section class="panel stack">
+        <div>
+          <h2>Subjects</h2>
+          <div class="subject-grid" id="subjectGrid"></div>
+        </div>
+      </section>
+
+      <section class="panel stack">
+        <div>
+          <h2>Today</h2>
+          <div class="mini" id="dailySummary"></div>
+        </div>
+        <div class="progress-bar" aria-label="Daily progress"><span id="dailyProgressBar" style="width:0%"></span></div>
+      </section>
+
+      <section class="panel stack">
+        <div>
+          <h2>Study mode</h2>
+          <div class="row">
+            <button class="btn btn-secondary" id="flashcardModeBtn">Flashcards</button>
+            <button class="btn btn-secondary" id="quizModeBtn">Quick quiz</button>
+          </div>
+        </div>
+      </section>
+    </aside>
+
+    <main class="main" id="main">
+      <header class="topbar">
+        <div style="display:flex; gap:1rem; align-items:center;">
+          <button class="mobile-toggle" id="mobileToggle" aria-label="Open menu">☰</button>
+          <div>
+            <h2 id="pageTitle">English Literature</h2>
+            <p id="pageSubtitle">Pick a topic, revise key ideas, and test recall.</p>
+          </div>
+        </div>
+        <div class="topbar-actions">
+          <button class="btn btn-secondary" id="shuffleBtn">Shuffle card</button>
+          <button class="btn btn-primary" id="completeSessionBtn">Mark session done</button>
+        </div>
+      </header>
+
+      <section class="hero-grid">
+        <article class="study-card">
+          <span class="pill" id="subjectBadge">English Literature</span>
+          <h3 id="focusTitle">Macbeth themes and quotations</h3>
+          <p id="focusDescription">Use the flashcard stack to review the theme, then answer one quick recall question to check what stuck.</p>
+          <div class="metrics">
+            <div class="metric"><span>Topics</span><strong id="metricTopics">4</strong></div>
+            <div class="metric"><span>Cards</span><strong id="metricCards">8</strong></div>
+            <div class="metric"><span>Mastery</span><strong id="metricMastery">62%</strong></div>
+          </div>
+        </article>
+
+        <section class="queue">
+          <div class="section-title">
+            <div>
+              <h3>Revision queue</h3>
+              <p>Small wins for today</p>
+            </div>
+          </div>
+          <div class="task-list" id="taskList"></div>
+        </section>
+      </section>
+
+      <section class="hero-grid">
+        <article class="flashcard" id="flashcardPanel">
+          <div class="section-title">
+            <div>
+              <h3>Flashcards</h3>
+              <p>Flip to reveal the answer</p>
+            </div>
+          </div>
+          <div class="card-face" id="cardFace">
+            <div class="label" id="cardLabel">Question</div>
+            <div class="content" id="cardContent"></div>
+          </div>
+          <div class="row">
+            <button class="btn btn-secondary" id="flipCardBtn">Flip card</button>
+            <button class="btn btn-primary" id="nextCardBtn">Next card</button>
+          </div>
+        </article>
+
+        <article class="quiz-card" id="quizPanel">
+          <div class="section-title">
+            <div>
+              <h3>Quick quiz</h3>
+              <p>One question at a time</p>
+            </div>
+          </div>
+          <div>
+            <div class="mini" id="quizCount">Question 1 of 3</div>
+            <h3 id="quizQuestion" style="margin:.5rem 0 0; font-size: var(--text-lg);"></h3>
+            <div class="quiz-options" id="quizOptions"></div>
+            <div class="mini" id="quizFeedback" style="margin-top:1rem;"></div>
+          </div>
+        </article>
+      </section>
+
+      <section class="queue">
+        <div class="section-title">
+          <div>
+            <h3>Topic breakdown</h3>
+            <p>What to tackle next</p>
+          </div>
+        </div>
+        <div class="topic-list" id="topicList"></div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const appData = {
+      subjects: [
+        {
+          id: 'english',
+          name: 'English Literature',
+          summary: 'Texts, themes, and quotations',
+          focusTitle: 'Macbeth themes and quotations',
+          focusDescription: 'Use the flashcard stack to review the theme, then answer one quick recall question to check what stuck.',
+          mastery: 62,
+          topics: [
+            { name: 'Ambition', due: 'Today', progress: 74 },
+            { name: 'Guilt', due: 'Tomorrow', progress: 51 },
+            { name: 'Kingship', due: 'Friday', progress: 43 },
+            { name: 'Key quotations', due: 'Weekend', progress: 80 }
+          ],
+          tasks: [
+            { text: 'Revise Lady Macbeth quotations', eta: '12 min', done: false },
+            { text: 'Answer one Macbeth practice paragraph', eta: '18 min', done: false },
+            { text: 'Review teacher feedback notes', eta: '6 min', done: true }
+          ],
+          flashcards: [
+            { q: 'What does Macbeth say before killing Duncan?', a: '"I have no spur ... only vaulting ambition".' },
+            { q: 'Which image captures guilt after the murder?', a: 'Blood on the hands becomes a symbol of lasting guilt.' },
+            { q: 'Why is kingship important?', a: 'Shakespeare contrasts Duncan’s rightful rule with Macbeth’s tyranny.' }
+          ],
+          quiz: [
+            { q: 'Which theme best fits “vaulting ambition”?', options: ['Loyalty', 'Ambition', 'Comic relief'], answer: 1 },
+            { q: 'Who says “Out, damned spot!”?', options: ['Lady Macbeth', 'Banquo', 'Macduff'], answer: 0 },
+            { q: 'What does blood mostly symbolise?', options: ['Celebration', 'Guilt', 'Weather'], answer: 1 }
+          ]
+        },
+        {
+          id: 'science',
+          name: 'Combined Science',
+          summary: 'Biology, chemistry, physics',
+          focusTitle: 'Cell biology and required practicals',
+          focusDescription: 'Cycle through definitions, then test yourself on methods and variables.',
+          mastery: 57,
+          topics: [
+            { name: 'Cell structure', due: 'Today', progress: 69 },
+            { name: 'Microscopy', due: 'Tomorrow', progress: 46 },
+            { name: 'Enzymes', due: 'Friday', progress: 55 },
+            { name: 'Required practicals', due: 'Weekend', progress: 38 }
+          ],
+          tasks: [
+            { text: 'Memorise organelle functions', eta: '10 min', done: false },
+            { text: 'Do one practical-method quiz', eta: '8 min', done: false },
+            { text: 'Correct last test mistakes', eta: '14 min', done: false }
+          ],
+          flashcards: [
+            { q: 'What does the mitochondria do?', a: 'It is the site of aerobic respiration and releases energy.' },
+            { q: 'Why stain cells with iodine?', a: 'It increases contrast so structures are easier to see.' },
+            { q: 'What is diffusion?', a: 'The net movement of particles from high to low concentration.' }
+          ],
+          quiz: [
+            { q: 'Which organelle controls the cell?', options: ['Nucleus', 'Ribosome', 'Vacuole'], answer: 0 },
+            { q: 'What does a higher magnification do?', options: ['Makes image darker only', 'Makes image appear larger', 'Stops focusing'], answer: 1 },
+            { q: 'Diffusion moves particles...', options: ['Low to high', 'Randomly only', 'High to low'], answer: 2 }
+          ]
+        },
+        {
+          id: 'history',
+          name: 'History',
+          summary: 'Causes, events, consequences',
+          focusTitle: 'Cold War flash review',
+          focusDescription: 'Track key events in order and practise concise cause-and-effect explanations.',
+          mastery: 71,
+          topics: [
+            { name: 'Berlin Crisis', due: 'Today', progress: 83 },
+            { name: 'Cuban Missile Crisis', due: 'Tomorrow', progress: 66 },
+            { name: 'Vietnam', due: 'Friday', progress: 58 },
+            { name: 'Detente', due: 'Weekend', progress: 77 }
+          ],
+          tasks: [
+            { text: 'Timeline the Berlin events', eta: '9 min', done: false },
+            { text: 'Write one 8-mark plan', eta: '15 min', done: false },
+            { text: 'Recall dates from last unit', eta: '7 min', done: true }
+          ],
+          flashcards: [
+            { q: 'When was the Berlin Wall built?', a: '1961.' },
+            { q: 'Why was Cuba important in 1962?', a: 'Soviet missiles in Cuba risked direct nuclear conflict with the USA.' },
+            { q: 'What is detente?', a: 'A period of eased tension between the superpowers.' }
+          ],
+          quiz: [
+            { q: 'Which event happened in 1962?', options: ['Vietnam withdrawal', 'Cuban Missile Crisis', 'Fall of Berlin Wall'], answer: 1 },
+            { q: 'Detente means...', options: ['Increased tension', 'Eased relations', 'Full alliance'], answer: 1 },
+            { q: 'The Berlin Wall separated...', options: ['North and South Korea', 'East and West Berlin', 'USSR and China'], answer: 1 }
+          ]
+        }
+      ]
+    };
+
+    const state = {
+      subjectId: 'english',
+      cardIndex: 0,
+      cardSide: 'q',
+      quizIndex: 0,
+      quizAnswered: false,
+      completedSessions: 1,
+      mode: 'flashcards'
+    };
+
+    const els = {
+      subjectGrid: document.getElementById('subjectGrid'),
+      pageTitle: document.getElementById('pageTitle'),
+      pageSubtitle: document.getElementById('pageSubtitle'),
+      subjectBadge: document.getElementById('subjectBadge'),
+      focusTitle: document.getElementById('focusTitle'),
+      focusDescription: document.getElementById('focusDescription'),
+      metricTopics: document.getElementById('metricTopics'),
+      metricCards: document.getElementById('metricCards'),
+      metricMastery: document.getElementById('metricMastery'),
+      taskList: document.getElementById('taskList'),
+      topicList: document.getElementById('topicList'),
+      cardLabel: document.getElementById('cardLabel'),
+      cardContent: document.getElementById('cardContent'),
+      dailySummary: document.getElementById('dailySummary'),
+      dailyProgressBar: document.getElementById('dailyProgressBar'),
+      quizCount: document.getElementById('quizCount'),
+      quizQuestion: document.getElementById('quizQuestion'),
+      quizOptions: document.getElementById('quizOptions'),
+      quizFeedback: document.getElementById('quizFeedback'),
+      flashcardPanel: document.getElementById('flashcardPanel'),
+      quizPanel: document.getElementById('quizPanel'),
+      sidebar: document.getElementById('sidebar')
+    };
+
+    const getSubject = () => appData.subjects.find(s => s.id === state.subjectId);
+
+    function renderSubjects() {
+      els.subjectGrid.innerHTML = '';
+      appData.subjects.forEach(subject => {
+        const btn = document.createElement('button');
+        btn.className = 'chip' + (subject.id === state.subjectId ? ' active' : '');
+        btn.innerHTML = `<span>${subject.name}</span><span class="mini">${subject.mastery}%</span>`;
+        btn.addEventListener('click', () => {
+          state.subjectId = subject.id;
+          state.cardIndex = 0;
+          state.cardSide = 'q';
+          state.quizIndex = 0;
+          state.quizAnswered = false;
+          render();
+          if (window.innerWidth <= 980) els.sidebar.classList.remove('open');
+        });
+        els.subjectGrid.appendChild(btn);
+      });
+    }
+
+    function renderTasks(subject) {
+      els.taskList.innerHTML = '';
+      subject.tasks.forEach((task, index) => {
+        const item = document.createElement('div');
+        item.className = 'task-item' + (task.done ? ' done' : '');
+        item.innerHTML = `
+          <div class="task-main">
+            <button class="check" aria-label="Toggle task ${index + 1}">${task.done ? '✓' : ''}</button>
+            <div>
+              <div class="task-text">${task.text}</div>
+              <div class="task-meta">${task.eta}</div>
+            </div>
+          </div>
+          <div class="task-meta">${task.done ? 'Done' : 'Up next'}</div>`;
+        item.querySelector('.check').addEventListener('click', () => {
+          task.done = !task.done;
+          render();
+        });
+        els.taskList.appendChild(item);
+      });
+    }
+
+    function renderTopics(subject) {
+      els.topicList.innerHTML = '';
+      subject.topics.forEach(topic => {
+        const item = document.createElement('div');
+        item.className = 'topic-item';
+        item.innerHTML = `
+          <div>
+            <div class="task-text">${topic.name}</div>
+            <span>Due ${topic.due}</span>
+          </div>
+          <div style="min-width:120px; width: 34%;">
+            <div class="mini" style="margin-bottom:.35rem; text-align:right;">${topic.progress}% ready</div>
+            <div class="progress-bar"><span style="width:${topic.progress}%"></span></div>
+          </div>`;
+        els.topicList.appendChild(item);
+      });
+    }
+
+    function renderFlashcard(subject) {
+      const card = subject.flashcards[state.cardIndex % subject.flashcards.length];
+      els.cardLabel.textContent = state.cardSide === 'q' ? 'Question' : 'Answer';
+      els.cardContent.textContent = state.cardSide === 'q' ? card.q : card.a;
+    }
+
+    function renderQuiz(subject) {
+      const quiz = subject.quiz[state.quizIndex % subject.quiz.length];
+      els.quizCount.textContent = `Question ${state.quizIndex + 1} of ${subject.quiz.length}`;
+      els.quizQuestion.textContent = quiz.q;
+      els.quizFeedback.textContent = state.quizAnswered ? 'Pick next question when ready.' : 'Choose the best answer.';
+      els.quizOptions.innerHTML = '';
+      quiz.options.forEach((option, index) => {
+        const btn = document.createElement('button');
+        btn.className = 'option';
+        btn.textContent = option;
+        btn.disabled = state.quizAnswered;
+        btn.addEventListener('click', () => {
+          state.quizAnswered = true;
+          [...els.quizOptions.children].forEach((child, childIndex) => {
+            child.classList.toggle('correct', childIndex === quiz.answer);
+            child.classList.toggle('wrong', childIndex === index && index !== quiz.answer);
+            child.disabled = true;
+          });
+          els.quizFeedback.textContent = index === quiz.answer ? 'Correct. Great recall.' : `Not quite. Correct answer: ${quiz.options[quiz.answer]}.`;
+        });
+        els.quizOptions.appendChild(btn);
+      });
+    }
+
+    function renderDaily(subject) {
+      const done = subject.tasks.filter(t => t.done).length;
+      const total = subject.tasks.length;
+      const percent = Math.round((done / total) * 100);
+      els.dailySummary.textContent = `${done} of ${total} tasks complete · ${state.completedSessions} sessions logged`;
+      els.dailyProgressBar.style.width = `${percent}%`;
+    }
+
+    function renderMode() {
+      els.flashcardPanel.classList.toggle('hidden', state.mode !== 'flashcards');
+      els.quizPanel.classList.toggle('hidden', state.mode !== 'quiz');
+      document.getElementById('flashcardModeBtn').classList.toggle('btn-primary', state.mode === 'flashcards');
+      document.getElementById('flashcardModeBtn').classList.toggle('btn-secondary', state.mode !== 'flashcards');
+      document.getElementById('quizModeBtn').classList.toggle('btn-primary', state.mode === 'quiz');
+      document.getElementById('quizModeBtn').classList.toggle('btn-secondary', state.mode !== 'quiz');
+    }
+
+    function render() {
+      const subject = getSubject();
+      renderSubjects();
+      els.pageTitle.textContent = subject.name;
+      els.pageSubtitle.textContent = subject.summary;
+      els.subjectBadge.textContent = subject.name;
+      els.focusTitle.textContent = subject.focusTitle;
+      els.focusDescription.textContent = subject.focusDescription;
+      els.metricTopics.textContent = subject.topics.length;
+      els.metricCards.textContent = subject.flashcards.length;
+      els.metricMastery.textContent = `${subject.mastery}%`;
+      renderTasks(subject);
+      renderTopics(subject);
+      renderFlashcard(subject);
+      renderQuiz(subject);
+      renderDaily(subject);
+      renderMode();
+    }
+
+    document.getElementById('flipCardBtn').addEventListener('click', () => {
+      state.cardSide = state.cardSide === 'q' ? 'a' : 'q';
+      renderFlashcard(getSubject());
+    });
+
+    document.getElementById('nextCardBtn').addEventListener('click', () => {
+      state.cardIndex = (state.cardIndex + 1) % getSubject().flashcards.length;
+      state.cardSide = 'q';
+      renderFlashcard(getSubject());
+    });
+
+    document.getElementById('shuffleBtn').addEventListener('click', () => {
+      state.cardIndex = Math.floor(Math.random() * getSubject().flashcards.length);
+      state.cardSide = 'q';
+      renderFlashcard(getSubject());
+    });
+
+    document.getElementById('completeSessionBtn').addEventListener('click', () => {
+      state.completedSessions += 1;
+      renderDaily(getSubject());
+    });
+
+    document.getElementById('flashcardModeBtn').addEventListener('click', () => {
+      state.mode = 'flashcards';
+      renderMode();
+    });
+    document.getElementById('quizModeBtn').addEventListener('click', () => {
+      state.mode = 'quiz';
+      state.quizAnswered = false;
+      renderMode();
+      renderQuiz(getSubject());
+    });
+
+    els.quizPanel.addEventListener('dblclick', () => {
+      state.quizIndex = (state.quizIndex + 1) % getSubject().quiz.length;
+      state.quizAnswered = false;
+      renderQuiz(getSubject());
+    });
+
+    document.getElementById('mobileToggle').addEventListener('click', () => {
+      els.sidebar.classList.toggle('open');
+    });
+
+    (function () {
+      const toggle = document.querySelector('[data-theme-toggle]');
+      const root = document.documentElement;
+      let theme = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      root.setAttribute('data-theme', theme);
+      toggle.addEventListener('click', () => {
+        theme = theme === 'dark' ? 'light' : 'dark';
+        root.setAttribute('data-theme', theme);
+      });
+    })();
+
+    render();
+  </script>
+</body>
+</html>

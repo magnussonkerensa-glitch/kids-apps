@@ -1,0 +1,1287 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Dinastias de Portugal — Aventura Real</title>
+<style>
+/* ===== FONTS & RESET ===== */
+@import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --borgonha: #8B2FC9;
+  --borgonha-light: #E8C5FF;
+  --avis: #D4500A;
+  --avis-light: #FFD9C0;
+  --filipina: #1565C0;
+  --filipina-light: #C5DCFF;
+  --braganca: #2E7D32;
+  --braganca-light: #C5EDCA;
+  --gold: #F9A825;
+  --gold-light: #FFF8E1;
+  --bg: #FFF9F0;
+  --card: #FFFFFF;
+  --text: #2C2C2C;
+  --text-light: #666;
+  --radius: 20px;
+  --shadow: 0 4px 20px rgba(0,0,0,0.12);
+  --shadow-lg: 0 8px 40px rgba(0,0,0,0.18);
+}
+
+body {
+  font-family: 'Nunito', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, .title-font { font-family: 'Fredoka One', cursive; }
+
+/* ===== SCREENS ===== */
+.screen {
+  display: none;
+  min-height: 100vh;
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+  animation: fadeIn 0.4s ease;
+}
+.screen.active { display: block; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== NAV ===== */
+#nav {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: white;
+  border-top: 3px solid #eee;
+  display: flex;
+  justify-content: space-around;
+  z-index: 100;
+  padding: 8px 0 env(safe-area-inset-bottom, 8px);
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+}
+.nav-btn {
+  background: none; border: none; cursor: pointer;
+  display: flex; flex-direction: column; align-items: center;
+  gap: 2px; padding: 6px 12px;
+  font-family: 'Nunito', sans-serif; font-size: 11px; font-weight: 700;
+  color: #aaa; transition: color 0.2s;
+}
+.nav-btn.active { color: var(--gold); }
+.nav-btn span.icon { font-size: 22px; }
+
+/* ===== BUTTONS ===== */
+.btn {
+  display: inline-block;
+  padding: 16px 36px;
+  border-radius: 50px;
+  border: none;
+  font-family: 'Fredoka One', cursive;
+  font-size: 22px;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+  box-shadow: 0 4px 0 rgba(0,0,0,0.2);
+  text-align: center;
+}
+.btn:active { transform: scale(0.96) translateY(2px); box-shadow: 0 2px 0 rgba(0,0,0,0.2); }
+.btn-gold { background: var(--gold); color: white; }
+.btn-purple { background: var(--borgonha); color: white; }
+.btn-orange { background: var(--avis); color: white; }
+.btn-blue { background: var(--filipina); color: white; }
+.btn-green { background: var(--braganca); color: white; }
+.btn-sm {
+  padding: 10px 22px;
+  font-size: 16px;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+}
+.btn-block { display: block; width: 100%; margin-top: 12px; }
+
+/* ===== CARDS ===== */
+.card {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 24px;
+  box-shadow: var(--shadow);
+  margin-bottom: 20px;
+}
+.card-borgonha  { border-top: 6px solid var(--borgonha);  background: linear-gradient(135deg, #fff 80%, var(--borgonha-light)); }
+.card-avis      { border-top: 6px solid var(--avis);      background: linear-gradient(135deg, #fff 80%, var(--avis-light)); }
+.card-filipina  { border-top: 6px solid var(--filipina);  background: linear-gradient(135deg, #fff 80%, var(--filipina-light)); }
+.card-braganca  { border-top: 6px solid var(--braganca);  background: linear-gradient(135deg, #fff 80%, var(--braganca-light)); }
+
+.dynasty-name {
+  font-family: 'Fredoka One', cursive;
+  font-size: 28px;
+  margin-bottom: 4px;
+}
+.dynasty-dates {
+  font-size: 15px; font-weight: 700; color: var(--text-light);
+  background: rgba(0,0,0,0.07); display: inline-block;
+  padding: 3px 10px; border-radius: 20px; margin-bottom: 12px;
+}
+.dynasty-emoji { font-size: 52px; float: right; margin-left: 12px; line-height: 1; }
+.fact-list { list-style: none; padding: 0; }
+.fact-list li { padding: 6px 0 6px 28px; position: relative; font-size: 16px; font-weight: 600; }
+.fact-list li::before { content: "👑"; position: absolute; left: 0; }
+.rei-box {
+  background: rgba(0,0,0,0.06); border-radius: 12px;
+  padding: 10px 14px; margin-top: 12px;
+  font-size: 15px; font-weight: 700;
+}
+.frase-box {
+  margin-top: 10px;
+  background: var(--gold-light); border-left: 4px solid var(--gold);
+  border-radius: 0 12px 12px 0;
+  padding: 10px 14px; font-size: 15px; font-weight: 700;
+  font-style: italic;
+}
+
+/* ===== WELCOME SCREEN ===== */
+#screen-welcome {
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; text-align: center; padding: 40px 24px;
+  min-height: 100vh;
+}
+.welcome-castle { font-size: 80px; animation: bounce 2s infinite; margin-bottom: 16px; }
+@keyframes bounce {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+.welcome-title { font-size: clamp(36px, 8vw, 56px); color: var(--borgonha); line-height: 1.1; }
+.welcome-sub { font-size: 20px; color: var(--avis); font-weight: 800; margin: 8px 0 20px; }
+.welcome-desc {
+  background: white; border-radius: var(--radius); padding: 20px;
+  box-shadow: var(--shadow); font-size: 17px; line-height: 1.6;
+  max-width: 480px; margin-bottom: 28px;
+}
+.stars-row { font-size: 32px; letter-spacing: 4px; margin-bottom: 20px; }
+
+/* ===== SECTION TITLES ===== */
+.section-title {
+  font-family: 'Fredoka One', cursive;
+  font-size: 32px; color: var(--borgonha);
+  text-align: center; margin-bottom: 20px; margin-top: 20px;
+}
+.section-sub {
+  text-align: center; font-size: 16px; font-weight: 600;
+  color: var(--text-light); margin-bottom: 24px; margin-top: -12px;
+}
+
+/* ===== TIMELINE ===== */
+.timeline {
+  position: relative;
+  padding: 20px 0 80px;
+}
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 50%; transform: translateX(-50%);
+  top: 0; bottom: 0;
+  width: 6px;
+  background: linear-gradient(to bottom, var(--borgonha), var(--avis), var(--filipina), var(--braganca));
+  border-radius: 3px;
+}
+.tl-item {
+  display: flex;
+  margin-bottom: 32px;
+  position: relative;
+}
+.tl-item:nth-child(odd) { flex-direction: row-reverse; }
+.tl-content {
+  width: calc(50% - 40px);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  box-shadow: var(--shadow);
+  background: white;
+  position: relative;
+}
+.tl-item:nth-child(odd) .tl-content { margin-right: 40px; }
+.tl-item:nth-child(even) .tl-content { margin-left: 40px; }
+.tl-dot {
+  position: absolute;
+  left: 50%; transform: translateX(-50%);
+  width: 36px; height: 36px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; border: 4px solid white; box-shadow: var(--shadow);
+  z-index: 1; top: 16px;
+}
+.tl-title { font-family: 'Fredoka One', cursive; font-size: 20px; }
+.tl-dates { font-size: 13px; font-weight: 700; color: var(--text-light); }
+.tl-fact { font-size: 14px; margin-top: 6px; line-height: 1.4; }
+
+/* Timeline colors */
+.tl-item.borgonha .tl-dot  { background: var(--borgonha); }
+.tl-item.borgonha .tl-content { border-left: 5px solid var(--borgonha); }
+.tl-item.avis .tl-dot      { background: var(--avis); }
+.tl-item.avis .tl-content  { border-left: 5px solid var(--avis); }
+.tl-item.filipina .tl-dot  { background: var(--filipina); }
+.tl-item.filipina .tl-content { border-left: 5px solid var(--filipina); }
+.tl-item.braganca .tl-dot  { background: var(--braganca); }
+.tl-item.braganca .tl-content { border-left: 5px solid var(--braganca); }
+
+/* ===== QUIZ ===== */
+.quiz-progress-bar {
+  height: 12px; background: #eee; border-radius: 6px;
+  margin-bottom: 20px; overflow: hidden;
+}
+.quiz-progress-fill {
+  height: 100%;
+  background: linear-gradient(to right, var(--borgonha), var(--avis));
+  border-radius: 6px;
+  transition: width 0.4s ease;
+}
+.quiz-q { font-size: 20px; font-weight: 800; margin-bottom: 20px; line-height: 1.4; }
+.quiz-options { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.quiz-opt {
+  background: white; border: 3px solid #ddd; border-radius: 16px;
+  padding: 16px 12px; font-size: 16px; font-weight: 700;
+  cursor: pointer; transition: all 0.2s; text-align: center;
+  font-family: 'Nunito', sans-serif;
+}
+.quiz-opt:hover { border-color: var(--gold); background: var(--gold-light); }
+.quiz-opt.correct { background: #E8F5E9; border-color: var(--braganca); color: var(--braganca); }
+.quiz-opt.wrong   { background: #FFEBEE; border-color: #C62828; color: #C62828; }
+.quiz-opt.disabled { pointer-events: none; opacity: 0.6; }
+.quiz-feedback {
+  text-align: center; padding: 16px; border-radius: 16px; margin-top: 16px;
+  font-size: 20px; font-weight: 800; display: none;
+}
+.quiz-feedback.show { display: block; animation: pop 0.3s; }
+.quiz-feedback.correct-fb { background: #E8F5E9; color: var(--braganca); }
+.quiz-feedback.wrong-fb   { background: #FFEBEE; color: #C62828; }
+@keyframes pop {
+  0%  { transform: scale(0.7); opacity: 0; }
+  80% { transform: scale(1.05); }
+  100%{ transform: scale(1); opacity: 1; }
+}
+
+/* ===== SCORE DISPLAY ===== */
+.score-badge {
+  background: var(--gold); color: white;
+  padding: 8px 18px; border-radius: 50px;
+  font-family: 'Fredoka One', cursive; font-size: 20px;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.points-display {
+  display: flex; justify-content: center;
+  margin-bottom: 20px;
+}
+
+/* ===== MATCH GAME ===== */
+.match-container { display: flex; gap: 16px; flex-wrap: wrap; }
+.match-col { flex: 1; min-width: 140px; display: flex; flex-direction: column; gap: 10px; }
+.match-item {
+  background: white; border: 3px solid #ddd; border-radius: 14px;
+  padding: 14px 12px; font-size: 15px; font-weight: 700;
+  cursor: pointer; text-align: center; transition: all 0.2s; min-height: 56px;
+  display: flex; align-items: center; justify-content: center;
+}
+.match-item.selected { border-color: var(--gold); background: var(--gold-light); }
+.match-item.matched   { border-color: var(--braganca); background: #E8F5E9; pointer-events: none; color: var(--braganca); }
+.match-item.wrong-match { border-color: #C62828; background: #FFEBEE; animation: shake 0.4s; }
+@keyframes shake {
+  0%,100%{ transform: translateX(0); }
+  25%    { transform: translateX(-6px); }
+  75%    { transform: translateX(6px); }
+}
+
+/* ===== ORDER GAME ===== */
+.order-items { display: flex; flex-direction: column; gap: 10px; }
+.order-item {
+  background: white; border: 3px solid #ddd; border-radius: 14px;
+  padding: 16px 18px; font-size: 17px; font-weight: 700;
+  cursor: pointer; display: flex; align-items: center; gap: 12px;
+  transition: all 0.2s;
+}
+.order-item .order-num {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: #eee; display: flex; align-items: center; justify-content: center;
+  font-size: 16px; font-weight: 800; flex-shrink: 0;
+}
+.order-item.selected { border-color: var(--gold); background: var(--gold-light); }
+.order-item.correct-pos { border-color: var(--braganca); background: #E8F5E9; pointer-events: none; }
+
+/* ===== GALLERY ===== */
+.gallery-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+.gallery-card {
+  background: white; border-radius: var(--radius);
+  padding: 18px 14px; text-align: center;
+  box-shadow: var(--shadow); cursor: pointer;
+  transition: transform 0.2s;
+}
+.gallery-card:active { transform: scale(0.97); }
+.gallery-card .g-emoji { font-size: 40px; display: block; margin-bottom: 6px; }
+.gallery-card .g-name { font-family: 'Fredoka One', cursive; font-size: 17px; color: var(--borgonha); }
+.gallery-card .g-dates { font-size: 12px; color: var(--text-light); font-weight: 700; }
+.gallery-card .g-fact { font-size: 13px; margin-top: 8px; line-height: 1.4; }
+
+/* ===== CHANGE CARD ===== */
+.change-card {
+  border-radius: var(--radius); padding: 20px;
+  margin-bottom: 16px; box-shadow: var(--shadow);
+  background: white;
+}
+.change-card .arrow { font-size: 28px; text-align: center; margin: 8px 0; }
+.change-from { font-family: 'Fredoka One', cursive; font-size: 18px; }
+.change-to   { font-family: 'Fredoka One', cursive; font-size: 18px; }
+.change-why  { margin-top: 10px; font-size: 15px; line-height: 1.5; font-weight: 600; }
+
+/* ===== FINAL CHALLENGE ===== */
+.final-score-card {
+  background: linear-gradient(135deg, #FFF8E1, #FFF3E0);
+  border: 4px solid var(--gold); border-radius: var(--radius);
+  padding: 30px; text-align: center; box-shadow: var(--shadow-lg);
+}
+.final-score-num {
+  font-family: 'Fredoka One', cursive; font-size: 72px;
+  color: var(--gold); line-height: 1;
+}
+.final-title-badge {
+  font-family: 'Fredoka One', cursive; font-size: 28px;
+  color: var(--borgonha); margin-top: 8px;
+}
+.medal { font-size: 64px; animation: spin 1s ease; }
+@keyframes spin {
+  0%  { transform: rotate(-15deg) scale(0); }
+  70% { transform: rotate(5deg) scale(1.1); }
+  100%{ transform: rotate(0deg) scale(1); }
+}
+
+/* ===== CONFETTI ===== */
+#confetti-container {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none; z-index: 999; overflow: hidden;
+}
+.confetti-piece {
+  position: absolute; width: 10px; height: 10px;
+  animation: fall linear forwards;
+  border-radius: 2px;
+}
+@keyframes fall {
+  0%   { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+}
+
+/* ===== DID YOU KNOW ===== */
+.did-you-know {
+  background: linear-gradient(135deg, #E3F2FD, #E8EAF6);
+  border-radius: var(--radius); padding: 16px 20px;
+  margin: 16px 0; border-left: 5px solid var(--filipina);
+}
+.did-you-know .dyk-title { font-family: 'Fredoka One', cursive; font-size: 17px; color: var(--filipina); margin-bottom: 6px; }
+.did-you-know p { font-size: 15px; font-weight: 600; line-height: 1.5; }
+
+/* ===== PROGRESS BAR TOP ===== */
+.top-bar {
+  background: linear-gradient(135deg, var(--borgonha), #6A0080);
+  padding: 14px 20px;
+  display: flex; align-items: center; justify-content: space-between;
+  border-radius: 0 0 24px 24px;
+  margin: -20px -20px 20px -20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+.top-bar-title { font-family: 'Fredoka One', cursive; font-size: 20px; color: white; }
+.top-bar-score { background: rgba(255,255,255,0.2); border-radius: 50px; padding: 6px 14px; color: white; font-weight: 800; font-size: 16px; }
+
+/* ===== MISC ===== */
+.emoji-big { font-size: 48px; display: block; text-align: center; margin: 10px 0; }
+.text-center { text-align: center; }
+.mt-16 { margin-top: 16px; }
+.mb-16 { margin-bottom: 16px; }
+.joke-box {
+  background: #FFF8E1; border-radius: 14px; padding: 14px 18px;
+  border: 2px dashed var(--gold); margin: 12px 0;
+  font-size: 15px; font-weight: 600;
+}
+.joke-box .j-title { font-family: 'Fredoka One', cursive; font-size: 16px; color: var(--gold); }
+
+/* PADDING FOR FIXED NAV */
+.screen { padding-bottom: 90px; }
+
+/* RESPONSIVE */
+@media (max-width: 500px) {
+  .quiz-options { grid-template-columns: 1fr; }
+  .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+  .tl-content { padding: 12px; }
+  .tl-title { font-size: 16px; }
+}
+</style>
+</head>
+<body>
+
+<!-- CONFETTI CONTAINER -->
+<div id="confetti-container"></div>
+
+<!-- NAV BAR -->
+<nav id="nav">
+  <button class="nav-btn active" onclick="showScreen('welcome')" id="nav-welcome">
+    <span class="icon">🏰</span>Início
+  </button>
+  <button class="nav-btn" onclick="showScreen('learn')" id="nav-learn">
+    <span class="icon">📖</span>Aprender
+  </button>
+  <button class="nav-btn" onclick="showScreen('timeline')" id="nav-timeline">
+    <span class="icon">📅</span>Linha
+  </button>
+  <button class="nav-btn" onclick="showScreen('games')" id="nav-games">
+    <span class="icon">🎮</span>Jogos
+  </button>
+  <button class="nav-btn" onclick="showScreen('gallery')" id="nav-gallery">
+    <span class="icon">👑</span>Reis
+  </button>
+  <button class="nav-btn" onclick="showScreen('final')" id="nav-final">
+    <span class="icon">🏆</span>Desafio
+  </button>
+</nav>
+
+<!-- ==================== WELCOME SCREEN ==================== -->
+<div id="screen-welcome" class="screen active">
+  <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:90vh;text-align:center;padding:20px;">
+    <div class="welcome-castle">🏰</div>
+    <h1 class="welcome-title">Dinastias de Portugal</h1>
+    <p class="welcome-sub">— Aventura Real —</p>
+    <div class="welcome-desc">
+      <p>Olá, explorador da história! 👋</p>
+      <p style="margin-top:8px;">Vamos aprender brincando sobre os <strong>reis e rainhas</strong> de Portugal!</p>
+      <p style="margin-top:8px;">Quatro famílias reais, muitas aventuras, e tu és o herói desta história! ⚔️</p>
+    </div>
+    <div class="stars-row">⭐⭐⭐</div>
+    <div class="points-display">
+      <div class="score-badge">⭐ <span id="total-score">0</span> pontos</div>
+    </div>
+    <button class="btn btn-gold" onclick="showScreen('learn')">Começar a Aventura! 🚀</button>
+    <p style="margin-top:20px;font-size:13px;color:var(--text-light);font-weight:700;">🎮 Aprende → Joga → Ganha estrelas!</p>
+  </div>
+</div>
+
+<!-- ==================== LEARN SCREEN ==================== -->
+<div id="screen-learn" class="screen">
+  <div class="top-bar">
+    <span class="top-bar-title">📖 Aprender</span>
+    <span class="top-bar-score">⭐ <span class="score-display">0</span></span>
+  </div>
+
+  <h2 class="section-title">As 4 Dinastias</h2>
+  <p class="section-sub">Descobre cada família real de Portugal!</p>
+
+  <!-- BORGONHA -->
+  <div class="card card-borgonha">
+    <span class="dynasty-emoji">⚔️</span>
+    <div class="dynasty-name" style="color:var(--borgonha)">Borgonha</div>
+    <span class="dynasty-dates">1139 – 1383</span>
+    <ul class="fact-list">
+      <li>Foi a <strong>primeira dinastia</strong> de Portugal.</li>
+      <li>D. Afonso Henriques fundou o reino em 1139.</li>
+      <li>Portugal ganhou a sua independência nesta época!</li>
+    </ul>
+    <div class="rei-box">👑 Rei importante: <strong>D. Afonso Henriques</strong> — o 1.º rei de Portugal!</div>
+    <div class="frase-box">💡 "Borgonha = o começo de tudo!"</div>
+  </div>
+
+  <div class="did-you-know">
+    <div class="dyk-title">🔍 Sabias que...?</div>
+    <p>D. Afonso Henriques ganhou uma batalha muito importante em Ourique em 1139 e decidiu chamar-se rei de Portugal! Que corajoso! 🛡️</p>
+  </div>
+
+  <!-- AVIS -->
+  <div class="card card-avis">
+    <span class="dynasty-emoji">🚢</span>
+    <div class="dynasty-name" style="color:var(--avis)">Avis</div>
+    <span class="dynasty-dates">1385 – 1580</span>
+    <ul class="fact-list">
+      <li>Começou com D. João I após uma crise.</li>
+      <li>Foi a época dos <strong>Descobrimentos</strong>!</li>
+      <li>Os portugueses descobriram novos continentes! 🌍</li>
+    </ul>
+    <div class="rei-box">👑 Rei importante: <strong>D. Manuel I</strong> — o "Rei Venturoso"!</div>
+    <div class="frase-box">💡 "Avis = barcos e descobertas!"</div>
+  </div>
+
+  <div class="did-you-know">
+    <div class="dyk-title">🔍 Sabias que...?</div>
+    <p>A Batalha de Aljubarrota (1385) foi uma vitória incrível! Portugal ganhou com menos soldados do que Castela. Dizem que uma padeira ajudou com uma pá! 🍞</p>
+  </div>
+
+  <!-- FILIPINA -->
+  <div class="card card-filipina">
+    <span class="dynasty-emoji">🇪🇸</span>
+    <div class="dynasty-name" style="color:var(--filipina)">Filipina</div>
+    <span class="dynasty-dates">1580 – 1640</span>
+    <ul class="fact-list">
+      <li>D. Sebastião morreu sem filhos na batalha de Alcácer-Quibir.</li>
+      <li>Depois, Portugal foi governado pelos <strong>Filipes de Espanha</strong>.</li>
+      <li>Foram 60 anos com reis espanhóis! 😮</li>
+    </ul>
+    <div class="rei-box">👑 Rei: <strong>Filipe I</strong> — era espanhol mas tornou-se rei de Portugal.</div>
+    <div class="frase-box">💡 "Filipina = os Filipes de Espanha!"</div>
+  </div>
+
+  <div class="joke-box">
+    <div class="j-title">😄 Curiosidade divertida</div>
+    Imagina que a tua família vai de férias e quando voltam, a casa tem um novo dono espanhol! Foi um pouco assim para Portugal em 1580! 😅
+  </div>
+
+  <!-- BRAGANÇA -->
+  <div class="card card-braganca">
+    <span class="dynasty-emoji">🕊️</span>
+    <div class="dynasty-name" style="color:var(--braganca)">Bragança</div>
+    <span class="dynasty-dates">1640 – 1910</span>
+    <ul class="fact-list">
+      <li>Portugal recuperou a independência em 1640!</li>
+      <li>D. João IV foi o primeiro rei desta dinastia.</li>
+      <li>Durou até 1910, quando Portugal se tornou <strong>república</strong>.</li>
+    </ul>
+    <div class="rei-box">👑 Rei importante: <strong>D. João IV</strong> — o "Rei Restaurador"!</div>
+    <div class="frase-box">💡 "Bragança = independência de volta!"</div>
+  </div>
+
+  <div class="did-you-know">
+    <div class="dyk-title">🔍 Sabias que...?</div>
+    <p>Em 1910 houve uma revolução e Portugal deixou de ter reis! Passou a ser uma república, como é hoje. O último rei chamava-se D. Manuel II. 👋</p>
+  </div>
+
+  <!-- WHY DID IT CHANGE -->
+  <h2 class="section-title" style="color:var(--avis)">Porque mudou a dinastia?</h2>
+  <p class="section-sub">Às vezes os reis morriam sem filhos... e aí havia problemas! 👀</p>
+
+  <div class="change-card" style="border-left:5px solid var(--borgonha)">
+    <div class="change-from" style="color:var(--borgonha)">⚔️ Borgonha</div>
+    <div class="arrow">⬇️</div>
+    <div class="change-to" style="color:var(--avis)">🚢 Avis</div>
+    <div class="change-why">Após D. Fernando, houve uma crise. D. João I, Mestre de Avis, ganhou a Batalha de Aljubarrota e tornou-se rei. Portugal ficou independente!</div>
+  </div>
+
+  <div class="change-card" style="border-left:5px solid var(--avis)">
+    <div class="change-from" style="color:var(--avis)">🚢 Avis</div>
+    <div class="arrow">⬇️</div>
+    <div class="change-to" style="color:var(--filipina)">🇪🇸 Filipina</div>
+    <div class="change-why">D. Sebastião morreu na guerra sem deixar filhos. Depois o Cardeal D. Henrique também morreu sem herdeiros. Então Filipe II de Espanha tornou-se rei de Portugal.</div>
+  </div>
+
+  <div class="change-card" style="border-left:5px solid var(--filipina)">
+    <div class="change-from" style="color:var(--filipina)">🇪🇸 Filipina</div>
+    <div class="arrow">⬇️</div>
+    <div class="change-to" style="color:var(--braganca)">🕊️ Bragança</div>
+    <div class="change-why">Em 1640, os portugueses fizeram uma revolta e expulsaram os reis espanhóis! D. João IV da família Bragança tornou-se o novo rei de Portugal. 🎉</div>
+  </div>
+
+  <div class="change-card" style="border-left:5px solid var(--braganca)">
+    <div class="change-from" style="color:var(--braganca)">🕊️ Bragança</div>
+    <div class="arrow">⬇️</div>
+    <div class="change-to" style="color:#B71C1C)">🏛️ República</div>
+    <div class="change-why">Em 1910, o povo português decidiu acabar com a monarquia. D. Manuel II foi o último rei e Portugal tornou-se uma República!</div>
+  </div>
+
+  <div class="text-center mt-16">
+    <button class="btn btn-gold" onclick="showScreen('games')">Agora vamos jogar! 🎮</button>
+  </div>
+</div>
+
+<!-- ==================== TIMELINE SCREEN ==================== -->
+<div id="screen-timeline" class="screen">
+  <div class="top-bar">
+    <span class="top-bar-title">📅 Linha do Tempo</span>
+    <span class="top-bar-score">⭐ <span class="score-display">0</span></span>
+  </div>
+
+  <h2 class="section-title">Linha do Tempo Real</h2>
+  <p class="section-sub">Vê a ordem das dinastias!</p>
+
+  <div class="timeline">
+    <div class="tl-item borgonha">
+      <div class="tl-content">
+        <div class="tl-title" style="color:var(--borgonha)">⚔️ Borgonha</div>
+        <div class="tl-dates">1139 – 1383</div>
+        <div class="tl-fact">Primeira dinastia! D. Afonso Henriques funda o reino de Portugal.</div>
+      </div>
+      <div class="tl-dot" style="background:var(--borgonha); top:20px;">⚔️</div>
+    </div>
+
+    <div class="tl-item avis" style="flex-direction:row;">
+      <div class="tl-content">
+        <div class="tl-title" style="color:var(--avis)">🚢 Avis</div>
+        <div class="tl-dates">1385 – 1580</div>
+        <div class="tl-fact">Os Descobrimentos! Barcos portugueses exploram o mundo inteiro.</div>
+      </div>
+      <div class="tl-dot" style="background:var(--avis); top:20px;">🚢</div>
+    </div>
+
+    <div class="tl-item filipina">
+      <div class="tl-content">
+        <div class="tl-title" style="color:var(--filipina)">🇪🇸 Filipina</div>
+        <div class="tl-dates">1580 – 1640</div>
+        <div class="tl-fact">Reis espanhóis governam Portugal durante 60 anos.</div>
+      </div>
+      <div class="tl-dot" style="background:var(--filipina); top:20px;">🇪🇸</div>
+    </div>
+
+    <div class="tl-item braganca" style="flex-direction:row;">
+      <div class="tl-content">
+        <div class="tl-title" style="color:var(--braganca)">🕊️ Bragança</div>
+        <div class="tl-dates">1640 – 1910</div>
+        <div class="tl-fact">Independência de volta! E depois... república em 1910!</div>
+      </div>
+      <div class="tl-dot" style="background:var(--braganca); top:20px;">🕊️</div>
+    </div>
+  </div>
+
+  <!-- Mini visual bar -->
+  <h3 style="font-family:'Fredoka One',cursive;font-size:22px;text-align:center;margin:20px 0 12px;">Barra do Tempo</h3>
+  <div style="border-radius:16px;overflow:hidden;box-shadow:var(--shadow);margin-bottom:20px;">
+    <div style="display:flex;text-align:center;font-weight:800;font-size:13px;">
+      <div style="background:var(--borgonha);color:white;flex:2.4;padding:14px 6px;line-height:1.3;">⚔️<br>Borgonha<br><small>1139–1383</small></div>
+      <div style="background:var(--avis);color:white;flex:2.4;padding:14px 6px;line-height:1.3;">🚢<br>Avis<br><small>1385–1580</small></div>
+      <div style="background:var(--filipina);color:white;flex:0.75;padding:14px 4px;line-height:1.3;font-size:11px;">🇪🇸<br>Filipina<br><small>–1640</small></div>
+      <div style="background:var(--braganca);color:white;flex:3.4;padding:14px 6px;line-height:1.3;">🕊️<br>Bragança<br><small>1640–1910</small></div>
+    </div>
+  </div>
+
+  <div class="joke-box">
+    <div class="j-title">🧠 Truque para memorizar!</div>
+    <strong>B – A – F – B</strong><br>
+    <em>"Borboleta Azul Feliz Brincando"</em><br>
+    = Borgonha, Avis, Filipina, Bragança! 🦋
+  </div>
+
+  <div class="text-center mt-16 mb-16">
+    <button class="btn btn-gold" onclick="showScreen('games')">Jogar agora! 🎮</button>
+  </div>
+</div>
+
+<!-- ==================== GAMES SCREEN ==================== -->
+<div id="screen-games" class="screen">
+  <div class="top-bar">
+    <span class="top-bar-title">🎮 Jogos</span>
+    <span class="top-bar-score">⭐ <span class="score-display">0</span></span>
+  </div>
+
+  <!-- GAME SELECTOR -->
+  <div id="game-selector">
+    <h2 class="section-title">Escolhe um Jogo!</h2>
+    <p class="section-sub">Três mini-jogos à tua espera 🎉</p>
+
+    <div style="display:flex;flex-direction:column;gap:16px;max-width:480px;margin:0 auto;">
+      <button class="btn btn-purple btn-block" style="font-size:18px;padding:20px;" onclick="startGame(1)">
+        🧠 Jogo 1: Pergunta e Resposta
+      </button>
+      <button class="btn btn-orange btn-block" style="font-size:18px;padding:20px;" onclick="startGame(2)">
+        🔀 Jogo 2: Ordena as Dinastias
+      </button>
+      <button class="btn btn-blue btn-block" style="font-size:18px;padding:20px;" onclick="startGame(3)">
+        🔗 Jogo 3: Associa a Pista
+      </button>
+    </div>
+  </div>
+
+  <!-- GAME 1: QUIZ -->
+  <div id="game1" style="display:none;">
+    <h2 class="section-title" style="color:var(--borgonha)">🧠 Pergunta e Resposta</h2>
+    <div class="quiz-progress-bar"><div class="quiz-progress-fill" id="g1-progress" style="width:0%"></div></div>
+    <div class="card">
+      <p style="font-size:13px;font-weight:700;color:var(--text-light);margin-bottom:8px;">Pergunta <span id="g1-num">1</span> de 6</p>
+      <div class="quiz-q" id="g1-question"></div>
+      <div class="quiz-options" id="g1-options"></div>
+      <div class="quiz-feedback" id="g1-feedback"></div>
+      <button class="btn btn-gold btn-block" id="g1-next" style="display:none;" onclick="nextG1()">Próxima ➡️</button>
+    </div>
+    <div id="g1-result" style="display:none;">
+      <div class="final-score-card">
+        <div class="medal" id="g1-medal"></div>
+        <div class="final-score-num" id="g1-score-num"></div>
+        <p style="font-size:18px;font-weight:800;margin:8px 0;">em 6 perguntas</p>
+        <div class="final-title-badge" id="g1-msg"></div>
+      </div>
+      <button class="btn btn-gold btn-block mt-16" onclick="startGame(1)">Jogar outra vez 🔄</button>
+      <button class="btn btn-green btn-block mt-16" onclick="document.getElementById('game-selector').style.display='block';document.getElementById('game1').style.display='none';">Outros jogos 🎮</button>
+    </div>
+  </div>
+
+  <!-- GAME 2: ORDER -->
+  <div id="game2" style="display:none;">
+    <h2 class="section-title" style="color:var(--avis)">🔀 Ordena as Dinastias</h2>
+    <div class="card">
+      <p style="font-weight:700;font-size:16px;margin-bottom:16px;">Toca nas dinastias na <strong>ordem certa</strong>! Qual foi a primeira? 🤔</p>
+      <div class="order-items" id="order-items"></div>
+      <div class="quiz-feedback" id="order-feedback"></div>
+      <button class="btn btn-gold btn-block mt-16" id="order-check" onclick="checkOrder()" style="display:none;">✅ Verificar</button>
+    </div>
+    <div id="g2-result" style="display:none;">
+      <div class="final-score-card">
+        <div class="medal" id="g2-medal"></div>
+        <div class="final-title-badge" id="g2-msg"></div>
+      </div>
+      <button class="btn btn-gold btn-block mt-16" onclick="startGame(2)">Jogar outra vez 🔄</button>
+      <button class="btn btn-green btn-block mt-16" onclick="document.getElementById('game-selector').style.display='block';document.getElementById('game2').style.display='none';">Outros jogos 🎮</button>
+    </div>
+  </div>
+
+  <!-- GAME 3: MATCH -->
+  <div id="game3" style="display:none;">
+    <h2 class="section-title" style="color:var(--filipina)">🔗 Associa a Pista</h2>
+    <div class="card">
+      <p style="font-weight:700;font-size:16px;margin-bottom:16px;">Liga a <strong>pista</strong> à <strong>dinastia</strong> certa!</p>
+      <p style="font-size:13px;color:var(--text-light);font-weight:700;margin-bottom:16px;">Toca numa pista, depois na dinastia!</p>
+      <div class="match-container">
+        <div class="match-col" id="match-clues"></div>
+        <div class="match-col" id="match-dynasties"></div>
+      </div>
+      <div class="quiz-feedback" id="match-feedback"></div>
+    </div>
+    <div id="g3-result" style="display:none;">
+      <div class="final-score-card">
+        <div class="medal" id="g3-medal"></div>
+        <div class="final-title-badge" id="g3-msg"></div>
+      </div>
+      <button class="btn btn-gold btn-block mt-16" onclick="startGame(3)">Jogar outra vez 🔄</button>
+      <button class="btn btn-green btn-block mt-16" onclick="document.getElementById('game-selector').style.display='block';document.getElementById('game3').style.display='none';">Outros jogos 🎮</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== GALLERY SCREEN ==================== -->
+<div id="screen-gallery" class="screen">
+  <div class="top-bar">
+    <span class="top-bar-title">👑 Galeria Real</span>
+    <span class="top-bar-score">⭐ <span class="score-display">0</span></span>
+  </div>
+
+  <h2 class="section-title">Os Reis Importantes</h2>
+  <p class="section-sub">Toca num rei para saber mais! 👆</p>
+
+  <div class="gallery-grid" id="gallery-grid"></div>
+
+  <!-- KING DETAIL MODAL -->
+  <div id="king-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;align-items:center;justify-content:center;padding:24px;">
+    <div style="background:white;border-radius:24px;padding:28px;max-width:400px;width:100%;box-shadow:var(--shadow-lg);animation:pop 0.3s;">
+      <div id="modal-emoji" style="font-size:64px;text-align:center;display:block;margin-bottom:12px;"></div>
+      <h3 id="modal-name" style="font-family:'Fredoka One',cursive;font-size:26px;text-align:center;color:var(--borgonha);"></h3>
+      <p id="modal-dates" style="text-align:center;font-weight:700;color:var(--text-light);margin:6px 0 16px;"></p>
+      <p id="modal-fact" style="font-size:16px;line-height:1.6;font-weight:600;"></p>
+      <p id="modal-dynasty" style="margin-top:12px;font-size:14px;font-weight:800;"></p>
+      <button class="btn btn-gold btn-block mt-16" onclick="closeModal()">Fechar ✖️</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== FINAL CHALLENGE ==================== -->
+<div id="screen-final" class="screen">
+  <div class="top-bar">
+    <span class="top-bar-title">🏆 Desafio Final</span>
+    <span class="top-bar-score">⭐ <span class="score-display">0</span></span>
+  </div>
+
+  <div id="final-intro">
+    <h2 class="section-title">🏆 Desafio Final!</h2>
+    <p class="section-sub">Pronto para o grande teste?</p>
+    <div class="card text-center">
+      <span class="emoji-big">🎯</span>
+      <p style="font-size:18px;font-weight:800;margin-bottom:12px;">10 perguntas para te tornares um <strong>Historiador Real</strong>!</p>
+      <p style="font-size:15px;color:var(--text-light);font-weight:700;">Mostra o que aprendeste sobre as 4 dinastias de Portugal!</p>
+      <button class="btn btn-gold btn-block mt-16" style="font-size:20px;" onclick="startFinal()">Aceito o desafio! ⚔️</button>
+    </div>
+  </div>
+
+  <div id="final-quiz" style="display:none;">
+    <div class="quiz-progress-bar"><div class="quiz-progress-fill" id="fq-progress" style="width:0%"></div></div>
+    <div class="card">
+      <p style="font-size:13px;font-weight:700;color:var(--text-light);margin-bottom:8px;">Pergunta <span id="fq-num">1</span> de 10</p>
+      <div class="quiz-q" id="fq-question"></div>
+      <div class="quiz-options" id="fq-options"></div>
+      <div class="quiz-feedback" id="fq-feedback"></div>
+      <button class="btn btn-gold btn-block" id="fq-next" style="display:none;" onclick="nextFQ()">Próxima ➡️</button>
+    </div>
+  </div>
+
+  <div id="final-result" style="display:none;">
+    <div class="final-score-card">
+      <div class="medal" id="final-medal">🏅</div>
+      <div class="final-score-num" id="final-score-num">0</div>
+      <p style="font-size:18px;font-weight:800;margin:4px 0;">em 10 perguntas</p>
+      <div class="final-title-badge" id="final-title">Título</div>
+      <p id="final-msg" style="margin-top:12px;font-size:16px;font-weight:600;line-height:1.5;"></p>
+    </div>
+    <div id="final-badges" style="text-align:center;font-size:40px;margin:20px 0;letter-spacing:8px;"></div>
+    <button class="btn btn-gold btn-block" onclick="startFinal()">Jogar outra vez 🔄</button>
+    <button class="btn btn-green btn-block mt-16" onclick="showScreen('learn')">Rever as Dinastias 📖</button>
+  </div>
+</div>
+
+<!-- ==================== JAVASCRIPT ==================== -->
+<script>
+// ===== DATA =====
+let totalScore = 0;
+
+const dynastyColors = {
+  'Borgonha': 'var(--borgonha)',
+  'Avis': 'var(--avis)',
+  'Filipina': 'var(--filipina)',
+  'Bragança': 'var(--braganca)'
+};
+
+// Kings data
+const kings = [
+  { emoji:'⚔️', name:'D. Afonso Henriques', dates:'Rei: 1139–1185', dynasty:'Borgonha', color:'var(--borgonha)',
+    fact:'Foi o primeiro rei de Portugal! Ganhou a batalha de Ourique e fundou o reino. Um herói total! 🦁' },
+  { emoji:'📜', name:'D. Dinis', dates:'Rei: 1279–1325', dynasty:'Borgonha', color:'var(--borgonha)',
+    fact:'Chamavam-lhe o "Rei Agricultor" e o "Rei Poeta". Fundou a primeira universidade de Portugal! 🎓' },
+  { emoji:'🛡️', name:'D. João I', dates:'Rei: 1385–1433', dynasty:'Avis', color:'var(--avis)',
+    fact:'Ganhou a Batalha de Aljubarrota e salvou Portugal de ser engolido por Castela! O pai dos Descobrimentos! ⛵' },
+  { emoji:'🌍', name:'D. Manuel I', dates:'Rei: 1495–1521', dynasty:'Avis', color:'var(--avis)',
+    fact:'No seu reinado Vasco da Gama chegou à Índia e Pedro Álvares Cabral ao Brasil! Que época incrível! 🚢' },
+  { emoji:'❓', name:'D. Sebastião', dates:'Rei: 1557–1578', dynasty:'Avis', color:'var(--avis)',
+    fact:'O jovem rei que desapareceu na Batalha de Alcácer-Quibir sem deixar filhos. Um grande mistério! 🌑' },
+  { emoji:'🇪🇸', name:'Filipe I', dates:'Rei: 1581–1598', dynasty:'Filipina', color:'var(--filipina)',
+    fact:'Era também Filipe II de Espanha. Tornou-se rei de Portugal quando D. Sebastião morreu sem herdeiros. 🤴' },
+  { emoji:'🕊️', name:'D. João IV', dates:'Rei: 1640–1656', dynasty:'Bragança', color:'var(--braganca)',
+    fact:'O "Rei Restaurador"! Libertou Portugal dos reis espanhóis em 1640 e trouxe a independência de volta! 🎉' },
+  { emoji:'👋', name:'D. Manuel II', dates:'Rei: 1908–1910', dynasty:'Bragança', color:'var(--braganca)',
+    fact:'Foi o último rei de Portugal! Em 1910 houve uma revolução e Portugal tornou-se uma República. 🏛️' }
+];
+
+// Quiz questions for Game 1
+const g1Questions = [
+  { q: 'Qual foi a primeira dinastia de Portugal?', opts: ['Avis','Borgonha','Bragança','Filipina'], ans: 1 },
+  { q: 'Quem foi o primeiro rei de Portugal?', opts: ['D. João I','D. Manuel I','D. Afonso Henriques','D. Dinis'], ans: 2 },
+  { q: 'A época dos Descobrimentos foi na dinastia...?', opts: ['Borgonha','Filipina','Bragança','Avis'], ans: 3 },
+  { q: 'Durante a dinastia Filipina, quem governou Portugal?', opts: ['Reis franceses','Reis ingleses','Reis espanhóis','Reis italianos'], ans: 2 },
+  { q: 'D. João IV foi o primeiro rei de que dinastia?', opts: ['Avis','Borgonha','Filipina','Bragança'], ans: 3 },
+  { q: 'Em que ano Portugal se tornou República?', opts: ['1640','1383','1910','1580'], ans: 2 }
+];
+
+// Match game data
+const matchPairs = [
+  { clue: '⚔️ 1.ª dinastia', dynasty: 'Borgonha' },
+  { clue: '🚢 Descobrimentos', dynasty: 'Avis' },
+  { clue: '🇪🇸 Reis espanhóis', dynasty: 'Filipina' },
+  { clue: '🕊️ Restauração 1640', dynasty: 'Bragança' }
+];
+
+// Final quiz questions
+const finalQuestions = [
+  { q: 'Qual é a ordem correta das dinastias?', opts: ['Avis, Borgonha, Bragança, Filipina','Borgonha, Avis, Filipina, Bragança','Filipina, Borgonha, Avis, Bragança','Bragança, Filipina, Avis, Borgonha'], ans: 1 },
+  { q: 'Que rei ganhou a Batalha de Aljubarrota?', opts: ['D. Afonso Henriques','D. Sebastião','D. João I','D. Manuel I'], ans: 2 },
+  { q: 'A dinastia de Borgonha começou em...', opts: ['1385','1580','1640','1139'], ans: 3 },
+  { q: 'Quando acabou a monarquia em Portugal?', opts: ['1910','1640','1383','1580'], ans: 0 },
+  { q: 'Quem foi o "Rei Restaurador" da independência?', opts: ['Filipe I','D. João I','D. João IV','D. Manuel II'], ans: 2 },
+  { q: 'Porque é que a dinastia de Avis começou?', opts: ['D. Afonso Henriques ganhou uma batalha','D. Sebastião morreu sem filhos','D. João I ganhou a Batalha de Aljubarrota','Os espanhóis invadiram Portugal'], ans: 2 },
+  { q: 'A dinastia Filipina durou quantos anos?', opts: ['50 anos','100 anos','60 anos','200 anos'], ans: 2 },
+  { q: 'Qual destas personagens pertence à dinastia de Borgonha?', opts: ['D. João IV','D. Manuel I','Filipe I','D. Afonso Henriques'], ans: 3 },
+  { q: 'Quem foi o último rei de Portugal?', opts: ['D. João IV','D. Manuel II','D. Sebastião','D. Dinis'], ans: 1 },
+  { q: 'A dinastia de Bragança começou com a Restauração da Independência. Em que ano?', opts: ['1580','1383','1640','1910'], ans: 2 }
+];
+
+// ===== NAVIGATION =====
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('screen-' + id).classList.add('active');
+  const navBtn = document.getElementById('nav-' + id);
+  if (navBtn) navBtn.classList.add('active');
+  window.scrollTo(0, 0);
+  updateScoreDisplays();
+}
+
+function updateScoreDisplays() {
+  document.querySelectorAll('.score-display').forEach(el => el.textContent = totalScore);
+  document.getElementById('total-score').textContent = totalScore;
+}
+
+function addScore(pts) {
+  totalScore += pts;
+  updateScoreDisplays();
+}
+
+// ===== CONFETTI =====
+function launchConfetti() {
+  const container = document.getElementById('confetti-container');
+  const colors = ['#F9A825','#8B2FC9','#D4500A','#1565C0','#2E7D32','#E91E63','#00BCD4'];
+  for (let i = 0; i < 60; i++) {
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    piece.style.cssText = `
+      left: ${Math.random() * 100}vw;
+      background: ${colors[Math.floor(Math.random() * colors.length)]};
+      width: ${6 + Math.random() * 10}px;
+      height: ${6 + Math.random() * 10}px;
+      border-radius: ${Math.random() > 0.5 ? '50%' : '2px'};
+      animation-duration: ${1.5 + Math.random() * 2.5}s;
+      animation-delay: ${Math.random() * 0.8}s;
+    `;
+    container.appendChild(piece);
+    setTimeout(() => piece.remove(), 4000);
+  }
+}
+
+// ===== GALLERY =====
+function buildGallery() {
+  const grid = document.getElementById('gallery-grid');
+  grid.innerHTML = '';
+  kings.forEach((k, i) => {
+    const card = document.createElement('div');
+    card.className = 'gallery-card';
+    card.style.borderTop = `5px solid ${k.color}`;
+    card.innerHTML = `
+      <span class="g-emoji">${k.emoji}</span>
+      <div class="g-name">${k.name}</div>
+      <div class="g-dates">${k.dynasty}</div>
+      <div class="g-dates">${k.dates}</div>
+    `;
+    card.onclick = () => openKingModal(i);
+    grid.appendChild(card);
+  });
+}
+
+function openKingModal(i) {
+  const k = kings[i];
+  document.getElementById('modal-emoji').textContent = k.emoji;
+  document.getElementById('modal-name').textContent = k.name;
+  document.getElementById('modal-dates').textContent = k.dates;
+  document.getElementById('modal-fact').textContent = k.fact;
+  document.getElementById('modal-dynasty').innerHTML = `<span style="color:${k.color}">Dinastia: ${k.dynasty}</span>`;
+  const modal = document.getElementById('king-modal');
+  modal.style.display = 'flex';
+}
+
+function closeModal() {
+  document.getElementById('king-modal').style.display = 'none';
+}
+
+// ===== GAME 1: QUIZ =====
+let g1Index = 0, g1Score = 0, g1Answered = false;
+
+function startGame(n) {
+  document.getElementById('game-selector').style.display = 'none';
+  document.getElementById('game1').style.display = 'none';
+  document.getElementById('game2').style.display = 'none';
+  document.getElementById('game3').style.display = 'none';
+  if (n === 1) { g1Index = 0; g1Score = 0; document.getElementById('game1').style.display = 'block'; document.getElementById('g1-result').style.display = 'none'; loadG1(); }
+  if (n === 2) { document.getElementById('game2').style.display = 'block'; document.getElementById('g2-result').style.display = 'none'; initOrder(); }
+  if (n === 3) { document.getElementById('game3').style.display = 'block'; document.getElementById('g3-result').style.display = 'none'; initMatch(); }
+}
+
+function loadG1() {
+  if (g1Index >= g1Questions.length) { showG1Result(); return; }
+  const q = g1Questions[g1Index];
+  g1Answered = false;
+  document.getElementById('g1-num').textContent = g1Index + 1;
+  document.getElementById('g1-progress').style.width = ((g1Index / g1Questions.length) * 100) + '%';
+  document.getElementById('g1-question').textContent = q.q;
+  document.getElementById('g1-feedback').className = 'quiz-feedback';
+  document.getElementById('g1-feedback').textContent = '';
+  document.getElementById('g1-next').style.display = 'none';
+  const opts = document.getElementById('g1-options');
+  opts.innerHTML = '';
+  q.opts.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'quiz-opt';
+    btn.textContent = opt;
+    btn.onclick = () => answerG1(i, btn);
+    opts.appendChild(btn);
+  });
+}
+
+function answerG1(i, btn) {
+  if (g1Answered) return;
+  g1Answered = true;
+  const q = g1Questions[g1Index];
+  const allOpts = document.querySelectorAll('#g1-options .quiz-opt');
+  allOpts.forEach(b => b.classList.add('disabled'));
+  const fb = document.getElementById('g1-feedback');
+  if (i === q.ans) {
+    btn.classList.add('correct');
+    g1Score++;
+    addScore(10);
+    fb.textContent = '✅ Muito bem! Resposta correta!';
+    fb.className = 'quiz-feedback show correct-fb';
+  } else {
+    btn.classList.add('wrong');
+    allOpts[q.ans].classList.add('correct');
+    fb.textContent = '❌ Quase! A resposta era: ' + q.opts[q.ans];
+    fb.className = 'quiz-feedback show wrong-fb';
+  }
+  document.getElementById('g1-next').style.display = 'block';
+  g1Index++;
+}
+
+function nextG1() {
+  document.getElementById('g1-feedback').className = 'quiz-feedback';
+  document.getElementById('g1-next').style.display = 'none';
+  loadG1();
+}
+
+function showG1Result() {
+  document.getElementById('g1-result').style.display = 'block';
+  document.getElementById('g1-score-num').textContent = g1Score;
+  document.querySelector('#game1 .card').style.display = 'none';
+  const msgs = ['Continua a tentar! 💪','Muito bom! 🌟','Fantástico! 🏆'];
+  const medals = ['🥉','🥈','🥇'];
+  const idx = g1Score <= 2 ? 0 : g1Score <= 4 ? 1 : 2;
+  document.getElementById('g1-medal').textContent = medals[idx];
+  document.getElementById('g1-msg').textContent = msgs[idx];
+  if (g1Score >= 5) launchConfetti();
+}
+
+// ===== GAME 2: ORDER =====
+const dynastyOrder = ['Borgonha','Avis','Filipina','Bragança'];
+let orderSelected = [];
+let orderShuffled = [];
+let orderCorrectCount = 0;
+
+function initOrder() {
+  orderSelected = [];
+  orderCorrectCount = 0;
+  orderShuffled = [...dynastyOrder].sort(() => Math.random() - 0.5);
+  const container = document.getElementById('order-items');
+  container.innerHTML = '';
+  document.getElementById('order-feedback').className = 'quiz-feedback';
+  document.getElementById('order-check').style.display = 'none';
+
+  const emojis = {'Borgonha':'⚔️','Avis':'🚢','Filipina':'🇪🇸','Bragança':'🕊️'};
+  orderShuffled.forEach((d, i) => {
+    const item = document.createElement('div');
+    item.className = 'order-item';
+    item.id = 'order-' + i;
+    item.dataset.dynasty = d;
+    item.innerHTML = `<div class="order-num" id="onum-${i}">?</div><span style="font-size:20px;">${emojis[d]}</span> <strong>${d}</strong>`;
+    item.onclick = () => selectOrder(i, d, item);
+    container.appendChild(item);
+  });
+}
+
+function selectOrder(i, dynasty, item) {
+  if (item.classList.contains('correct-pos') || item.classList.contains('selected')) return;
+  item.classList.add('selected');
+  orderSelected.push({ i, dynasty, item });
+  document.getElementById(`onum-${i}`).textContent = orderSelected.length;
+
+  if (orderSelected.length === dynastyOrder.length) {
+    document.getElementById('order-check').style.display = 'block';
+  }
+}
+
+function checkOrder() {
+  let correct = 0;
+  orderSelected.forEach((sel, pos) => {
+    if (sel.dynasty === dynastyOrder[pos]) {
+      sel.item.classList.add('correct-pos');
+      sel.item.classList.remove('selected');
+      correct++;
+    } else {
+      sel.item.classList.remove('selected');
+      sel.item.style.borderColor = '#C62828';
+      sel.item.style.background = '#FFEBEE';
+    }
+  });
+
+  const fb = document.getElementById('order-feedback');
+  if (correct === 4) {
+    fb.textContent = '🎉 Perfeito! Ordem correta!';
+    fb.className = 'quiz-feedback show correct-fb';
+    addScore(20);
+    launchConfetti();
+    showG2Result(true);
+  } else {
+    fb.textContent = `Hmm... ${correct} de 4 corretos. Tenta outra vez!`;
+    fb.className = 'quiz-feedback show wrong-fb';
+    setTimeout(() => { initOrder(); }, 1500);
+  }
+}
+
+function showG2Result(won) {
+  setTimeout(() => {
+    document.getElementById('g2-result').style.display = 'block';
+    document.getElementById('g2-medal').textContent = won ? '🏆' : '💪';
+    document.getElementById('g2-msg').textContent = won ? 'Perfeito! Conheces a ordem das dinastias! 🎉' : 'Quase lá! Tenta outra vez!';
+  }, 1000);
+}
+
+// ===== GAME 3: MATCH =====
+let matchSelectedClue = null;
+let matchCorrect = 0;
+const matchEmojis = {'Borgonha':'⚔️','Avis':'🚢','Filipina':'🇪🇸','Bragança':'🕊️'};
+
+function initMatch() {
+  matchSelectedClue = null;
+  matchCorrect = 0;
+  const shuffledPairs = [...matchPairs].sort(() => Math.random() - 0.5);
+  const shuffledDynasties = [...matchPairs].map(p => p.dynasty).sort(() => Math.random() - 0.5);
+
+  const cluesEl = document.getElementById('match-clues');
+  const dynEl = document.getElementById('match-dynasties');
+  cluesEl.innerHTML = '<div style="font-weight:800;font-size:13px;color:var(--text-light);text-align:center;margin-bottom:6px;">PISTAS</div>';
+  dynEl.innerHTML = '<div style="font-weight:800;font-size:13px;color:var(--text-light);text-align:center;margin-bottom:6px;">DINASTIAS</div>';
+
+  document.getElementById('match-feedback').className = 'quiz-feedback';
+
+  shuffledPairs.forEach(pair => {
+    const item = document.createElement('div');
+    item.className = 'match-item';
+    item.textContent = pair.clue;
+    item.dataset.answer = pair.dynasty;
+    item.onclick = () => selectClue(item);
+    cluesEl.appendChild(item);
+  });
+
+  shuffledDynasties.forEach(d => {
+    const item = document.createElement('div');
+    item.className = 'match-item';
+    item.innerHTML = `${matchEmojis[d]} ${d}`;
+    item.dataset.dynasty = d;
+    item.onclick = () => selectDynasty(item);
+    dynEl.appendChild(item);
+  });
+}
+
+function selectClue(item) {
+  if (item.classList.contains('matched')) return;
+  document.querySelectorAll('#match-clues .match-item').forEach(i => i.classList.remove('selected'));
+  item.classList.add('selected');
+  matchSelectedClue = item;
+}
+
+function selectDynasty(dynItem) {
+  if (!matchSelectedClue) return;
+  if (dynItem.classList.contains('matched')) return;
+
+  const correct = matchSelectedClue.dataset.answer === dynItem.dataset.dynasty;
+  const fb = document.getElementById('match-feedback');
+
+  if (correct) {
+    matchSelectedClue.classList.add('matched');
+    matchSelectedClue.classList.remove('selected');
+    dynItem.classList.add('matched');
+    matchCorrect++;
+    addScore(10);
+    fb.textContent = '✅ Certo!';
+    fb.className = 'quiz-feedback show correct-fb';
+    matchSelectedClue = null;
+
+    if (matchCorrect === matchPairs.length) {
+      launchConfetti();
+      setTimeout(() => {
+        document.getElementById('g3-result').style.display = 'block';
+        document.getElementById('g3-medal').textContent = '🏆';
+        document.getElementById('g3-msg').textContent = 'Incrível! Associaste tudo corretamente! 🎉';
+      }, 800);
+    }
+  } else {
+    matchSelectedClue.classList.add('wrong-match');
+    dynItem.classList.add('wrong-match');
+    fb.textContent = '❌ Não é essa! Tenta outra vez!';
+    fb.className = 'quiz-feedback show wrong-fb';
+    setTimeout(() => {
+      matchSelectedClue.classList.remove('wrong-match', 'selected');
+      dynItem.classList.remove('wrong-match');
+      matchSelectedClue = null;
+    }, 600);
+  }
+}
+
+// ===== FINAL QUIZ =====
+let fqIndex = 0, fqScore = 0, fqAnswered = false;
+
+function startFinal() {
+  fqIndex = 0; fqScore = 0;
+  document.getElementById('final-intro').style.display = 'none';
+  document.getElementById('final-quiz').style.display = 'block';
+  document.getElementById('final-result').style.display = 'none';
+  loadFQ();
+}
+
+function loadFQ() {
+  if (fqIndex >= finalQuestions.length) { showFinalResult(); return; }
+  const q = finalQuestions[fqIndex];
+  fqAnswered = false;
+  document.getElementById('fq-num').textContent = fqIndex + 1;
+  document.getElementById('fq-progress').style.width = ((fqIndex / finalQuestions.length) * 100) + '%';
+  document.getElementById('fq-question').textContent = q.q;
+  document.getElementById('fq-feedback').className = 'quiz-feedback';
+  document.getElementById('fq-next').style.display = 'none';
+  const opts = document.getElementById('fq-options');
+  opts.innerHTML = '';
+  q.opts.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'quiz-opt';
+    btn.textContent = opt;
+    btn.onclick = () => answerFQ(i, btn);
+    opts.appendChild(btn);
+  });
+}
+
+function answerFQ(i, btn) {
+  if (fqAnswered) return;
+  fqAnswered = true;
+  const q = finalQuestions[fqIndex];
+  const allOpts = document.querySelectorAll('#fq-options .quiz-opt');
+  allOpts.forEach(b => b.classList.add('disabled'));
+  const fb = document.getElementById('fq-feedback');
+  if (i === q.ans) {
+    btn.classList.add('correct');
+    fqScore++;
+    addScore(15);
+    const msgs = ['✅ Muito bem!','✅ Boa!','✅ Excelente!','✅ Fantástico!'];
+    fb.textContent = msgs[Math.floor(Math.random() * msgs.length)];
+    fb.className = 'quiz-feedback show correct-fb';
+  } else {
+    btn.classList.add('wrong');
+    allOpts[q.ans].classList.add('correct');
+    fb.textContent = '❌ Quase! A resposta certa era: ' + q.opts[q.ans];
+    fb.className = 'quiz-feedback show wrong-fb';
+  }
+  const nextBtn = document.getElementById('fq-next');
+  nextBtn.textContent = fqIndex + 1 >= finalQuestions.length ? 'Ver resultado 🏆' : 'Próxima ➡️';
+  nextBtn.style.display = 'block';
+  fqIndex++;
+}
+
+function nextFQ() {
+  document.getElementById('fq-feedback').className = 'quiz-feedback';
+  document.getElementById('fq-next').style.display = 'none';
+  loadFQ();
+}
+
+function showFinalResult() {
+  document.getElementById('final-quiz').style.display = 'none';
+  document.getElementById('final-result').style.display = 'block';
+  document.getElementById('fq-progress').style.width = '100%';
+  document.getElementById('final-score-num').textContent = fqScore;
+
+  let medal, title, msg, badges;
+  if (fqScore <= 4) {
+    medal = '🥉'; title = '🌱 Aprendiz da História';
+    msg = 'Boa tentativa! Volta a rever as dinastias e tenta outra vez. Consegues!';
+    badges = '⭐⭐';
+  } else if (fqScore <= 7) {
+    medal = '🥈'; title = '⚔️ Cavaleiro da História';
+    msg = 'Muito bem! Sabes bastante sobre as dinastias. Mais um bocadinho e és um especialista!';
+    badges = '⭐⭐⭐';
+    launchConfetti();
+  } else {
+    medal = '🏆'; title = '👑 Historiador Real!';
+    msg = 'INCRÍVEL! Parabéns! Dominaste as 4 dinastias de Portugal. És uma estrela! 🌟';
+    badges = '⭐⭐⭐⭐⭐';
+    launchConfetti();
+    setTimeout(launchConfetti, 1000);
+  }
+
+  document.getElementById('final-medal').textContent = medal;
+  document.getElementById('final-title').textContent = title;
+  document.getElementById('final-msg').textContent = msg;
+  document.getElementById('final-badges').textContent = badges;
+}
+
+// ===== INIT =====
+buildGallery();
+showScreen('welcome');
+</script>
+</body>
+</html>

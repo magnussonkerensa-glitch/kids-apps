@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#4a5c4e">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>Builder App</title>
+<link rel="manifest" href="#" id="manifest-link">
+<style>
+  :root {
+    --sage: #7d9b7e;
+    --sage-light: #a8bfa9;
+    --sage-dark: #4a5c4e;
+    --sage-deep: #2e3d30;
+    --grey-blue: #6b7f8e;
+    --grey-blue-light: #9aaebb;
+    --grey-blue-dark: #3d4f5c;
+    --grey: #5a5f5e;
+    --grey-light: #8a9190;
+    --grey-lightest: #c8cece;
+    --bg: #2a2f2e;
+    --bg2: #323836;
+    --bg3: #3a4140;
+    --card: #3f4845;
+    --card2: #475250;
+    --text: #dde8dd;
+    --text-muted: #9aada8;
+    --border: #4a5553;
+    --danger: #b06060;
+    --success: #5a8a5a;
+    --warn: #8a7a40;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
+
+  /* NAV */
+  #bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--bg2); border-top: 1px solid var(--border); display: flex; z-index: 100; padding-bottom: env(safe-area-inset-bottom); }
+  .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 9px 2px 7px; gap: 3px; border: none; background: none; color: var(--text-muted); font-size: 10px; cursor: pointer; transition: color 0.2s; }
+  .nav-btn.active { color: var(--sage-light); }
+  .nav-btn svg { width: 21px; height: 21px; }
+
+  /* SCREENS */
+  .screen { display: none; padding: 16px; padding-bottom: 80px; min-height: 100vh; }
+  .screen.active { display: block; }
+
+  /* HEADER */
+  .page-header { font-size: 22px; font-weight: 700; color: var(--sage-light); margin-bottom: 16px; }
+
+  /* CARDS */
+  .card { background: var(--card); border-radius: 12px; padding: 14px; margin-bottom: 12px; border: 1px solid var(--border); }
+  .card-title { font-size: 13px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+
+  /* BUTTONS */
+  .btn { display: inline-flex; align-items: center; gap: 6px; padding: 10px 16px; border-radius: 10px; border: none; font-size: 14px; font-weight: 600; cursor: pointer; transition: opacity 0.15s, transform 0.1s; }
+  .btn:active { opacity: 0.8; transform: scale(0.97); }
+  .btn-sage { background: var(--sage-dark); color: var(--text); }
+  .btn-blue { background: var(--grey-blue-dark); color: var(--text); }
+  .btn-grey { background: var(--card2); color: var(--text); }
+  .btn-danger { background: var(--danger); color: var(--text); }
+  .btn-success { background: var(--success); color: var(--text); }
+  .btn-sm { padding: 7px 12px; font-size: 12px; border-radius: 8px; }
+  .btn-full { width: 100%; justify-content: center; }
+
+  /* VOICE BTN */
+  .voice-btn { background: var(--sage-dark); border: none; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text); flex-shrink: 0; font-size: 16px; transition: background 0.2s; }
+  .voice-btn.recording { background: var(--danger); animation: pulse 1s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.6} }
+
+  /* INPUTS */
+  input, textarea, select { background: var(--bg3); border: 1px solid var(--border); color: var(--text); border-radius: 8px; padding: 10px 12px; font-size: 14px; width: 100%; font-family: inherit; }
+  input:focus, textarea:focus, select:focus { outline: none; border-color: var(--sage); }
+  textarea { resize: vertical; min-height: 80px; }
+  label { font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 4px; margin-top: 10px; }
+  .input-row { display: flex; gap: 8px; align-items: flex-start; }
+  .input-row input, .input-row textarea { flex: 1; }
+
+  /* LIST ITEMS */
+  .list-item { background: var(--card); border-radius: 10px; padding: 14px; margin-bottom: 8px; border: 1px solid var(--border); cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+  .list-item:active { background: var(--card2); }
+  .list-item-title { font-size: 15px; font-weight: 600; color: var(--text); }
+  .list-item-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+  /* BANNER */
+  .total-banner { background: var(--sage-deep); border: 1px solid var(--sage-dark); border-radius: 10px; padding: 12px 16px; margin: 8px 0; display: flex; justify-content: space-between; align-items: center; }
+  .total-banner .label { font-size: 12px; color: var(--sage-light); }
+  .total-banner .amount { font-size: 20px; font-weight: 700; color: var(--sage-light); }
+
+  /* JOB FULL PAGE */
+  #job-screen { display: none; position: fixed; inset: 0; background: var(--bg); z-index: 90; overflow-y: auto; }
+  #job-screen.active { display: block; }
+  #client-detail-screen { display: none; position: fixed; inset: 0; background: var(--bg); z-index: 90; overflow-y: auto; }
+  #client-detail-screen.active { display: block; }
+  .detail-back { display: flex; align-items: center; gap: 8px; padding: 16px; background: var(--bg2); border-bottom: 1px solid var(--border); cursor: pointer; color: var(--sage-light); font-weight: 600; position: sticky; top: 0; z-index: 50; }
+  .detail-content { padding: 16px; padding-bottom: 100px; }
+  .job-section { background: var(--card); border-radius: 12px; padding: 16px; margin-bottom: 14px; border: 1px solid var(--border); }
+  .job-section-title { font-size: 14px; font-weight: 700; color: var(--sage-light); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+
+  /* TODO */
+  .todo-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+  .todo-item:last-child { border-bottom: none; }
+  .todo-check { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--sage); background: none; flex-shrink: 0; cursor: pointer; margin-top: 1px; display: flex; align-items: center; justify-content: center; }
+  .todo-check.done { background: var(--sage); border-color: var(--sage); }
+  .todo-text { flex: 1; font-size: 14px; line-height: 1.4; }
+  .todo-text.done { text-decoration: line-through; color: var(--text-muted); }
+  .todo-del { background: none; border: none; color: var(--text-muted); cursor: pointer; padding: 4px; font-size: 16px; }
+
+  /* MATERIALS */
+  .material-item { background: var(--bg3); border-radius: 8px; padding: 10px; margin-bottom: 8px; border: 1px solid var(--border); }
+  .material-header { display: flex; justify-content: space-between; align-items: start; }
+  .material-name { font-weight: 600; font-size: 14px; }
+  .material-cost { font-weight: 700; color: var(--sage-light); }
+  .material-meta { font-size: 11px; color: var(--text-muted); margin-top: 3px; }
+  .material-receipt { max-width: 100%; max-height: 120px; border-radius: 6px; margin-top: 6px; object-fit: cover; }
+
+  /* LOG ITEMS */
+  .log-item { display: flex; justify-content: space-between; align-items: start; padding: 8px 0; border-bottom: 1px solid var(--border); }
+  .log-item:last-child { border-bottom: none; }
+  .log-meta { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .log-value { font-weight: 700; color: var(--sage-light); flex-shrink: 0; margin-left: 8px; }
+
+  /* INVOICE */
+  .invoice-line { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid var(--border); font-size: 14px; }
+  .invoice-line:last-child { border-bottom: none; }
+  .invoice-total { display: flex; justify-content: space-between; padding: 10px 0 0; font-size: 18px; font-weight: 700; color: var(--sage-light); margin-top: 4px; }
+
+  /* MEMO */
+  .memo-item { background: var(--bg3); border-radius: 8px; padding: 10px; margin-bottom: 8px; }
+  .memo-controls { display: flex; align-items: center; gap: 8px; }
+  .memo-play { background: var(--grey-blue-dark); border: none; border-radius: 50%; width: 32px; height: 32px; color: var(--text); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+
+  /* PHOTO */
+  .photo-thumb { width: 80px; height: 80px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border); cursor: pointer; }
+  .photos-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+
+  /* MODAL */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 200; align-items: flex-end; }
+  .modal-overlay.open { display: flex; }
+  .modal { background: var(--bg2); border-radius: 16px 16px 0 0; padding: 20px; padding-bottom: calc(20px + env(safe-area-inset-bottom)); width: 100%; max-height: 88vh; overflow-y: auto; border-top: 1px solid var(--border); }
+  .modal-title { font-size: 17px; font-weight: 700; color: var(--sage-light); margin-bottom: 16px; }
+  .modal-actions { display: flex; gap: 10px; margin-top: 14px; }
+
+  /* GREETING */
+  .greeting { font-size: 24px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+  .greeting-sub { font-size: 14px; color: var(--text-muted); margin-bottom: 20px; }
+
+  /* SUMMARY PILLS */
+  .summary-row { display: flex; gap: 8px; margin-bottom: 16px; }
+  .summary-pill { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 10px 8px; flex: 1; text-align: center; }
+  .summary-pill .val { font-size: 22px; font-weight: 700; color: var(--sage-light); }
+  .summary-pill .lbl { font-size: 10px; color: var(--text-muted); }
+
+  /* CLIENT DETAIL */
+  .client-info-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .client-info-row a { color: var(--sage-light); text-decoration: none; font-size: 15px; }
+
+  /* RATE BADGE */
+  .rate-badge { background: var(--grey-blue-dark); border-radius: 8px; padding: 6px 12px; font-size: 13px; color: var(--grey-blue-light); cursor: pointer; border: none; white-space: nowrap; }
+
+  /* STATUS BADGE */
+  .status-badge { display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; }
+  .status-active { background: var(--sage-dark); color: var(--sage-light); }
+  .status-done { background: var(--grey); color: var(--grey-lightest); }
+
+  input[type="file"] { display: none; }
+  .divider { height: 1px; background: var(--border); margin: 12px 0; }
+</style>
+</head>
+<body>
+
+<!-- TODAY -->
+<div id="screen-today" class="screen active">
+  <div class="greeting" id="greeting-text">Good morning</div>
+  <div class="greeting-sub" id="greeting-date"></div>
+  <div class="summary-row">
+    <div class="summary-pill"><div class="val" id="sum-jobs">0</div><div class="lbl">Active Jobs</div></div>
+    <div class="summary-pill"><div class="val" id="sum-clients">0</div><div class="lbl">Clients</div></div>
+    <div class="summary-pill"><div class="val" id="sum-todos">0</div><div class="lbl">To-Dos</div></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Today's To-Do List</div>
+    <div id="todo-list"></div>
+    <div style="display:flex;gap:8px;margin-top:10px;align-items:center;">
+      <input type="text" id="todo-input" placeholder="Add a task…" style="flex:1">
+      <button class="voice-btn" onclick="startVoice('todo-input',this)">🎙</button>
+      <button class="btn btn-sage btn-sm" onclick="addTodo()">Add</button>
+    </div>
+    <div style="margin-top:10px;">
+      <button class="btn btn-grey btn-sm" onclick="document.getElementById('photo-today').click()">📷 Add Photo</button>
+      <input type="file" id="photo-today" accept="image/*" capture="environment" onchange="addTodayPhoto(event)">
+    </div>
+    <div class="photos-row" id="today-photos"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Voice Memos</div>
+    <button class="btn btn-sage btn-sm" id="memo-record-today" onclick="toggleMemoRecording('today',this)">🎙 Record Memo</button>
+    <div id="today-memos" style="margin-top:10px;"></div>
+  </div>
+</div>
+
+<!-- CLIENTS -->
+<div id="screen-clients" class="screen">
+  <div class="page-header">Clients</div>
+  <button class="btn btn-sage btn-full" style="margin-bottom:14px" onclick="openModal('modal-add-client')">+ New Client</button>
+  <div id="client-list"></div>
+</div>
+
+<!-- JOBS -->
+<div id="screen-jobs" class="screen">
+  <div class="page-header">Jobs</div>
+  <button class="btn btn-sage btn-full" style="margin-bottom:14px" onclick="openAddJob()">+ New Job</button>
+  <div id="jobs-filter" style="margin-bottom:12px;display:flex;gap:8px;">
+    <button class="btn btn-sm" id="filter-all" onclick="setJobFilter('all')" style="background:var(--sage-dark);color:var(--text)">All</button>
+    <button class="btn btn-sm btn-grey" id="filter-active" onclick="setJobFilter('active')">Active</button>
+    <button class="btn btn-sm btn-grey" id="filter-done" onclick="setJobFilter('done')">Done</button>
+  </div>
+  <div id="job-list"></div>
+</div>
+
+<!-- SHOPPING -->
+<div id="screen-shopping" class="screen">
+  <div class="page-header">Shopping List</div>
+  <div class="card">
+    <div class="input-row" style="align-items:center;">
+      <input type="text" id="shop-item" placeholder="Item to buy…">
+      <button class="voice-btn" onclick="startVoice('shop-item',this)">🎙</button>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
+      <input type="number" id="shop-cost" placeholder="Est. cost £" style="width:120px;flex:none">
+      <input type="text" id="shop-supplier" placeholder="Supplier" style="flex:1">
+      <button class="btn btn-sage btn-sm" onclick="addShopItem()">Add</button>
+    </div>
+  </div>
+  <div id="shopping-list"></div>
+</div>
+
+<!-- CLIENT DETAIL OVERLAY -->
+<div id="client-detail-screen">
+  <div class="detail-back" onclick="closeClientDetail()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="20" height="20"><path d="M15 18l-6-6 6-6"/></svg>
+    Clients
+  </div>
+  <div class="detail-content" id="client-detail-content"></div>
+</div>
+
+<!-- JOB FULL PAGE OVERLAY -->
+<div id="job-screen">
+  <div class="detail-back" onclick="closeJob()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="20" height="20"><path d="M15 18l-6-6 6-6"/></svg>
+    Jobs
+    <span id="job-back-label" style="color:var(--text-muted);font-weight:400;font-size:13px;margin-left:auto"></span>
+  </div>
+  <div class="detail-content" id="job-content"></div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav id="bottom-nav">
+  <button class="nav-btn active" id="nav-today" onclick="showScreen('today')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+    Today
+  </button>
+  <button class="nav-btn" id="nav-clients" onclick="showScreen('clients')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    Clients
+  </button>
+  <button class="nav-btn" id="nav-jobs" onclick="showScreen('jobs')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
+    Jobs
+  </button>
+  <button class="nav-btn" id="nav-shopping" onclick="showScreen('shopping')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+    Shopping
+  </button>
+</nav>
+
+<!-- MODAL: Add Client -->
+<div class="modal-overlay" id="modal-add-client">
+  <div class="modal">
+    <div class="modal-title" id="modal-client-title">New Client</div>
+    <label>Name *</label>
+    <input type="text" id="new-client-name" placeholder="Full name or company">
+    <label>Phone</label>
+    <input type="tel" id="new-client-phone" placeholder="+44…">
+    <label>Email</label>
+    <input type="email" id="new-client-email" placeholder="email@example.com">
+    <label>Address</label>
+    <input type="text" id="new-client-addr" placeholder="Street, Town, Postcode">
+    <label>Notes</label>
+    <div class="input-row">
+      <textarea id="new-client-notes" placeholder="Any extra info…" style="min-height:60px"></textarea>
+      <button class="voice-btn" onclick="startVoice('new-client-notes',this)">🎙</button>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-grey" onclick="cancelClientModal()" style="flex:1">Cancel</button>
+      <button class="btn btn-sage" onclick="saveClient()" style="flex:1">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Add / Edit Job -->
+<div class="modal-overlay" id="modal-add-job">
+  <div class="modal">
+    <div class="modal-title">New Job</div>
+    <label>Client *</label>
+    <select id="new-job-client"></select>
+    <label>Job Name *</label>
+    <input type="text" id="new-job-name" placeholder="e.g. Kitchen renovation">
+    <label>Description</label>
+    <div class="input-row">
+      <textarea id="new-job-desc" placeholder="Describe the job…" style="min-height:70px"></textarea>
+      <button class="voice-btn" onclick="startVoice('new-job-desc',this)">🎙</button>
+    </div>
+    <label>Quote / Estimate £</label>
+    <input type="number" id="new-job-quote" placeholder="0.00">
+    <div class="modal-actions">
+      <button class="btn btn-grey" onclick="closeModal('modal-add-job')" style="flex:1">Cancel</button>
+      <button class="btn btn-sage" onclick="saveJob()" style="flex:1">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Add Material -->
+<div class="modal-overlay" id="modal-add-material">
+  <div class="modal">
+    <div class="modal-title">Add Material</div>
+    <label>Item Name *</label>
+    <div class="input-row">
+      <input type="text" id="mat-name" placeholder="e.g. 20kg cement">
+      <button class="voice-btn" onclick="startVoice('mat-name',this)">🎙</button>
+    </div>
+    <label>Cost £</label>
+    <input type="number" id="mat-cost" placeholder="0.00" step="0.01">
+    <label>Supplier</label>
+    <input type="text" id="mat-supplier" placeholder="e.g. Travis Perkins">
+    <label>Notes</label>
+    <div class="input-row">
+      <textarea id="mat-desc" placeholder="Any notes…" style="min-height:56px"></textarea>
+      <button class="voice-btn" onclick="startVoice('mat-desc',this)">🎙</button>
+    </div>
+    <label>Receipt Photo</label>
+    <button class="btn btn-grey btn-sm" onclick="document.getElementById('mat-receipt-file').click()">📷 Take / Choose Photo</button>
+    <input type="file" id="mat-receipt-file" accept="image/*" capture="environment" onchange="previewReceipt(event)">
+    <img id="mat-receipt-preview" style="display:none;max-width:100%;max-height:150px;border-radius:8px;margin-top:8px;object-fit:cover">
+    <div class="modal-actions">
+      <button class="btn btn-grey" onclick="closeModal('modal-add-material')" style="flex:1">Cancel</button>
+      <button class="btn btn-sage" onclick="saveMaterial()" style="flex:1">Add</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Log Hours -->
+<div class="modal-overlay" id="modal-add-hours">
+  <div class="modal">
+    <div class="modal-title">Log Hours</div>
+    <label>Date</label>
+    <input type="date" id="hours-date">
+    <label>Hours Worked</label>
+    <input type="number" id="hours-val" placeholder="e.g. 7.5" step="0.5" min="0">
+    <label>Note</label>
+    <div class="input-row">
+      <input type="text" id="hours-note" placeholder="What was done…">
+      <button class="voice-btn" onclick="startVoice('hours-note',this)">🎙</button>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-grey" onclick="closeModal('modal-add-hours')" style="flex:1">Cancel</button>
+      <button class="btn btn-sage" onclick="saveHours()" style="flex:1">Log</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Record Payment -->
+<div class="modal-overlay" id="modal-add-payment">
+  <div class="modal">
+    <div class="modal-title">Record Payment</div>
+    <label>Date</label>
+    <input type="date" id="pay-date">
+    <label>Amount £</label>
+    <input type="number" id="pay-amount" placeholder="0.00" step="0.01" min="0">
+    <label>Note</label>
+    <div class="input-row">
+      <input type="text" id="pay-note" placeholder="e.g. Cash, bank transfer…">
+      <button class="voice-btn" onclick="startVoice('pay-note',this)">🎙</button>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-grey" onclick="closeModal('modal-add-payment')" style="flex:1">Cancel</button>
+      <button class="btn btn-sage" onclick="savePayment()" style="flex:1">Record</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─────────────────────────────────────────────
+// DATA
+// ─────────────────────────────────────────────
+const DB = {
+  get: (k, d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch { return d; } },
+  set: (k, v) => localStorage.setItem(k, JSON.stringify(v))
+};
+
+let clients  = DB.get('clients2', []);   // {id, name, phone, email, address, notes}
+let jobs     = DB.get('jobs2', []);      // {id, clientId, name, desc, quote, status, materials[], notes[], memos[], hours[], payments[]}
+let todos    = DB.get('todos', []);
+let todayPhotos = DB.get('todayPhotos', []);
+let todayMemos  = DB.get('todayMemos', []);
+let shopping = DB.get('shopping', []);
+let settings = DB.get('settings', { hourlyRate: 25 });
+
+function save() {
+  DB.set('clients2', clients);
+  DB.set('jobs2', jobs);
+  DB.set('todos', todos);
+  DB.set('todayPhotos', todayPhotos);
+  DB.set('todayMemos', todayMemos);
+  DB.set('shopping', shopping);
+  DB.set('settings', settings);
+}
+
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2); }
+function clientById(id) { return clients.find(c => c.id === id); }
+function jobById(id) { return jobs.find(j => j.id === id); }
+
+// ─────────────────────────────────────────────
+// NAVIGATION
+// ─────────────────────────────────────────────
+let jobFilter = 'all';
+let currentJobId = null;
+let editingClientId = null;
+
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('job-screen').classList.remove('active');
+  document.getElementById('client-detail-screen').classList.remove('active');
+  document.getElementById('screen-' + name).classList.add('active');
+  document.getElementById('nav-' + name).classList.add('active');
+  if (name === 'today')    renderToday();
+  if (name === 'clients')  renderClients();
+  if (name === 'jobs')     renderJobs();
+  if (name === 'shopping') renderShopping();
+}
+
+function openJob(id) {
+  currentJobId = id;
+  document.getElementById('job-screen').classList.add('active');
+  renderJob();
+}
+
+function closeJob() {
+  document.getElementById('job-screen').classList.remove('active');
+  renderJobs();
+}
+
+function openClientDetail(id) {
+  editingClientId = id;
+  document.getElementById('client-detail-screen').classList.add('active');
+  renderClientDetail();
+}
+
+function closeClientDetail() {
+  document.getElementById('client-detail-screen').classList.remove('active');
+  renderClients();
+}
+
+// ─────────────────────────────────────────────
+// MODALS
+// ─────────────────────────────────────────────
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(m => {
+  m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); });
+});
+
+// ─────────────────────────────────────────────
+// TODAY
+// ─────────────────────────────────────────────
+function renderToday() {
+  const h = new Date().getHours();
+  document.getElementById('greeting-text').textContent = h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening';
+  document.getElementById('greeting-date').textContent = new Date().toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+  document.getElementById('sum-jobs').textContent = jobs.filter(j => j.status !== 'done').length;
+  document.getElementById('sum-clients').textContent = clients.length;
+  document.getElementById('sum-todos').textContent = todos.filter(t => !t.done).length;
+  renderTodos();
+  renderTodayPhotos();
+  renderMemos('today', todayMemos, 'today-memos');
+}
+
+function renderTodos() {
+  const list = document.getElementById('todo-list');
+  list.innerHTML = '';
+  todos.forEach((t, i) => {
+    const div = document.createElement('div');
+    div.className = 'todo-item';
+    div.innerHTML = `
+      <button class="todo-check ${t.done?'done':''}" onclick="toggleTodo(${i})">
+        ${t.done ? '✓' : ''}
+      </button>
+      <span class="todo-text ${t.done?'done':''}">${esc(t.text)}</span>
+      <button class="todo-del" onclick="deleteTodo(${i})">✕</button>`;
+    list.appendChild(div);
+  });
+}
+
+function addTodo() {
+  const inp = document.getElementById('todo-input');
+  const text = inp.value.trim();
+  if (!text) return;
+  todos.push({ id: uid(), text, done: false });
+  inp.value = '';
+  save(); renderTodos();
+  document.getElementById('sum-todos').textContent = todos.filter(t=>!t.done).length;
+}
+document.getElementById('todo-input').addEventListener('keydown', e => { if (e.key==='Enter') addTodo(); });
+
+function toggleTodo(i) { todos[i].done=!todos[i].done; save(); renderTodos(); document.getElementById('sum-todos').textContent=todos.filter(t=>!t.done).length; }
+function deleteTodo(i) { todos.splice(i,1); save(); renderTodos(); }
+
+function addTodayPhoto(e) {
+  const f = e.target.files[0]; if (!f) return;
+  const r = new FileReader();
+  r.onload = ev => { todayPhotos.push({ id:uid(), src:ev.target.result, date:new Date().toISOString() }); save(); renderTodayPhotos(); };
+  r.readAsDataURL(f);
+}
+function renderTodayPhotos() {
+  const row = document.getElementById('today-photos'); row.innerHTML='';
+  todayPhotos.forEach((p,i) => {
+    const img = document.createElement('img'); img.className='photo-thumb'; img.src=p.src;
+    img.onclick = () => { if (confirm('Delete this photo?')) { todayPhotos.splice(i,1); save(); renderTodayPhotos(); } };
+    row.appendChild(img);
+  });
+}
+
+// ─────────────────────────────────────────────
+// CLIENTS
+// ─────────────────────────────────────────────
+function renderClients() {
+  const list = document.getElementById('client-list'); list.innerHTML='';
+  if (!clients.length) { list.innerHTML='<div style="color:var(--text-muted);text-align:center;padding:40px 20px">No clients yet.<br>Tap + New Client to add one.</div>'; return; }
+  clients.forEach(c => {
+    const jobCount = jobs.filter(j => j.clientId===c.id).length;
+    const div = document.createElement('div'); div.className='list-item';
+    div.innerHTML = `
+      <div>
+        <div class="list-item-title">${esc(c.name)}</div>
+        <div class="list-item-sub">${c.phone||'No phone'} · ${jobCount} job${jobCount!==1?'s':''}</div>
+      </div>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="9 18 15 12 9 6"/></svg>`;
+    div.onclick = () => openClientDetail(c.id);
+    list.appendChild(div);
+  });
+}
+
+function renderClientDetail() {
+  const c = clients.find(cl=>cl.id===editingClientId);
+  if (!c) return;
+  const clientJobs = jobs.filter(j=>j.clientId===c.id);
+  const content = document.getElementById('client-detail-content');
+  content.innerHTML = `
+    <div class="job-section">
+      <div class="job-section-title">Contact Details</div>
+      <label>Name</label>
+      <input type="text" id="cd-name" value="${esc(c.name)}">
+      <label>Phone</label>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <input type="tel" id="cd-phone" value="${esc(c.phone||'')}" style="flex:1">
+        ${c.phone ? `<a href="tel:${esc(c.phone)}" class="btn btn-sage btn-sm">📞 Call</a>` : ''}
+      </div>
+      <label>Email</label>
+      <input type="email" id="cd-email" value="${esc(c.email||'')}">
+      <label>Address</label>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <input type="text" id="cd-addr" value="${esc(c.address||'')}" style="flex:1">
+        ${c.address ? `<a href="https://maps.google.com/?q=${encodeURIComponent(c.address)}" target="_blank" class="btn btn-blue btn-sm">📍 Map</a>` : ''}
+      </div>
+      <label>Notes</label>
+      <div class="input-row">
+        <textarea id="cd-notes" style="min-height:70px">${esc(c.notes||'')}</textarea>
+        <button class="voice-btn" onclick="startVoice('cd-notes',this)">🎙</button>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:12px">
+        <button class="btn btn-sage" onclick="updateClient()" style="flex:1">Save Changes</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteClient()">Delete</button>
+      </div>
+    </div>
+
+    <div class="job-section">
+      <div class="job-section-title">Jobs for ${esc(c.name)}</div>
+      ${clientJobs.length===0 ? '<div style="color:var(--text-muted);font-size:14px">No jobs yet.</div>' : ''}
+      ${clientJobs.map(j => `
+        <div class="list-item" style="margin-bottom:8px" onclick="openJob('${j.id}')">
+          <div>
+            <div class="list-item-title">${esc(j.name)}</div>
+            <div class="list-item-sub">Materials: £${matTotal(j)} · ${hoursTotal(j).toFixed(1)} hrs</div>
+          </div>
+          <span class="status-badge ${j.status==='done'?'status-done':'status-active'}">${j.status==='done'?'Done':'Active'}</span>
+        </div>`).join('')}
+      <button class="btn btn-sage btn-sm" style="margin-top:4px" onclick="openAddJobForClient('${c.id}')">+ New Job for ${esc(c.name)}</button>
+    </div>
+  `;
+}
+
+function updateClient() {
+  const c = clients.find(cl=>cl.id===editingClientId);
+  if (!c) return;
+  c.name    = document.getElementById('cd-name').value.trim() || c.name;
+  c.phone   = document.getElementById('cd-phone').value.trim();
+  c.email   = document.getElementById('cd-email').value.trim();
+  c.address = document.getElementById('cd-addr').value.trim();
+  c.notes   = document.getElementById('cd-notes').value.trim();
+  save();
+  renderClientDetail();
+  showToast('Client saved');
+}
+
+function deleteClient() {
+  if (!confirm('Delete this client? Their jobs will remain but be unlinked.')) return;
+  clients = clients.filter(c=>c.id!==editingClientId);
+  save();
+  closeClientDetail();
+}
+
+function cancelClientModal() {
+  editingClientId = null;
+  ['new-client-name','new-client-phone','new-client-email','new-client-addr','new-client-notes'].forEach(id=>document.getElementById(id).value='');
+  closeModal('modal-add-client');
+}
+
+function saveClient() {
+  const name = document.getElementById('new-client-name').value.trim();
+  if (!name) return alert('Please enter a client name.');
+  clients.push({ id:uid(), name, phone:document.getElementById('new-client-phone').value.trim(), email:document.getElementById('new-client-email').value.trim(), address:document.getElementById('new-client-addr').value.trim(), notes:document.getElementById('new-client-notes').value.trim() });
+  save(); cancelClientModal(); renderClients();
+}
+
+// ─────────────────────────────────────────────
+// JOBS LIST
+// ─────────────────────────────────────────────
+function setJobFilter(f) {
+  jobFilter = f;
+  ['all','active','done'].forEach(x => {
+    const b = document.getElementById('filter-'+x);
+    b.style.background = x===f ? 'var(--sage-dark)' : 'var(--card2)';
+    b.style.color = 'var(--text)';
+  });
+  renderJobs();
+}
+
+function renderJobs() {
+  const list = document.getElementById('job-list'); list.innerHTML='';
+  let filtered = jobs;
+  if (jobFilter==='active') filtered = jobs.filter(j=>j.status!=='done');
+  if (jobFilter==='done')   filtered = jobs.filter(j=>j.status==='done');
+  if (!filtered.length) { list.innerHTML='<div style="color:var(--text-muted);text-align:center;padding:40px 20px">No jobs here.</div>'; return; }
+  filtered.forEach(j => {
+    const c = clientById(j.clientId);
+    const div = document.createElement('div'); div.className='list-item';
+    div.innerHTML = `
+      <div style="flex:1">
+        <div class="list-item-title">${esc(j.name)}</div>
+        <div class="list-item-sub">${c?esc(c.name):'No client'} · £${matTotal(j)} materials · ${hoursTotal(j).toFixed(1)} hrs</div>
+      </div>
+      <span class="status-badge ${j.status==='done'?'status-done':'status-active'}" style="margin-left:8px">${j.status==='done'?'Done':'Active'}</span>`;
+    div.onclick = () => openJob(j.id);
+    list.appendChild(div);
+  });
+}
+
+function openAddJob() {
+  populateClientDropdown(null);
+  openModal('modal-add-job');
+}
+
+function openAddJobForClient(clientId) {
+  populateClientDropdown(clientId);
+  openModal('modal-add-job');
+}
+
+function populateClientDropdown(selectedId) {
+  const sel = document.getElementById('new-job-client');
+  sel.innerHTML = clients.length
+    ? clients.map(c=>`<option value="${c.id}" ${c.id===selectedId?'selected':''}>${esc(c.name)}</option>`).join('')
+    : '<option value="">— Add a client first —</option>';
+}
+
+function saveJob() {
+  const name = document.getElementById('new-job-name').value.trim();
+  if (!name) return alert('Please enter a job name.');
+  const clientId = document.getElementById('new-job-client').value;
+  jobs.push({ id:uid(), clientId, name, desc:document.getElementById('new-job-desc').value.trim(), quote:document.getElementById('new-job-quote').value, status:'active', materials:[], notes:[], memos:[], hours:[], payments:[] });
+  save();
+  ['new-job-name','new-job-desc','new-job-quote'].forEach(id=>document.getElementById(id).value='');
+  closeModal('modal-add-job');
+  renderJobs();
+}
+
+// ─────────────────────────────────────────────
+// JOB PAGE
+// ─────────────────────────────────────────────
+function getJob() { return jobById(currentJobId); }
+function matTotal(j) { return (j.materials||[]).reduce((a,m)=>a+parseFloat(m.cost||0),0).toFixed(2); }
+function hoursTotal(j) { return (j.hours||[]).reduce((a,h)=>a+parseFloat(h.hrs||0),0); }
+function paidTotal(j) { return (j.payments||[]).reduce((a,p)=>a+parseFloat(p.amount||0),0); }
+
+function renderJob() {
+  const j = getJob(); if (!j) return;
+  const c = clientById(j.clientId);
+  const rate = settings.hourlyRate || 25;
+  document.getElementById('job-back-label').textContent = c ? c.name : '';
+
+  const content = document.getElementById('job-content');
+  content.innerHTML = `
+    <!-- S1: Client Info -->
+    <div class="job-section">
+      <div class="job-section-title">👤 Client</div>
+      ${c ? `
+        <div style="font-size:18px;font-weight:700;margin-bottom:8px">${esc(c.name)}</div>
+        ${c.phone ? `<div class="client-info-row">📞 <a href="tel:${esc(c.phone)}">${esc(c.phone)}</a></div>` : ''}
+        ${c.email ? `<div class="client-info-row">✉️ <a href="mailto:${esc(c.email)}" style="color:var(--grey-blue-light)">${esc(c.email)}</a></div>` : ''}
+        ${c.address ? `<div class="client-info-row">📍 <a href="https://maps.google.com/?q=${encodeURIComponent(c.address)}" target="_blank" style="color:var(--grey-blue-light)">${esc(c.address)}</a></div>` : ''}
+      ` : '<div style="color:var(--text-muted)">No client assigned</div>'}
+    </div>
+
+    <!-- S2: Job Details -->
+    <div class="job-section">
+      <div class="job-section-title">📋 Job Details</div>
+      <div style="font-size:16px;font-weight:700;margin-bottom:8px">${esc(j.name)}</div>
+      <label>Description</label>
+      <div class="input-row" style="margin-bottom:8px">
+        <textarea id="job-desc-edit" rows="3" style="min-height:70px">${esc(j.desc||'')}</textarea>
+        <button class="voice-btn" onclick="startVoice('job-desc-edit',this)">🎙</button>
+      </div>
+      <label>Quote / Estimate £</label>
+      <input type="number" id="job-quote-edit" value="${esc(j.quote||'')}" placeholder="0.00">
+      <label>Status</label>
+      <select id="job-status-edit">
+        <option value="active" ${j.status!=='done'?'selected':''}>Active</option>
+        <option value="done" ${j.status==='done'?'selected':''}>Done / Completed</option>
+      </select>
+      <button class="btn btn-sage btn-sm" style="margin-top:10px" onclick="saveJobDetails()">Save Details</button>
+      ${j.quote?`<div style="margin-top:8px;font-size:13px;color:var(--text-muted)">Quoted: <strong style="color:var(--text)">£${parseFloat(j.quote).toFixed(2)}</strong></div>`:''}
+    </div>
+
+    <!-- S3: Materials -->
+    <div class="job-section">
+      <div class="job-section-title">🧱 Materials</div>
+      <div class="total-banner"><div class="label">Materials Total</div><div class="amount" id="mat-total-display">£${matTotal(j)}</div></div>
+      <div id="materials-list"></div>
+      <button class="btn btn-sage btn-sm" style="margin-top:8px" onclick="openModal('modal-add-material')">+ Add Material</button>
+    </div>
+
+    <!-- S4: Progress Notes -->
+    <div class="job-section">
+      <div class="job-section-title">💬 Progress Notes</div>
+      <div class="input-row" style="margin-bottom:8px">
+        <textarea id="progress-note-input" placeholder="Type or dictate a note…" rows="3" style="min-height:70px"></textarea>
+        <button class="voice-btn" onclick="startVoice('progress-note-input',this)">🎙</button>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+        <button class="btn btn-sage btn-sm" onclick="addProgressNote()">Add Note</button>
+        <button class="btn btn-blue btn-sm" id="memo-record-job" onclick="toggleMemoRecording('job',this)">🎙 Record Memo</button>
+      </div>
+      <div id="progress-notes-list"></div>
+      <div id="job-memos" style="margin-top:8px"></div>
+    </div>
+
+    <!-- S5: Hours -->
+    <div class="job-section">
+      <div class="job-section-title">⏱ Hours Worked</div>
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px">
+        <div class="total-banner" style="flex:1;margin:0"><div class="label">Total Hours</div><div class="amount" id="hours-total-display">${hoursTotal(j).toFixed(1)} hrs</div></div>
+        <button class="rate-badge" onclick="changeRate()">£${rate}/hr</button>
+      </div>
+      <div id="hours-list"></div>
+      <button class="btn btn-sage btn-sm" onclick="openAddHours()">+ Log Hours</button>
+    </div>
+
+    <!-- S6: Payments -->
+    <div class="job-section">
+      <div class="job-section-title">💳 Money Paid</div>
+      <div class="total-banner"><div class="label">Total Received</div><div class="amount" id="paid-total-display">£${paidTotal(j).toFixed(2)}</div></div>
+      <div id="payments-list"></div>
+      <button class="btn btn-sage btn-sm" onclick="openAddPayment()">+ Record Payment</button>
+    </div>
+
+    <!-- S7: Invoice -->
+    <div class="job-section">
+      <div class="job-section-title">🧾 Invoice</div>
+      <div id="invoice-block"></div>
+    </div>
+  `;
+
+  renderMaterials(); renderProgressNotes(); renderMemos('job', j.memos||[], 'job-memos'); renderHours(); renderPayments(); renderInvoice();
+}
+
+function saveJobDetails() {
+  const j = getJob(); if (!j) return;
+  j.desc   = document.getElementById('job-desc-edit').value;
+  j.quote  = document.getElementById('job-quote-edit').value;
+  j.status = document.getElementById('job-status-edit').value;
+  save(); showToast('Job details saved');
+}
+
+// MATERIALS
+function renderMaterials() {
+  const j = getJob(); const list = document.getElementById('materials-list'); if (!list) return;
+  list.innerHTML = '';
+  (j.materials||[]).forEach((m,i) => {
+    const div = document.createElement('div'); div.className='material-item';
+    div.innerHTML=`
+      <div class="material-header">
+        <div>
+          <div class="material-name">${esc(m.name)}</div>
+          ${m.supplier?`<div class="material-meta">📦 ${esc(m.supplier)}</div>`:''}
+          ${m.desc?`<div class="material-meta">${esc(m.desc)}</div>`:''}
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+          <div class="material-cost">£${parseFloat(m.cost||0).toFixed(2)}</div>
+          <button class="btn btn-danger btn-sm" onclick="deleteMaterial(${i})">Delete</button>
+        </div>
+      </div>
+      ${m.receipt?`<img class="material-receipt" src="${m.receipt}">`:''}`;
+    list.appendChild(div);
+  });
+  const el = document.getElementById('mat-total-display');
+  if (el) el.textContent='£'+matTotal(j);
+  renderInvoice();
+}
+
+let matReceiptData = null;
+function previewReceipt(e) {
+  const f=e.target.files[0]; if (!f) return;
+  const r=new FileReader(); r.onload=ev=>{ matReceiptData=ev.target.result; const img=document.getElementById('mat-receipt-preview'); img.src=matReceiptData; img.style.display='block'; }; r.readAsDataURL(f);
+}
+
+function saveMaterial() {
+  const j=getJob(); if (!j) return;
+  const name=document.getElementById('mat-name').value.trim(); if (!name) return alert('Enter item name.');
+  (j.materials||(j.materials=[])).push({ id:uid(), name, cost:document.getElementById('mat-cost').value||0, supplier:document.getElementById('mat-supplier').value.trim(), desc:document.getElementById('mat-desc').value.trim(), receipt:matReceiptData });
+  matReceiptData=null; save();
+  ['mat-name','mat-cost','mat-supplier','mat-desc'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('mat-receipt-preview').style.display='none';
+  document.getElementById('mat-receipt-file').value='';
+  closeModal('modal-add-material'); renderMaterials();
+}
+
+function deleteMaterial(i) { const j=getJob(); if (!j||!confirm('Delete material?')) return; j.materials.splice(i,1); save(); renderMaterials(); }
+
+// NOTES
+function addProgressNote() {
+  const j=getJob(); const inp=document.getElementById('progress-note-input'); const text=inp.value.trim(); if (!text) return;
+  (j.notes||(j.notes=[])).unshift({ id:uid(), text, date:new Date().toISOString() });
+  inp.value=''; save(); renderProgressNotes();
+}
+
+function renderProgressNotes() {
+  const j=getJob(); const list=document.getElementById('progress-notes-list'); if (!list) return;
+  list.innerHTML='';
+  (j.notes||[]).forEach((n,i) => {
+    const div=document.createElement('div'); div.className='material-item';
+    const c=clientById(j.clientId);
+    div.innerHTML=`
+      <div style="display:flex;justify-content:space-between;align-items:start;gap:8px">
+        <div style="flex:1"><div style="font-size:14px;line-height:1.5">${esc(n.text)}</div><div class="material-meta">${fmtDate(n.date)}</div></div>
+        <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end">
+          ${i===0&&c?.phone?`<button class="btn btn-success btn-sm" onclick="sendNoteWA(${i})">WhatsApp</button>`:''}
+          <button class="btn btn-danger btn-sm" onclick="deleteNote(${i})">Del</button>
+        </div>
+      </div>`;
+    list.appendChild(div);
+  });
+}
+
+function sendNoteWA(i) { const j=getJob(); const c=clientById(j.clientId); const phone=(c?.phone||'').replace(/\D/g,''); const msg=`Hi ${c?.name||''}, update on your job (${j.name}):\n\n${j.notes[i].text}`; window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`,'_blank'); }
+function deleteNote(i) { const j=getJob(); if (!confirm('Delete note?')) return; j.notes.splice(i,1); save(); renderProgressNotes(); }
+
+// HOURS
+function openAddHours() { document.getElementById('hours-date').value=today(); openModal('modal-add-hours'); }
+function saveHours() {
+  const j=getJob(); if (!j) return;
+  const hrs=parseFloat(document.getElementById('hours-val').value); if (!hrs||hrs<=0) return alert('Enter hours worked.');
+  (j.hours||(j.hours=[])).push({ id:uid(), hrs, date:document.getElementById('hours-date').value, note:document.getElementById('hours-note').value.trim() });
+  save(); ['hours-val','hours-note'].forEach(id=>document.getElementById(id).value=''); closeModal('modal-add-hours'); renderHours();
+}
+function renderHours() {
+  const j=getJob(); const list=document.getElementById('hours-list'); if (!list) return;
+  list.innerHTML='';
+  (j.hours||[]).forEach((h,i) => {
+    const div=document.createElement('div'); div.className='log-item';
+    div.innerHTML=`<div style="flex:1"><div>${parseFloat(h.hrs).toFixed(1)} hrs</div><div class="log-meta">${h.date?fmtDateStr(h.date):''} ${h.note?'· '+esc(h.note):''}</div></div><div style="display:flex;align-items:center;gap:8px"><div class="log-value">${parseFloat(h.hrs).toFixed(1)}h</div><button class="btn btn-danger btn-sm" onclick="deleteHours(${i})">✕</button></div>`;
+    list.appendChild(div);
+  });
+  const el=document.getElementById('hours-total-display'); if (el) el.textContent=hoursTotal(j).toFixed(1)+' hrs';
+  renderInvoice();
+}
+function deleteHours(i) { const j=getJob(); if (!confirm('Delete session?')) return; j.hours.splice(i,1); save(); renderHours(); }
+
+// PAYMENTS
+function openAddPayment() { document.getElementById('pay-date').value=today(); openModal('modal-add-payment'); }
+function savePayment() {
+  const j=getJob(); if (!j) return;
+  const amount=parseFloat(document.getElementById('pay-amount').value); if (!amount||amount<=0) return alert('Enter payment amount.');
+  (j.payments||(j.payments=[])).push({ id:uid(), amount, date:document.getElementById('pay-date').value, note:document.getElementById('pay-note').value.trim() });
+  save(); ['pay-amount','pay-note'].forEach(id=>document.getElementById(id).value=''); closeModal('modal-add-payment'); renderPayments();
+}
+function renderPayments() {
+  const j=getJob(); const list=document.getElementById('payments-list'); if (!list) return;
+  list.innerHTML='';
+  (j.payments||[]).forEach((p,i) => {
+    const div=document.createElement('div'); div.className='log-item';
+    div.innerHTML=`<div style="flex:1"><div>£${parseFloat(p.amount).toFixed(2)}</div><div class="log-meta">${p.date?fmtDateStr(p.date):''} ${p.note?'· '+esc(p.note):''}</div></div><button class="btn btn-danger btn-sm" onclick="deletePayment(${i})">✕</button>`;
+    list.appendChild(div);
+  });
+  const el=document.getElementById('paid-total-display'); if (el) el.textContent='£'+paidTotal(j).toFixed(2);
+  renderInvoice();
+}
+function deletePayment(i) { const j=getJob(); if (!confirm('Delete payment?')) return; j.payments.splice(i,1); save(); renderPayments(); }
+
+// INVOICE
+function renderInvoice() {
+  const j=getJob(); const block=document.getElementById('invoice-block'); if (!block||!j) return;
+  const c=clientById(j.clientId);
+  const rate=settings.hourlyRate||25;
+  const mt=parseFloat(matTotal(j));
+  const ht=hoursTotal(j);
+  const lt=ht*rate;
+  const pt=paidTotal(j);
+  const due=mt+lt-pt;
+  block.innerHTML=`
+    <div style="font-size:12px;color:var(--text-muted);margin-bottom:10px">Generated ${new Date().toLocaleDateString('en-GB')}</div>
+    <div class="invoice-line"><span>Client</span><span>${c?esc(c.name):'—'}</span></div>
+    <div class="invoice-line"><span>Job</span><span>${esc(j.name)}</span></div>
+    <div class="divider"></div>
+    <div class="invoice-line"><span>Materials</span><span>£${mt.toFixed(2)}</span></div>
+    <div class="invoice-line"><span>Labour (${ht.toFixed(1)} hrs × £${rate}/hr)</span><span>£${lt.toFixed(2)}</span></div>
+    <div class="invoice-line"><span>Payments received</span><span style="color:var(--success)">−£${pt.toFixed(2)}</span></div>
+    <div class="invoice-total"><span>Amount Due</span><span>£${due.toFixed(2)}</span></div>
+    <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap">
+      <button class="btn btn-grey btn-sm" onclick="copyInvoice()">📋 Copy</button>
+      <button class="btn btn-success btn-sm" onclick="sendInvoiceWA()">WhatsApp Invoice</button>
+    </div>`;
+}
+
+function invoiceText() {
+  const j=getJob(); const c=clientById(j.clientId); const rate=settings.hourlyRate||25;
+  const mt=parseFloat(matTotal(j)); const ht=hoursTotal(j); const lt=ht*rate; const pt=paidTotal(j);
+  let t=`INVOICE — ${new Date().toLocaleDateString('en-GB')}\n`;
+  t+=`Client: ${c?c.name:'—'}\nJob: ${j.name}\n`;
+  if (j.desc) t+=`Description: ${j.desc}\n`;
+  t+=`\nMATERIALS\n`;
+  (j.materials||[]).forEach(m=>{ t+=`  ${m.name}${m.supplier?' ('+m.supplier+')':''}: £${parseFloat(m.cost||0).toFixed(2)}\n`; });
+  t+=`Materials Total: £${mt.toFixed(2)}\n\nLABOUR\n  ${ht.toFixed(1)} hrs × £${rate}/hr = £${lt.toFixed(2)}\n\nPAYMENTS RECEIVED: £${pt.toFixed(2)}\n\n============================\nAMOUNT DUE: £${(mt+lt-pt).toFixed(2)}\n`;
+  return t;
+}
+function copyInvoice() { navigator.clipboard.writeText(invoiceText()).then(()=>showToast('Copied!')).catch(()=>alert(invoiceText())); }
+function sendInvoiceWA() { const c=clientById(getJob()?.clientId); const phone=(c?.phone||'').replace(/\D/g,''); window.open(`https://wa.me/${phone}?text=${encodeURIComponent(invoiceText())}`,'_blank'); }
+function changeRate() { const r=prompt('Hourly rate (£):',settings.hourlyRate||25); if (r!==null&&!isNaN(parseFloat(r))) { settings.hourlyRate=parseFloat(r); save(); renderJob(); } }
+
+// ─────────────────────────────────────────────
+// SHOPPING
+// ─────────────────────────────────────────────
+function renderShopping() {
+  const list=document.getElementById('shopping-list'); list.innerHTML='';
+  if (!shopping.length) { list.innerHTML='<div style="color:var(--text-muted);text-align:center;padding:30px">Shopping list is empty.</div>'; return; }
+  shopping.forEach((s,i) => {
+    const div=document.createElement('div'); div.className='list-item'; div.style.cursor='default';
+    div.innerHTML=`
+      <div style="display:flex;align-items:center;gap:10px;flex:1">
+        <button class="todo-check ${s.done?'done':''}" onclick="toggleShop(${i})">${s.done?'✓':''}</button>
+        <div>
+          <div class="list-item-title" style="${s.done?'text-decoration:line-through;color:var(--text-muted)':''}">${esc(s.item)}</div>
+          <div class="list-item-sub">${s.supplier?esc(s.supplier)+' · ':''}${s.cost?'£'+parseFloat(s.cost).toFixed(2):''}</div>
+        </div>
+      </div>
+      <button class="btn btn-danger btn-sm" onclick="deleteShopItem(${i})">✕</button>`;
+    list.appendChild(div);
+  });
+}
+function addShopItem() {
+  const item=document.getElementById('shop-item').value.trim(); if (!item) return;
+  shopping.push({ id:uid(), item, cost:document.getElementById('shop-cost').value, supplier:document.getElementById('shop-supplier').value.trim(), done:false });
+  save(); ['shop-item','shop-cost','shop-supplier'].forEach(id=>document.getElementById(id).value=''); renderShopping();
+}
+function toggleShop(i) { shopping[i].done=!shopping[i].done; save(); renderShopping(); }
+function deleteShopItem(i) { shopping.splice(i,1); save(); renderShopping(); }
+
+// ─────────────────────────────────────────────
+// VOICE — Speech Recognition
+// ─────────────────────────────────────────────
+let recognition=null, activeVBtn=null;
+function startVoice(targetId, btn) {
+  if (!('webkitSpeechRecognition' in window||'SpeechRecognition' in window)) return alert('Speech recognition not supported. Use Chrome on Android.');
+  if (recognition) { recognition.stop(); return; }
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  recognition=new SR(); recognition.continuous=true; recognition.interimResults=true; recognition.lang='en-GB';
+  const target=document.getElementById(targetId); const base=target.value;
+  btn.classList.add('recording'); btn.textContent='⏹'; activeVBtn=btn;
+  recognition.onresult=e=>{ let f='',im=''; for(let i=e.resultIndex;i<e.results.length;i++){ if(e.results[i].isFinal)f+=e.results[i][0].transcript; else im+=e.results[i][0].transcript; } target.value=base+(base&&(f||im)?' ':'')+f+im; };
+  recognition.onerror=()=>stopVoice(); recognition.onend=()=>stopVoice(); recognition.start();
+}
+function stopVoice() {
+  if(recognition){try{recognition.stop();}catch(e){} recognition=null;}
+  if(activeVBtn){activeVBtn.classList.remove('recording');activeVBtn.textContent='🎙';activeVBtn=null;}
+}
+
+// ─────────────────────────────────────────────
+// VOICE MEMOS — MediaRecorder
+// ─────────────────────────────────────────────
+let mediaRecorder=null, memoChunks=[], memoContext=null, memoBtn=null;
+function toggleMemoRecording(ctx, btn) {
+  if (mediaRecorder&&mediaRecorder.state==='recording') { mediaRecorder.stop(); return; }
+  navigator.mediaDevices.getUserMedia({audio:true}).then(stream => {
+    memoContext=ctx; memoBtn=btn; memoChunks=[];
+    mediaRecorder=new MediaRecorder(stream);
+    mediaRecorder.ondataavailable=e=>memoChunks.push(e.data);
+    mediaRecorder.onstop=()=>{
+      const blob=new Blob(memoChunks,{type:'audio/webm'});
+      const r=new FileReader(); r.onload=ev=>{
+        const memo={id:uid(),data:ev.target.result,date:new Date().toISOString()};
+        if (memoContext==='today') { todayMemos.push(memo); save(); renderMemos('today',todayMemos,'today-memos'); }
+        else { const j=getJob(); (j.memos||(j.memos=[])).push(memo); save(); renderMemos('job',j.memos,'job-memos'); }
+        stream.getTracks().forEach(t=>t.stop());
+      }; r.readAsDataURL(blob);
+      if(memoBtn){memoBtn.classList.remove('recording');memoBtn.textContent='🎙 Record Memo';memoBtn=null;}
+      mediaRecorder=null;
+    };
+    mediaRecorder.start(); btn.classList.add('recording'); btn.textContent='⏹ Stop Recording';
+  }).catch(()=>alert('Microphone access denied.'));
+}
+
+function renderMemos(ctx, memos, containerId) {
+  const el=document.getElementById(containerId); if (!el) return;
+  el.innerHTML='';
+  (memos||[]).forEach((m,i)=>{
+    const div=document.createElement('div'); div.className='memo-item';
+    div.innerHTML=`<div class="memo-controls"><button class="memo-play" onclick="playMemo(this,'${m.data}')">▶</button><span style="font-size:12px;color:var(--text-muted);flex:1">Memo · ${fmtDate(m.date)}</span><button class="btn btn-danger btn-sm" onclick="deleteMemo('${ctx}',${i})">✕</button></div>`;
+    el.appendChild(div);
+  });
+}
+
+let currentAudio=null;
+function playMemo(btn,src) {
+  if(currentAudio){currentAudio.pause();currentAudio=null; document.querySelectorAll('.memo-play').forEach(b=>b.textContent='▶'); if(btn.textContent==='▶')return;}
+  currentAudio=new Audio(src); currentAudio.play(); btn.textContent='⏸';
+  currentAudio.onended=()=>{btn.textContent='▶';currentAudio=null;};
+}
+
+function deleteMemo(ctx,i) {
+  if(!confirm('Delete memo?'))return;
+  if(ctx==='today'){todayMemos.splice(i,1);save();renderMemos('today',todayMemos,'today-memos');}
+  else{const j=getJob();j.memos.splice(i,1);save();renderMemos('job',j.memos,'job-memos');}
+}
+
+// ─────────────────────────────────────────────
+// UTILS
+// ─────────────────────────────────────────────
+function esc(s) { if(!s)return''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function today() { return new Date().toISOString().split('T')[0]; }
+function fmtDate(iso) { if(!iso)return''; return new Date(iso).toLocaleDateString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}); }
+function fmtDateStr(d) { if(!d)return''; const p=d.split('-'); return new Date(p[0],p[1]-1,p[2]).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}); }
+
+let toastTimer=null;
+function showToast(msg) {
+  let t=document.getElementById('toast');
+  if(!t){t=document.createElement('div');t.id='toast';t.style.cssText='position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--sage-dark);color:var(--text);padding:10px 20px;border-radius:20px;font-size:14px;z-index:999;pointer-events:none;transition:opacity 0.3s';document.body.appendChild(t);}
+  t.textContent=msg;t.style.opacity='1';
+  if(toastTimer)clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.style.opacity='0',2000);
+}
+
+// ─────────────────────────────────────────────
+// PWA
+// ─────────────────────────────────────────────
+const manifest={name:'Builder App',short_name:'Builder',start_url:'.',display:'standalone',background_color:'#2a2f2e',theme_color:'#4a5c4e',orientation:'portrait',icons:[{src:"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' fill='%234a5c4e' rx='24'/%3E%3Ctext x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-size='100' fill='%23a8bfa9'%3E🔨%3C/text%3E%3C/svg%3E",sizes:'192x192',type:'image/svg+xml'}]};
+document.getElementById('manifest-link').href=URL.createObjectURL(new Blob([JSON.stringify(manifest)],{type:'application/json'}));
+
+if('serviceWorker'in navigator){
+  const sw=`const C='builder-v2';self.addEventListener('install',e=>{self.skipWaiting();});self.addEventListener('activate',e=>{e.waitUntil(self.clients.claim());});self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).catch(()=>new Response('Offline',{status:503}))));});`;
+  navigator.serviceWorker.register(URL.createObjectURL(new Blob([sw],{type:'application/javascript'}))).catch(()=>{});
+}
+
+// ─────────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────────
+renderToday();
+</script>
+</body>
+</html>

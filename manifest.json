@@ -1,0 +1,24 @@
+{
+  "name": "The Atlas Chronicles",
+  "short_name": "Atlas",
+  "description": "A home education geography platform for curious explorers",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#071020",
+  "theme_color": "#64b5f6",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

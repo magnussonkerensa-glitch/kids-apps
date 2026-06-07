@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cub's Turma 4 End of Year Exam Revision</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --bg:#fff9f1; --surface:#ffffffcc; --text:#2f2349; --muted:#735f95; --line:#ebddff;
+      --pink:#ff5cab; --purple:#8b5cf6; --blue:#4cc9f0; --green:#22c55e; --yellow:#ffd93d; --orange:#ff9f1c;
+      --radius:24px; --shadow:0 18px 40px rgba(87,54,161,.16);
+    }
+    *{box-sizing:border-box} body{margin:0;font-family:'Nunito',sans-serif;color:var(--text);background:
+      radial-gradient(circle at 15% 15%, rgba(255,92,171,.14), transparent 16%),
+      radial-gradient(circle at 85% 20%, rgba(76,201,240,.18), transparent 18%),
+      radial-gradient(circle at 80% 80%, rgba(34,197,94,.14), transparent 16%),
+      linear-gradient(135deg,#fffaf2 0%,#fff1fb 45%,#eef7ff 100%);} 
+    .app{max-width:1280px;margin:0 auto;padding:20px}
+    .hero{background:linear-gradient(135deg,#ff5cab,#8b5cf6 52%,#4cc9f0);color:#fff;border-radius:32px;padding:28px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+    .hero::after{content:'';position:absolute;right:-50px;bottom:-70px;width:220px;height:220px;border-radius:50%;background:rgba(255,255,255,.12);box-shadow:-120px -20px 0 rgba(255,255,255,.08), -30px -120px 0 rgba(255,255,255,.08)}
+    h1,h2,h3,h4{font-family:'Baloo 2',cursive;margin:0;line-height:1}
+    h1{font-size:clamp(2.4rem,4vw,4.6rem)} h2{font-size:clamp(1.5rem,2vw,2.1rem)} h3{font-size:1.4rem}
+    .hero-top{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;flex-wrap:wrap}
+    .hero p{max-width:72ch;margin:.7rem 0 0;font-size:1.03rem}
+    .pill{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:999px;background:rgba(255,255,255,.18);font-weight:800}
+    .layout{display:grid;grid-template-columns:260px 1fr;gap:18px;margin-top:18px}
+    .panel{background:var(--surface);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.6);border-radius:var(--radius);box-shadow:var(--shadow)}
+    .sidebar{padding:16px;position:sticky;top:14px;height:fit-content}
+    .subject-btn{width:100%;border:none;background:#fff;padding:14px 16px;border-radius:18px;margin-bottom:10px;text-align:left;font-weight:800;color:var(--text);cursor:pointer;box-shadow:0 10px 20px rgba(56,34,95,.08)}
+    .subject-btn.active{background:linear-gradient(90deg,#ffdef0,#e7ddff);outline:3px solid #d4c4ff}
+    .small{color:var(--muted);font-size:.95rem}
+    .main{display:grid;gap:18px}
+    .tabs{display:flex;gap:10px;flex-wrap:wrap;padding:16px}
+    .tab-btn{border:none;background:#fff;padding:12px 16px;border-radius:999px;font-weight:800;cursor:pointer}
+    .tab-btn.active{background:linear-gradient(90deg,#ffd93d,#ff9f1c);color:#5c4100}
+    .content{padding:0 16px 16px}
+    .grid{display:grid;grid-template-columns:1.15fr .85fr;gap:18px}
+    .card{background:#fff;border-radius:24px;padding:18px;box-shadow:0 12px 24px rgba(60,36,108,.08)}
+    .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+    .kpi{border-radius:22px;padding:16px;color:#fff;min-height:110px;display:flex;flex-direction:column;justify-content:space-between}
+    .kpi:nth-child(1){background:linear-gradient(135deg,#ff9f1c,#ff5cab)}
+    .kpi:nth-child(2){background:linear-gradient(135deg,#8b5cf6,#4cc9f0)}
+    .kpi:nth-child(3){background:linear-gradient(135deg,#22c55e,#4cc9f0)}
+    .kpi:nth-child(4){background:linear-gradient(135deg,#ffd93d,#ff9f1c);color:#5a4200}
+    .kpi strong{font-size:2rem;font-family:'Baloo 2',cursive}
+    .quest-list,.test-list{display:grid;gap:12px;margin-top:14px}
+    .quest{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:14px;border-radius:18px;background:#fff7fd;border:1px solid #f3d7eb}
+    .quest.done{background:#e9fff4;border-color:#bfefd4}
+    .quest button,.primary,.ghost{border:none;border-radius:999px;padding:11px 15px;font-weight:800;cursor:pointer}
+    .quest button,.primary{background:linear-gradient(90deg,#ff5cab,#8b5cf6);color:#fff}
+    .ghost{background:#fff0b9;color:#6b5000}
+    .qa{margin-top:14px}
+    .question{font-weight:800;font-size:1.15rem;margin-bottom:12px}
+    .answers{display:grid;gap:10px}
+    .answer{border:none;background:#fff;padding:14px;border-radius:18px;text-align:left;font-weight:800;cursor:pointer;box-shadow:0 8px 18px rgba(52,30,88,.08)}
+    .answer.correct{background:#defbe9;outline:3px solid #22c55e}.answer.wrong{background:#ffe0ec;outline:3px solid #ff5cab}
+    .feedback{min-height:24px;margin-top:12px;font-weight:800}
+    .progress-shell{display:grid;grid-template-columns:320px 1fr;gap:18px;align-items:center}
+    canvas{max-width:100%}
+    .reward{padding:18px;border-radius:22px;background:linear-gradient(135deg,#fff2a6,#ffdce8 56%,#e2f0ff);display:none}
+    .reward.show{display:block}
+    .prize{font-size:2.5rem}
+    @media (max-width: 980px){.layout,.grid,.progress-shell{grid-template-columns:1fr}.sidebar{position:static}.kpis{grid-template-columns:1fr 1fr}}
+    @media (max-width: 640px){.kpis{grid-template-columns:1fr}.app{padding:12px}}
+  </style>
+</head>
+<body>
+<div class="app">
+  <section class="hero panel">
+    <div class="hero-top">
+      <div>
+        <div class="pill">🏆 Grande prémio: €30 ao atingir 100% de progresso</div>
+        <h1>Cub's Turma 4 End of Year Exam Revision</h1>
+        <p>Esta miniapp transforma cada disciplina numa missão com jogos de revisão, respostas corrigidas, rondas de fichas de teste e um painel de progresso. Os conteúdos de Matemática baseiam-se em decimais, números naturais até 10 000, frações equivalentes, números racionais e operações com frações; as secções de Ciências e Estudo do Meio baseiam-se nos revestimentos e na locomoção dos animais, no ciclo da água, no Sistema Solar, nos rios, na costa e em temas de Portugal presentes nos PDFs anexados. [file:3][file:2][file:6][file:7][file:9]</p>
+      </div>
+      <div class="pill">⭐ Ganha pontos • ✅ Vê as respostas • 📈 Acompanha o progresso</div>
+    </div>
+  </section>
+
+  <div class="layout">
+    <aside class="sidebar panel">
+      <h2 style="margin-bottom:12px">Disciplinas</h2>
+      <button class="subject-btn active" data-subject="math">➗ Missão de Matemática</button>
+      <button class="subject-btn" data-subject="science">🧪 Missão de Ciências</button>
+      <button class="subject-btn" data-subject="estudo">🌍 Missão de Estudo do Meio</button>
+      <p class="small">Cada disciplina tem 3 separadores: jogos de revisão, fichas de teste e progresso. A recompensa desbloqueia quando o progresso total chega aos 100%. [file:3][file:2][file:6][file:7]</p>
+    </aside>
+
+    <main class="main">
+      <section class="panel">
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="games">Jogos de revisão</button>
+          <button class="tab-btn" data-tab="tests">Fichas de teste</button>
+          <button class="tab-btn" data-tab="progress">Progresso</button>
+        </div>
+        <div class="content">
+          <div class="kpis">
+            <div class="kpi"><span>Pontos totais</span><strong id="points">0</strong><span>Em todas as missões</span></div>
+            <div class="kpi"><span>Missões concluídas</span><strong id="completed">0</strong><span>Minijogos terminados</span></div>
+            <div class="kpi"><span>Respostas certas</span><strong id="correct">0</strong><span>Atualizado em direto</span></div>
+            <div class="kpi"><span>Progresso</span><strong id="percent">0%</strong><span>Meta: 100%</span></div>
+          </div>
+
+          <div id="gamesView" class="tab-view">
+            <div class="grid">
+              <div class="card">
+                <h2 id="subjectTitle">Missão de Matemática</h2>
+                <p class="small" id="subjectBlurb"></p>
+                <div class="quest-list" id="questList"></div>
+              </div>
+              <div class="card">
+                <h3 id="gameTitle">Escolhe uma missão</h3>
+                <div class="qa">
+                  <div class="question" id="questionText">Escolhe um jogo de revisão para começar.</div>
+                  <div class="answers" id="answers"></div>
+                  <div class="feedback" id="feedback"></div>
+                  <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">
+                    <button class="primary" id="nextQuestion" disabled>Pergunta seguinte ✨</button>
+                    <button class="ghost" id="resetGame">Reiniciar missão ↺</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="testsView" class="tab-view" style="display:none">
+            <div class="grid">
+              <div class="card">
+                <h2>Rondas de fichas de teste</h2>
+                <p class="small">Estes separadores de teste seguem os tipos de tarefas mostrados nos PDFs anexados: mini-testes de Matemática sobre números e frações, fichas de Ciências sobre forma corporal, revestimentos e locomoção, e fichas de Estudo do Meio sobre água, rios, Sistema Solar, costa e Portugal. [file:3][file:2][file:6][file:7][file:9]</p>
+                <div class="test-list" id="testList"></div>
+              </div>
+              <div class="card">
+                <h3 id="markTitle">Grelha de correção</h3>
+                <div id="markBox" class="small">Seleciona uma ficha de teste para ver o formato, os temas e a forma de correção sugerida.</div>
+              </div>
+            </div>
+          </div>
+
+          <div id="progressView" class="tab-view" style="display:none">
+            <div class="progress-shell">
+              <div class="card">
+                <h2>Quest progress</h2>
+                <canvas id="progressChart" width="280" height="280"></canvas>
+              </div>
+              <div class="card">
+                <h2>Reward tracker</h2>
+                <p class="small">The pie chart fills as she completes quests and test rounds. When total progress reaches 100%, the reward unlocks and the grand prize becomes available. This matches your idea of using progress as the trigger for the €30 reward. [file:3][file:2][file:6]</p>
+                <div id="rewardBox" class="reward">
+                  <div class="prize">🎉 €30 Prize Unlocked!</div>
+                  <p style="font-weight:800">Grand prize achieved — full revision quest completed.</p>
+                </div>
+                <div id="progressDetails"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+<script>
+const data = {
+  math: {
+    title: 'Missão de Matemática',
+    blurb: 'Criada a partir do caderno de Matemática: números naturais até 10 000, ordenação e comparação de decimais, frações equivalentes, mini-teste de números racionais e operações com frações. Todas as perguntas abaixo foram reescritas para fazerem sentido sozinhas. [file:3]',
+    quests: [
+      { id:'m1', name:'Montanha dos Números', topic:'Números naturais até 10 000', questions:[
+        {q:'Um número tem 4 milhares, 4 centenas, 7 dezenas e 6 unidades. Que número é esse?', options:['4476','4746','4467'], a:'4476', e:'O exemplo com material MAB na ficha representa o número 4476. [file:3]'},
+        {q:'Um número tem 2 milhares, 2 centenas, 5 dezenas e 4 unidades. Que número é esse?', options:['2254','2524','2245'], a:'2254', e:'O segundo exemplo com material MAB na ficha representa o número 2254. [file:3]'},
+        {q:'Na sequência de +1000, que número vem a seguir a 2386?', options:['2486','3386','4386'], a:'3386', e:'A ficha mostra a sequência 2386, 3386, 4386, 5386, 6386 e 7386. [file:3]'},
+        {q:'Na sequência de -1000, que número vem a seguir a 10 000?', options:['9000','9900','8000'], a:'9000', e:'A ficha mostra 10 000, 9000, 8000, 7000, 6000 e 5000. [file:3]'},
+        {q:'Que número vem imediatamente antes de 1800?', options:['1799','1700','1801'], a:'1799', e:'A ficha trabalha os números que vêm imediatamente antes e depois. [file:3]'},
+        {q:'Que número vem imediatamente a seguir a 9600?', options:['9601','9610','9599'], a:'9601', e:'A ficha apresenta a sequência 9599, 9600, 9601. [file:3]'}]},
+      { id:'m2', name:'Arco-Íris dos Decimais', topic:'Ordenar e comparar decimais', questions:[
+        {q:'Coloca estes números decimais por ordem crescente: 0,5 ; 0,31 ; 0,01 ; 0,1', options:['0,01 < 0,1 < 0,31 < 0,5','0,1 < 0,01 < 0,31 < 0,5','0,01 < 0,31 < 0,1 < 0,5'], a:'0,01 < 0,1 < 0,31 < 0,5', e:'Esta ordenação decimal aparece exatamente assim na ficha. [file:3]'},
+        {q:'Coloca estes números decimais por ordem crescente: 0,62 ; 0,81 ; 0,3 ; 0,76', options:['0,3 < 0,62 < 0,76 < 0,81','0,62 < 0,3 < 0,76 < 0,81','0,3 < 0,76 < 0,62 < 0,81'], a:'0,3 < 0,62 < 0,76 < 0,81', e:'Este é um dos conjuntos de ordenação de decimais da ficha. [file:3]'},
+        {q:'Qual é o número decimal maior: 7,53 ou 7,6?', options:['7,6','7,53','São iguais'], a:'7,6', e:'O mini-teste compara 7,53 e 7,6, e 7,6 é o maior. [file:3]'},
+        {q:'Qual é o número decimal maior: 7,34 ou 7,304?', options:['7,34','7,304','São iguais'], a:'7,34', e:'O mini-teste mostra que 7,34 é maior do que 7,304. [file:3]'},
+        {q:'Que número decimal corresponde à fração 3/4?', options:['0,25','0,75','0,20'], a:'0,75', e:'A ficha de frações equivalentes faz corresponder 3/4 a 0,75. [file:3]'},
+        {q:'Que número decimal corresponde à fração 1/5?', options:['0,20','0,10','1,0'], a:'0,20', e:'A ficha de frações equivalentes faz corresponder 1/5 a 0,20. [file:3]'}]},
+      { id:'m3', name:'Castelo das Frações', topic:'Frações equivalentes e números racionais', questions:[
+        {q:'Qual destas frações é equivalente a 1/2?', options:['2/4','2/10','1/10'], a:'2/4', e:'O mini-teste mostra que 4/8 = 2/4, e ambas são equivalentes a 1/2. [file:3]'},
+        {q:'Qual destas frações é equivalente a 3/4?', options:['6/8','3/5','25/100'], a:'6/8', e:'A ficha de frações equivalentes faz corresponder 3/4 a 6/8. [file:3]'},
+        {q:'Escolhe o símbolo correto: 1/3 ? 3/4', options:['>','<','='], a:'<', e:'O mini-teste mostra que 1/3 é menor do que 3/4. [file:3]'},
+        {q:'Escolhe o símbolo correto: 4/8 ? 2/4', options:['>','<','='], a:'=', e:'O mini-teste mostra que 4/8 é igual a 2/4. [file:3]'},
+        {q:'Coloca estas frações por ordem crescente: 1/10 ; 1/8 ; 1/7 ; 1/5 ; 1/4', options:['1/10 < 1/8 < 1/7 < 1/5 < 1/4','1/4 < 1/5 < 1/7 < 1/8 < 1/10','1/8 < 1/10 < 1/7 < 1/5 < 1/4'], a:'1/10 < 1/8 < 1/7 < 1/5 < 1/4', e:'This exact ascending order appears in the mini test. [file:3]'},
+        {q:'Qual é a fração maior: 6/7 ou 3/4?', options:['6/7','3/4','São iguais'], a:'6/7', e:'O mini-teste identifica 6/7 como a fração maior. [file:3]'},
+        {q:'No problema do bolo, a Rita comeu 1/6, o Bruno comeu 4/9 e a Catarina comeu 7/18. Quem comeu mais bolo?', options:['Rita','Bruno','Catarina'], a:'Bruno', e:'Ao comparar as frações, vê-se que 4/9 é maior do que 7/18 e 1/6. [file:3]'},
+        {q:'No mesmo problema do bolo, quem comeu menos bolo?', options:['Rita','Bruno','Catarina'], a:'Rita', e:'A ficha mostra que 1/6 é a menor quantidade. [file:3]'}]},
+      { id:'m4', name:'Forja das Frações', topic:'Adição e subtração de frações', questions:[
+        {q:'Quanto é 3/5 + 4/5?', options:['7/5','7/10','1'], a:'7/5', e:'A ficha de adição com denominadores iguais dá 3/5 + 4/5 = 7/5. [file:3]'},
+        {q:'Quanto é 4/5 + 1/5?', options:['5/10','5/5 = 1','4/10'], a:'5/5 = 1', e:'A ficha mostra 4/5 + 1/5 = 5/5 = 1. [file:3]'},
+        {q:'Quanto é 1/2 + 2/3?', options:['5/6','7/6','1'], a:'7/6', e:'A ficha de adição com denominadores diferentes mostra 1/2 + 2/3 = 7/6. [file:3]'},
+        {q:'Quanto é 3/5 - 1/5?', options:['2/5','3/4','1/5'], a:'2/5', e:'A ficha de subtração mostra 3/5 - 1/5 = 2/5. [file:3]'},
+        {q:'Quanto é 1 - 5/6?', options:['1/6','5/6','4/6'], a:'1/6', e:'A ficha de subtração mostra 1 - 5/6 = 1/6. [file:3]'},
+        {q:'Quanto é 2 - 1/4?', options:['3/4','7/4','5/4'], a:'7/4', e:'A ficha de subtração mostra 2 - 1/4 = 7/4. [file:3]'}]},
+      { id:'m5', name:'Desafio Final', topic:'Desafio misto de Matemática', questions:[
+        {q:'Que fração é igual ao decimal 0,60?', options:['6/10','1/10','2/8'], a:'6/10', e:'A ficha de frações equivalentes dá 0,60 = 6/10. [file:3]'},
+        {q:'Coloca estas frações por ordem crescente: 6/12 ; 6/8 ; 6/7 ; 6/5 ; 6/3', options:['6/12 < 6/8 < 6/7 < 6/5 < 6/3','6/3 < 6/5 < 6/7 < 6/8 < 6/12','6/8 < 6/12 < 6/7 < 6/5 < 6/3'], a:'6/12 < 6/8 < 6/7 < 6/5 < 6/3', e:'Esta sequência aparece exatamente assim no mini-teste. [file:3]'},
+        {q:'Quanto é 2/8 + 5/8?', options:['7/8','7/16','3/8'], a:'7/8', e:'A ficha visual de adição mostra 2/8 + 5/8 = 7/8. [file:3]'},
+        {q:'Quanto é 3/4 × 3?', options:['9/4','9/12','3/7'], a:'9/4', e:'A ficha de multiplicação de frações por números inteiros mostra 3/4 × 3 = 9/4. [file:3]'},
+        {q:'Quanto é 2/3 × 9?', options:['18/3','11/3','18/9'], a:'18/3', e:'A ficha de multiplicação mostra 2/3 × 9 = 18/3. [file:3]'},
+        {q:'Escolhe o símbolo correto: 8/7 ? 3/7', options:['>','<','='], a:'>', e:'O mini-teste mostra que 8/7 é maior do que 3/7. [file:3]'}]}
+    ],
+    tests:[
+      {name:'Teste de Números Naturais e Decimais', desc:'Números com MAB, antes e depois, sequências de +1000 e -1000, ordenação e comparação de decimais. [file:3]', key:'Usa perguntas curtas de escolha múltipla e mostra a resposta logo após cada item. [file:3]'},
+      {name:'Teste de Frações Equivalentes', desc:'Frações equivalentes, correspondência entre frações e decimais, e escrita de outra fração equivalente. [file:3]', key:'Mostra a resposta depois de submeter para ela ver que pares correspondem entre si. [file:3]'},
+      {name:'Mini-Teste de Números Racionais', desc:'Símbolos > < =, ordenação de frações, identificação da fração maior e o problema do bolo. [file:3]', key:'Atribui 2 pontos por resposta certa e um bónus de 5 pontos por terminar a ficha toda. [file:3]'},
+      {name:'Teste de Operações com Frações', desc:'Adição com denominadores iguais, adição com denominadores diferentes, subtração e multiplicação por números inteiros. [file:3]', key:'Corrige as respostas de imediato e acrescenta uma linha de explicação a mostrar o método usado. [file:3]'}]
+  },
+  science: {
+    title: 'Missão de Ciências',
+    blurb: 'Built from the science pack on animal body forms, coverings, locomotion, bird features, feeding structures, and basic human body systems. The questions below have been checked and rewritten to make sense on their own. [file:2]',
+    quests: [
+      { id:'s1', name:'Baía das Formas do Corpo', topic:'Formas corporais e simetria', questions:[
+        {q:'Which of these animals does NOT have a segmented body: earthworm, crab, bee, or spider?', options:['Earthworm','Crab','Bee'], a:'Earthworm', e:'The worksheet marks minhoca, or earthworm, as the animal without a segmented body. [file:2]'},
+        {q:'A carp has the typical body shape of a fish. What shape is it?', options:['Cylindrical','Flattened','Fusiform'], a:'Fusiform', e:'The worksheet says the carp has a fusiform body. [file:2]'},
+        {q:'If an animal can be divided into two identical halves in only one way, what symmetry does it have?', options:['Bilateral symmetry','Radial symmetry','Asymmetry'], a:'Bilateral symmetry', e:'The symmetry section defines this as bilateral symmetry. [file:2]'},
+        {q:'If an animal can be divided into more than one identical part around a centre, what symmetry does it have?', options:['Radial symmetry','Asymmetry','Bilateral symmetry'], a:'Radial symmetry', e:'The worksheet matches more than one form of division with radial symmetry. [file:2]'},
+        {q:'If an animal cannot be divided into identical parts, what is this called?', options:['Asymmetry','Pentarradial symmetry','Bilateral symmetry'], a:'Asymmetry', e:'The worksheet defines this as asymmetry. [file:2]'},
+        {q:'If an animal can be divided into five equal parts, what symmetry does it have?', options:['Pentarradial symmetry','Radial symmetry','Asymmetry'], a:'Pentarradial symmetry', e:'The worksheet matches division into five equal parts with pentarradial symmetry. [file:2]'}]},
+      { id:'s2', name:'Caverna dos Revestimentos', topic:'Revestimentos dos animais', questions:[
+        {q:'Fish scales help fish do what better in water?', options:['Slide through the water','Stay warm all the time','Breathe through the skin'], a:'Slide through the water', e:'The worksheet states that fish scales help fish glide more easily in water. [file:2]'},
+        {q:'Do fish scales usually grow with the animal’s body?', options:['Yes','No','Only in birds'], a:'Yes', e:'The worksheet marks as true that fish scales accompany the growth of the animal. [file:2]'},
+        {q:'Bird feathers make flying harder. True or false?', options:['True','False'], a:'False', e:'The worksheet marks this statement as false. [file:2]'},
+        {q:'Are feathers the body covering of birds?', options:['Yes','No'], a:'Yes', e:'The worksheet marks this statement as true. [file:2]'},
+        {q:'Are feathers waterproof, especially in aquatic birds?', options:['Yes','No'], a:'Yes', e:'The worksheet marks this as true. [file:2]'},
+        {q:'Are all feathers exactly the same and used for the same function?', options:['Yes','No'], a:'No', e:'The worksheet marks this as false, meaning feathers are not all the same. [file:2]'}]},
+      { id:'s3', name:'Fortaleza do Exosqueleto', topic:'Exosqueleto, pele nua e insetos', questions:[
+        {q:'A beetle is an insect. What covers and protects its body?', options:['A chitin exoskeleton','Bare skin','Feathers'], a:'A chitin exoskeleton', e:'The worksheet says the beetle has a chitin exoskeleton that protects it and helps movement. [file:2]'},
+        {q:'Are many invertebrates usually covered by an exoskeleton?', options:['Yes','No'], a:'Yes', e:'The worksheet marks as true that the body covering of invertebrates often forms an exoskeleton. [file:2]'},
+        {q:'Do some invertebrates with exoskeletons moult as they grow?', options:['Yes','No'], a:'Yes', e:'The worksheet marks this as true. [file:2]'},
+        {q:'Bare skin is thin, slippery and moist, with glands that produce a sticky liquid. True or false?', options:['True','False'], a:'True', e:'The worksheet marks this as true. [file:2]'},
+        {q:'Does bare skin help animals live in very dry habitats?', options:['Yes','No'], a:'No', e:'The worksheet marks this statement as false. [file:2]'},
+        {q:'A dragonfly is an invertebrate with what kind of body covering?', options:['Chitinous exoskeleton','Calcified shell','Bare skin'], a:'Chitinous exoskeleton', e:'The worksheet marks as true that the dragonfly is an invertebrate with a chitinous exoskeleton. [file:2]'}]},
+      { id:'s4', name:'Labirinto da Locomoção', topic:'Locomoção', questions:[
+        {q:'Locomotion is the ability of an animal to do what?', options:['Move from one place to another','Change colour','Grow bigger'], a:'Move from one place to another', e:'The locomotion worksheet defines locomotion as the ability to move. [file:2]'},
+        {q:'Which body parts are responsible for movement according to the worksheet?', options:['Muscles and bones','Teeth and feathers','Scales and claws'], a:'Muscles and bones', e:'The worksheet says the organs responsible for movement are the muscles and bones. [file:2]'},
+        {q:'Bones connect to each other through what?', options:['Joints','Scales','Feathers'], a:'Joints', e:'The locomotion worksheet says the bones connect through articulations, or joints. [file:2]'},
+        {q:'Which of these is one of the four types of locomotion on land named in the worksheet?', options:['Running','Floating','Digestion'], a:'Running', e:'The worksheet lists running, jumping, reptation, and walking as types of locomotion on land. [file:2]'},
+        {q:'Which animal is adapted to running because it supports its hooves on the ground?', options:['Wild boar','Bear','Swan'], a:'Wild boar', e:'The worksheet says the wild boar is adapted to running because it supports its hooves on the ground. [file:2]'},
+        {q:'Which animal is adapted to walking because it supports the whole foot on the ground?', options:['Bear','Wild boar','Bat'], a:'Bear', e:'The worksheet contrasts the bear with the wild boar in this way. [file:2]'}]},
+      { id:'s5', name:'Quartel do Corpo Humano', topic:'Corpo humano e sistemas', questions:[
+        {q:'What is the smallest living part of the human body?', options:['Cell','Tissue','Organ'], a:'Cell', e:'The human body text says cells are the smallest living part of the body. [file:2]'},
+        {q:'What do groups of similar cells form?', options:['Tissues','Bones','Planets'], a:'Tissues', e:'The text explains that cells grouped together form tissues. [file:2]'},
+        {q:'What do two or more tissues form?', options:['Organs','Skeletons','Scales'], a:'Organs', e:'The text says that two or more tissues form organs. [file:2]'},
+        {q:'Which system is responsible for carrying blood around the body?', options:['Cardiovascular system','Digestive system','Urinary system'], a:'Cardiovascular system', e:'The systems section says the cardiovascular system guarantees blood circulation. [file:2]'},
+        {q:'Which system helps with support, locomotion, and protection of internal organs?', options:['Skeletal system','Respiratory system','Reproductive system'], a:'Skeletal system', e:'The worksheet says the skeletal system helps with support, locomotion, and protection. [file:2]'},
+        {q:'Which system allows the body to absorb oxygen and release carbon dioxide?', options:['Respiratory system','Digestive system','Nervous system'], a:'Respiratory system', e:'The systems section gives this function to the respiratory system. [file:2]'}]}
+    ],
+    tests:[
+      {name:'Animal Shapes and Symmetry Test', desc:'Segmented and non-segmented bodies, fish body shape, and different kinds of symmetry. [file:2]', key:'Use quick multiple choice and true/false items with immediate corrections. [file:2]'},
+      {name:'Animal Coverings Test', desc:'Scales, feathers, bare skin, exoskeletons, and moulting. [file:2]', key:'Reveal a one-line explanation after each answer so she learns the feature and the reason. [file:2]'},
+      {name:'Locomotion Test', desc:'Movement, muscles, bones, joints, locomotion on land, and animal adaptations for running and walking. [file:2]', key:'Give bonus points for streaks to keep the round lively. [file:2]'},
+      {name:'Human Body Systems Test', desc:'Cells, tissues, organs, and the cardiovascular, skeletal, and respiratory systems. [file:2]', key:'Mix simple recall questions with short matching tasks between system and function. [file:2]'}]
+  },
+  estudo: {
+    title: 'Missão de Estudo do Meio',
+    blurb: 'Criada a partir das fichas de Estudo do Meio: ciclo da água e estados físicos da água, Sistema Solar, planetas, fases da Lua, rios, costa, geografia de Portugal e divisões administrativas. As perguntas abaixo foram reescritas para fazerem sentido sozinhas. [file:6][file:7]',
+    quests: [
+      { id:'e1', name:'Salpicos do Ciclo da Água', topic:'Água e estados físicos', questions:[
+        {q:'Como se chama o percurso que a água faz na Natureza à volta da Terra?', options:['Ciclo da água','Sistema Solar','Marés'], a:'Ciclo da água', e:'A ficha pede o nome do percurso que a água realiza na Terra. [file:6]'},
+        {q:'Quando a água líquida passa ao estado gasoso por causa do calor, como se chama essa mudança?', options:['Fusão','Evaporação','Solidificação'], a:'Evaporação', e:'A ficha pede o nome da mudança do estado líquido para o estado gasoso. [file:6]'},
+        {q:'Quando a água passa do estado líquido ao estado sólido devido ao arrefecimento, como se chama essa mudança?', options:['Solidificação','Evaporação','Fusão'], a:'Solidificação', e:'A secção sobre os estados da água pede o nome desta mudança. [file:6]'},
+        {q:'Quando a água passa do estado sólido ao estado líquido por aquecimento, como se chama essa mudança?', options:['Fusão','Granizo','Condensação'], a:'Fusão', e:'A ficha pede o nome da mudança do estado sólido para o estado líquido. [file:6]'},
+        {q:'No texto sobre o ciclo da água, o que arrefece e se transforma em gotinhas de água que formam as nuvens?', options:['Vapor de água','Mar','Granizo'], a:'Vapor de água', e:'O texto diz que o vapor de água arrefece e se transforma em gotas de água que formam as nuvens. [file:6]'},
+        {q:'A água das nuvens pode cair em forma de chuva, neve ou…', options:['Granizo','Marés','Nevoeiro'], a:'Granizo', e:'A ficha dá como exemplos chuva, neve ou granizo. [file:6]'}]},
+      { id:'e2', name:'Patrulha dos Planetas', topic:'Sistema Solar e Lua', questions:[
+        {q:'Segundo a ficha, o Sistema Solar é formado pelo Sol e por oito…', options:['Planets','Moons','Stars'], a:'Planets', e:'A ficha diz que o Sistema Solar é formado pelo Sol, oito planetas, satélites, asteroides e cometas. [file:6]'},
+        {q:'Qual é o satélite natural da Terra?', options:['Mars','Moon','Sun'], a:'Moon', e:'A ficha afirma que a Lua é o satélite natural da Terra. [file:6]'},
+        {q:'Quantos planetas existem no Sistema Solar?', options:['7','8','9'], a:'8', e:'As duas fichas sobre o Sistema Solar referem oito planetas. [file:6][file:7]'},
+        {q:'O movimento da Terra à volta do seu próprio eixo chama-se movimento de…', options:['Rotation','Translation','Evaporation'], a:'Rotation', e:'A ficha do Sistema Solar pede o nome do movimento da Terra à volta do seu próprio eixo. [file:7]'},
+        {q:'O movimento da Terra à volta do Sol chama-se movimento de…', options:['Rotation','Translation','Condensation'], a:'Translation', e:'A ficha pede o nome do movimento da Terra à volta do Sol. [file:7]'},
+        {q:'O movimento de rotação da Terra dá origem a quê?', options:['Day and night','Summer and winter','Rain and snow'], a:'Day and night', e:'A ficha do Sistema Solar diz que este movimento dá origem aos dias e às noites. [file:7]'}]},
+      { id:'e3', name:'Exploradores de Portugal', topic:'Rios, costa e território', questions:[
+        {q:'Junto à foz, um rio pode alargar-se. Como se chama esse alargamento?', options:['Estuary','Dune','Cliff'], a:'Estuary', e:'A secção de vocabulário da costa define estuário como o alargamento de um rio junto à foz. [file:6]'},
+        {q:'O que é uma duna?', options:['Uma colina de areia formada pela ação do vento junto ao mar','Uma zona de costa rochosa, alta e escarpada','Uma zona da costa em que a terra entra pelo mar'], a:'Uma colina de areia formada pela ação do vento junto ao mar', e:'A ficha define duna desta forma. [file:6]'},
+        {q:'O que é uma arriba?', options:['Uma costa baixa e arenosa','Uma zona de costa rochosa, alta e escarpada','A nascente de um rio'], a:'Uma zona de costa rochosa, alta e escarpada', e:'A ficha define arriba como uma zona de costa rochosa, alta e escarpada. [file:6]'},
+        {q:'O que é uma praia?', options:['Uma zona de costa baixa, plana e arenosa','Apenas a foz de um rio','Um cabo'], a:'Uma zona de costa baixa, plana e arenosa', e:'A secção de associação define praia desta forma. [file:6]'},
+        {q:'Qual é a maior elevação de Portugal Continental?', options:['Pico do Areeiro','Pico','Serra da Estrela'], a:'Serra da Estrela', e:'A ficha faz esta pergunta diretamente e dá Serra da Estrela como resposta correta para o continente. [file:6]'},
+        {q:'Segundo a pergunta sobre a divisão administrativa, Portugal é constituído por 18…', options:['Districts','Parishes','Continents'], a:'Districts', e:'A ficha diz que Portugal é constituído por 18 distritos. [file:6]'}]},
+      { id:'e4', name:'Missão dos Rios', topic:'Rios portugueses', questions:[
+        {q:'Que rio português já aparece identificado na ficha com o número 4?', options:['Rio Mondego','Rio Douro','Rio Tejo'], a:'Rio Mondego', e:'A ficha identifica o número 4 como rio Mondego. [file:6]'},
+        {q:'Que rio português já aparece identificado na ficha com o número 7?', options:['Rio Sado','Rio Guadiana','Rio Minho'], a:'Rio Guadiana', e:'A ficha identifica o número 7 como rio Guadiana. [file:6]'},
+        {q:'O rio que passa por Miranda do Douro e desagua no Atlântico junto ao Porto e a Vila Nova de Gaia é o…', options:['Douro','Mondego','Sado'], a:'Douro', e:'Esta descrição corresponde ao Douro na ficha. [file:6]'},
+        {q:'O rio que passa por Coimbra e desagua no Atlântico na Figueira da Foz é o…', options:['Mondego','Sado','Guadiana'], a:'Mondego', e:'Esta descrição corresponde ao Mondego na ficha. [file:6]'},
+        {q:'O rio que nasce na Serra da Vigia e desagua no Atlântico em Setúbal é o…', options:['Sado','Mondego','Douro'], a:'Sado', e:'Esta descrição corresponde ao Sado na ficha. [file:6]'},
+        {q:'Qual destas é uma atividade realista que se desenvolve nos rios portugueses?', options:['Pesca','Escalada de vulcões','Corridas no deserto'], a:'Pesca', e:'A ficha pede atividades que se desenvolvem nos rios portugueses; a pesca é um exemplo válido. [file:6]'}]}
+    ],
+    tests:[
+      {name:'Teste da Água e dos Estados Físicos', desc:'Estados físicos da água, vocabulário do ciclo da água e mudanças provocadas pelo aquecimento e pelo arrefecimento. [file:6]', key:'Usa espaços para completar e escolha múltipla, e depois mostra a resposta exata após cada pergunta. [file:6]'},
+      {name:'Teste do Sistema Solar', desc:'Sol, oito planetas, Lua, movimentos da Terra e dia/noite. [file:6][file:7]', key:'Mistura perguntas de memória com pequenas explicações para ela praticar factos e compreensão. [file:6][file:7]'},
+      {name:'Teste dos Rios e da Costa', desc:'Rios portugueses, estuário, duna, praia, arriba e vocabulário da erosão costeira. [file:6]', key:'Atribui 2 pontos por cada definição correta e um bónus por acertar todas as associações. [file:6]'},
+      {name:'Teste de Geografia de Portugal', desc:'Maiores elevações, distritos, divisões administrativas e noções básicas do mapa de Portugal. [file:6]', key:'Usa legendas de mapa sempre que possível e mantém o texto curto e direto. [file:6]'}]
+  }
+};
+
+let currentSubject = 'math';
+let currentTab = 'games';
+let currentQuest = null;
+let qIndex = 0;
+let points = 0;
+let completedQuests = new Set();
+let correctAnswers = 0;
+const totalUnits = 9 + 6;
+const completedTests = new Set();
+let chart;
+
+const subjectBtns = document.querySelectorAll('.subject-btn');
+const tabBtns = document.querySelectorAll('.tab-btn');
+const subjectTitle = document.getElementById('subjectTitle');
+const subjectBlurb = document.getElementById('subjectBlurb');
+const questList = document.getElementById('questList');
+const testList = document.getElementById('testList');
+const gameTitle = document.getElementById('gameTitle');
+const questionText = document.getElementById('questionText');
+const answers = document.getElementById('answers');
+const feedback = document.getElementById('feedback');
+const nextQuestion = document.getElementById('nextQuestion');
+const resetGame = document.getElementById('resetGame');
+const markTitle = document.getElementById('markTitle');
+const markBox = document.getElementById('markBox');
+const pointsEl = document.getElementById('points');
+const completedEl = document.getElementById('completed');
+const correctEl = document.getElementById('correct');
+const percentEl = document.getElementById('percent');
+const rewardBox = document.getElementById('rewardBox');
+const progressDetails = document.getElementById('progressDetails');
+
+function totalProgresso(){
+  return Math.round(((completedQuests.size + completedTests.size) / totalUnits) * 100);
+}
+
+function updateStats(){
+  pointsEl.textContent = points;
+  completedEl.textContent = completedQuests.size + completedTests.size;
+  correctEl.textContent = correctAnswers;
+  const pct = totalProgresso();
+  percentEl.textContent = pct + '%';
+  rewardBox.classList.toggle('show', pct >= 100);
+  progressDetails.innerHTML = `<p><strong>${completedQuests.size}</strong> quest games completed and <strong>${completedTests.size}</strong> test rounds completed. Progresso is calculated across 9 mini-games and 6 test rounds in total.</p>`;
+  if(chart){ chart.data.datasets[0].data = [pct, 100-pct]; chart.update(); }
+}
+
+function renderSubject(){
+  const s = data[currentSubject];
+  subjectTitle.textContent = s.title;
+  subjectBlurb.innerHTML = s.blurb;
+  questList.innerHTML = '';
+  s.quests.forEach(q => {
+    const done = completedQuests.has(q.id);
+    const div = document.createElement('div');
+    div.className = 'quest ' + (done ? 'done' : '');
+    div.innerHTML = `<div><strong>${q.name}</strong><div class="small">${q.topic}</div></div><button>${done ? 'Replay' : 'Começar'}</button>`;
+    div.querySelector('button').onclick = () => startQuest(q.id);
+    questList.appendChild(div);
+  });
+  testList.innerHTML = '';
+  s.tests.forEach((t, i) => {
+    const id = `${currentSubject}-test-${i}`;
+    const done = completedTests.has(id);
+    const div = document.createElement('div');
+    div.className = 'quest ' + (done ? 'done' : '');
+    div.innerHTML = `<div><strong>${t.name}</strong><div class="small">${t.desc}</div></div><button>${done ? 'Review' : 'Complete'}</button>`;
+    div.querySelector('button').onclick = () => completeTest(id, t);
+    testList.appendChild(div);
+  });
+  if(!currentQuest){
+    gameTitle.textContent = 'Escolhe uma missão';
+    questionText.textContent = 'Escolhe um jogo de revisão para começar.';
+    answers.innerHTML = '';
+    feedback.textContent = '';
+    nextQuestion.disabled = true;
+  }
+}
+
+function startQuest(id){
+  currentQuest = data[currentSubject].quests.find(q => q.id === id);
+  qIndex = 0;
+  gameTitle.textContent = currentQuest.name;
+  renderQuestion();
+}
+
+function renderQuestion(){
+  const item = currentQuest.questions[qIndex];
+  questionText.textContent = item.q;
+  feedback.textContent = '';
+  answers.innerHTML = '';
+  nextQuestion.disabled = true;
+  item.options.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'answer';
+    btn.textContent = opt;
+    btn.onclick = () => answerQuestion(btn, opt, item);
+    answers.appendChild(btn);
+  });
+}
+
+function answerQuestion(button, selected, item){
+  [...answers.children].forEach(btn => {
+    btn.disabled = true;
+    if(btn.textContent === item.a) btn.classList.add('correct');
+  });
+  if(selected === item.a){
+    button.classList.add('correct');
+    points += 10;
+    correctAnswers += 1;
+    feedback.textContent = '✅ Certo! ' + item.e;
+  } else {
+    button.classList.add('wrong');
+    feedback.textContent = '💡 Good try. ' + item.e;
+  }
+  nextQuestion.disabled = false;
+  updateStats();
+}
+
+nextQuestion.onclick = () => {
+  if(!currentQuest) return;
+  qIndex += 1;
+  if(qIndex < currentQuest.questions.length){
+    renderQuestion();
+  } else {
+    completedQuests.add(currentQuest.id);
+    points += 10;
+    feedback.textContent = '🏁 Quest completed! Bonus +10 points.';
+    updateStats();
+    renderSubject();
+    questionText.textContent = 'Missão concluída! Choose another revision game.';
+    answers.innerHTML = '';
+    nextQuestion.disabled = true;
+  }
+};
+
+resetGame.onclick = () => {
+  if(currentQuest){ qIndex = 0; renderQuestion(); }
+};
+
+function completeTest(id, t){
+  completedTests.add(id);
+  points += 15;
+  markTitle.textContent = t.name;
+  markBox.innerHTML = `<p><strong>Temas:</strong> ${t.desc}</p><p><strong>Suggested marking:</strong> ${t.key}</p><p><strong>Status:</strong> Concluída for progress tracking, +15 points added.</p>`;
+  updateStats();
+  renderSubject();
+}
+
+subjectBtns.forEach(btn => btn.onclick = () => {
+  subjectBtns.forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentSubject = btn.dataset.subject;
+  currentQuest = null;
+  renderSubject();
+});
+
+tabBtns.forEach(btn => btn.onclick = () => {
+  tabBtns.forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentTab = btn.dataset.tab;
+  document.getElementById('gamesView').style.display = currentTab === 'games' ? 'block' : 'none';
+  document.getElementById('testsView').style.display = currentTab === 'tests' ? 'block' : 'none';
+  document.getElementById('progressView').style.display = currentTab === 'progress' ? 'block' : 'none';
+});
+
+chart = new Chart(document.getElementById('progressChart'), {
+  type:'pie',
+  data:{labels:['Concluída','Remaining'],datasets:[{data:[0,100],backgroundColor:['#8b5cf6','#efe5ff'],borderWidth:0}]},
+  options:{plugins:{legend:{position:'bottom'}}, animation:{duration:700}}
+});
+
+renderSubject();
+updateStats();
+</script>
+</body>
+</html>

@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Spelling Stars App</title>
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet">
+  <style>
+    :root, [data-theme="light"] {
+      --text-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+      --text-sm: clamp(0.875rem, 0.8rem + 0.35vw, 1rem);
+      --text-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+      --text-lg: clamp(1.125rem, 1rem + 0.75vw, 1.5rem);
+      --text-xl: clamp(1.5rem, 1.2rem + 1.25vw, 2.25rem);
+      --space-2: 0.5rem; --space-3: 0.75rem; --space-4: 1rem; --space-5: 1.25rem; --space-6: 1.5rem; --space-8: 2rem;
+      --radius-md: 0.85rem; --radius-lg: 1.25rem; --radius-xl: 1.75rem; --radius-full: 9999px;
+      --color-surface: #fffdf8; --color-surface-2: #fff6e6; --color-border: rgba(58,40,22,0.12); --color-divider: rgba(58,40,22,0.08);
+      --color-text: #2f2418; --color-text-muted: #76685a; --color-primary: #ff7a59; --color-primary-2: #6c63ff; --color-green: #2ea76b; --color-gold: #f4b400;
+      --shadow-sm: 0 6px 18px rgba(66,37,10,0.08); --shadow-md: 0 18px 40px rgba(66,37,10,0.14); --font-body: 'Satoshi', system-ui, sans-serif;
+      --grad-main: linear-gradient(135deg, #ffefc1 0%, #ffd4e0 38%, #d8d7ff 100%); --grad-card: linear-gradient(180deg, rgba(255,255,255,0.92), rgba(255,255,255,0.76));
+    }
+    [data-theme="dark"] {
+      --color-surface: #211b2b; --color-surface-2: #2a2337; --color-border: rgba(255,255,255,0.12); --color-divider: rgba(255,255,255,0.08);
+      --color-text: #f8f4ef; --color-text-muted: #c8bfcf; --color-primary: #ff8f70; --color-primary-2: #8c82ff; --color-green: #59d690; --color-gold: #ffd45a;
+      --shadow-sm: 0 8px 18px rgba(0,0,0,0.25); --shadow-md: 0 18px 44px rgba(0,0,0,0.35); --grad-main: linear-gradient(135deg, #2f2344 0%, #311d2f 38%, #16334d 100%); --grad-card: linear-gradient(180deg, rgba(38,30,51,0.94), rgba(30,24,40,0.82));
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { min-height: 100dvh; font-family: var(--font-body); font-size: var(--text-base); color: var(--color-text); background: var(--grad-main); line-height: 1.5; }
+    button, input, textarea, select { font: inherit; } button { cursor: pointer; border: none; }
+    .app-shell { max-width: 1320px; margin: 0 auto; padding: var(--space-4); }
+    .topbar, .panel, .hero-card { border: 1px solid var(--color-border); border-radius: var(--radius-xl); background: var(--grad-card); backdrop-filter: blur(16px); box-shadow: var(--shadow-sm); }
+    .topbar { display:flex; justify-content:space-between; gap:var(--space-4); align-items:center; padding:var(--space-4); margin-bottom:var(--space-4); }
+    .brand { display:flex; gap:var(--space-3); align-items:center; }
+    .logo { width:54px; height:54px; border-radius:18px; display:grid; place-items:center; background:linear-gradient(135deg, var(--color-primary), var(--color-primary-2)); color:#fff; font-size:1.6rem; }
+    .brand h1 { font-size:var(--text-xl); line-height:1.05; } .muted, .brand p { color:var(--color-text-muted); font-size:var(--text-sm); }
+    .toolbar, .task-actions, .chips, .option-grid { display:flex; gap:var(--space-2); flex-wrap:wrap; }
+    .button, .mini-btn, .option-btn { min-height:44px; padding:0.8rem 1rem; border-radius:var(--radius-full); background:var(--color-surface); color:var(--color-text); border:1px solid var(--color-border); box-shadow:var(--shadow-sm); }
+    .button.primary { background:linear-gradient(135deg, var(--color-primary), #ff9c63); color:#fff; border-color:transparent; }
+    .button.secondary { background:linear-gradient(135deg, var(--color-primary-2), #8a7bff); color:#fff; border-color:transparent; }
+    .layout { display:grid; grid-template-columns:320px 1fr; gap:var(--space-4); }
+    .panel-inner { padding:var(--space-4); } .sidebar-section + .sidebar-section { border-top:1px solid var(--color-divider); }
+    .sidebar-title { font-size:var(--text-sm); text-transform:uppercase; letter-spacing:0.08em; color:var(--color-text-muted); margin-bottom:var(--space-3); }
+    .child-list, .level-list, .task-list, .analytics-list { display:grid; gap:var(--space-3); }
+    .child-card, .level-card, .task-card { width:100%; text-align:left; padding:var(--space-4); border-radius:var(--radius-lg); border:1px solid var(--color-border); background:var(--color-surface); box-shadow:var(--shadow-sm); }
+    .child-card.active, .level-card.active { outline:3px solid rgba(108,99,255,0.22); }
+    .child-header, .level-header, .section-head, .task-top, .game-top { display:flex; justify-content:space-between; gap:var(--space-3); align-items:center; }
+    .avatar { width:42px; height:42px; border-radius:14px; display:grid; place-items:center; color:#fff; font-weight:900; }
+    .grid-main { display:grid; gap:var(--space-4); }
+    .hero { display:grid; grid-template-columns:1.1fr 0.9fr; gap:var(--space-4); }
+    .hero-card { padding:var(--space-5); box-shadow:var(--shadow-md); }
+    .chip { padding:0.45rem 0.8rem; border-radius:var(--radius-full); font-size:var(--text-xs); font-weight:700; background:rgba(255,255,255,0.75); border:1px solid var(--color-border); }
+    .stats, .score-strip, .task-meta { display:grid; gap:var(--space-3); }
+    .stats { grid-template-columns:repeat(4, 1fr); }
+    .score-strip { grid-template-columns:repeat(4,1fr); }
+    .task-meta { grid-template-columns:repeat(3,1fr); margin-top:var(--space-3); }
+    .stat-card, .game-card, .meta-box { padding:var(--space-4); border-radius:var(--radius-lg); background:var(--color-surface); border:1px solid var(--color-border); box-shadow:var(--shadow-sm); }
+    .meta-box { padding:0.7rem; text-align:center; background:var(--color-surface-2); }
+    .stat-card strong { display:block; font-size:1.9rem; line-height:1.1; margin-top:var(--space-2); }
+    .content-grid { display:grid; grid-template-columns:1.05fr 0.95fr; gap:var(--space-4); }
+    .progress-bar { width:100%; height:14px; border-radius:var(--radius-full); background:rgba(0,0,0,0.08); overflow:hidden; margin-top:var(--space-2); }
+    .progress-fill { height:100%; border-radius:inherit; background:linear-gradient(90deg, var(--color-gold), var(--color-primary)); width:0%; transition:width 300ms ease; }
+    .points { font-size:var(--text-xs); font-weight:800; padding:0.35rem 0.6rem; border-radius:var(--radius-full); background:rgba(244,180,0,0.15); }
+    .task-card.complete { background:rgba(46,167,107,0.12); }
+    .word-editor textarea, .word-editor input, .word-editor select { width:100%; border-radius:var(--radius-lg); border:1px solid var(--color-border); background:var(--color-surface); padding:0.9rem 1rem; color:var(--color-text); }
+    .word-editor textarea { min-height:120px; resize:vertical; }
+    .reward-box { padding:var(--space-4); border-radius:var(--radius-lg); background:linear-gradient(135deg, rgba(244,180,0,0.18), rgba(255,122,89,0.18)); border:1px solid rgba(244,180,0,0.28); }
+    .star-row { display:flex; gap:0.2rem; flex-wrap:wrap; font-size:1.15rem; }
+    .game-stage { display:grid; gap:var(--space-4); }
+    .game-word { font-size:clamp(1.7rem, 1.2rem + 2vw, 3rem); font-weight:900; letter-spacing:0.04em; text-align:center; }
+    .answer-input { width:100%; padding:1rem 1.1rem; min-height:50px; border-radius:var(--radius-lg); border:1px solid var(--color-border); background:var(--color-surface); color:var(--color-text); }
+    .option-btn { justify-content:center; background:var(--color-surface-2); }
+    .toast { position:fixed; right:18px; bottom:18px; z-index:20; padding:0.95rem 1rem; border-radius:var(--radius-lg); background:var(--color-surface); border:1px solid var(--color-border); box-shadow:var(--shadow-md); max-width:340px; }
+    .hidden { display:none !important; }
+    @media (max-width: 1100px) { .layout, .hero, .content-grid { grid-template-columns:1fr; } .stats, .score-strip { grid-template-columns:repeat(2,1fr); } }
+    @media (max-width: 680px) { .topbar { flex-direction:column; align-items:stretch; } .stats, .score-strip, .task-meta { grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo">★</div>
+        <div>
+          <h1>Spelling Stars</h1>
+          <p>English spelling app with adaptive review, speech support, and weekly goals with streak tracking.</p>
+        </div>
+      </div>
+      <div class="toolbar">
+        <button class="button" id="themeToggle">🌙 Theme</button>
+        <button class="button" id="viewToggleBtn">Parent view</button>
+        <button class="button secondary" id="exportReportBtn">Export report</button>
+        <button class="button secondary" id="addLevelBtn">+ Add level</button>
+        <button class="button primary" id="resetChildBtn">Reset child</button>
+      </div>
+    </header>
+
+    <div class="layout">
+      <aside class="panel">
+        <div class="panel-inner sidebar-section">
+          <div class="sidebar-title">Children</div>
+          <div class="child-list" id="childList"></div>
+        </div>
+        <div class="panel-inner sidebar-section">
+          <div class="sidebar-title">Levels</div>
+          <div class="level-list" id="levelList"></div>
+        </div>
+      </aside>
+
+      <main class="grid-main">
+        <section class="panel hidden" id="parentPanel">
+          <div class="panel-inner">
+            <div class="section-head"><h3>Parent summary</h3><span class="muted">Across all children</span></div>
+            <div class="stats">
+              <div class="stat-card"><span class="muted">Family stars</span><strong id="familyStars">0</strong></div>
+              <div class="stat-card"><span class="muted">Family correct</span><strong id="familyCorrect">0</strong></div>
+              <div class="stat-card"><span class="muted">Family euros</span><strong id="familyEuros">€0</strong></div>
+              <div class="stat-card"><span class="muted">Weekly streaks</span><strong id="familyStreaks">0</strong></div>
+            </div>
+            <div style="height:1rem"></div>
+            <div class="analytics-list" id="parentCards"></div>
+          </div>
+        </section>
+
+        <section class="hero">
+          <div class="hero-card">
+            <div class="section-head">
+              <div>
+                <p class="muted">Current child</p>
+                <h2 id="childTitle">Owl</h2>
+              </div>
+              <div class="avatar" id="heroAvatar">O</div>
+            </div>
+            <p id="childSummary">This level includes repeated practice, grammar-linked checks, badges, adaptive review, speech support, and weekly goals.</p>
+            <div class="chips">
+              <span class="chip" id="chipBadge">Badge: ready to earn</span>
+              <span class="chip" id="chipLevel">Level 1</span>
+              <span class="chip" id="chipCorrect">0 correct</span>
+              <span class="chip" id="chipStars">0 stars</span>
+              <span class="chip" id="chipWordCount">50 words</span>
+              <span class="chip" id="chipGoal">Goal 4 days</span>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-inner">
+              <div class="section-head"><h3>Progress</h3><span class="muted" id="completionText">0% done</span></div>
+              <div class="stats">
+                <div class="stat-card"><span class="muted">Stars</span><strong id="totalStars">0</strong></div>
+                <div class="stat-card"><span class="muted">Correct answers</span><strong id="totalCorrect">0</strong></div>
+                <div class="stat-card"><span class="muted">Level reward</span><strong id="rewardEarned">€0</strong></div>
+                <div class="stat-card"><span class="muted">Completed levels</span><strong id="completedLevels">0</strong></div>
+              </div>
+              <div style="margin-top: 1rem;">
+                <span class="muted">100-answer target</span>
+                <div class="progress-bar"><div class="progress-fill" id="correctProgress"></div></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="content-grid">
+          <div class="panel">
+            <div class="panel-inner">
+              <div class="section-head"><h3>Play area</h3><span class="muted" id="taskCountLabel">5 tasks</span></div>
+              <div class="task-list" id="taskList"></div>
+              <div style="height:1rem"></div>
+              <div class="game-card">
+                <div class="game-top">
+                  <div>
+                    <p class="muted">Mini-game</p>
+                    <h3 id="gameTitle">Type the word</h3>
+                  </div>
+                  <span class="points" id="gameBadge">type</span>
+                </div>
+                <div style="height:1rem"></div>
+                <div class="score-strip">
+                  <div class="stat-card"><div class="muted">Round</div><strong id="roundCount">1</strong></div>
+                  <div class="stat-card"><div class="muted">Streak</div><strong id="streakCount">0</strong></div>
+                  <div class="stat-card"><div class="muted">Level words</div><strong id="levelWordsCount">50</strong></div>
+                  <div class="stat-card"><div class="muted">Grammar focus</div><strong id="grammarFocus">Basics</strong></div>
+                </div>
+                <div style="height:1rem"></div>
+                <div class="game-stage" id="gameStage"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-inner word-editor">
+              <div class="section-head"><h3>Goals and settings</h3><span class="muted">Parent controls</span></div>
+              <label for="weeklyGoalInput" class="muted">Weekly practice goal (days)</label>
+              <select id="weeklyGoalInput">
+                <option value="3">3 days</option>
+                <option value="4" selected>4 days</option>
+                <option value="5">5 days</option>
+                <option value="6">6 days</option>
+                <option value="7">7 days</option>
+              </select>
+              <div style="height:0.8rem"></div>
+              <div class="task-actions">
+                <button class="button primary" id="saveGoalBtn">Save goal</button>
+                <button class="button" id="logTodayBtn">Log today</button>
+              </div>
+              <div style="height:1rem"></div>
+              <label for="levelNameInput" class="muted">Level title</label>
+              <input id="levelNameInput" type="text" />
+              <div style="height:0.8rem"></div>
+              <label for="patternInput" class="muted">Focus pattern</label>
+              <input id="patternInput" type="text" />
+              <div style="height:0.8rem"></div>
+              <label for="grammarInput" class="muted">Grammar focus</label>
+              <input id="grammarInput" type="text" />
+              <div style="height:0.8rem"></div>
+              <label for="wordsInput" class="muted">Words, one per line or comma separated</label>
+              <textarea id="wordsInput"></textarea>
+              <div style="height:0.8rem"></div>
+              <div class="task-actions">
+                <button class="button primary" id="saveLevelBtn">Save level</button>
+                <button class="button" id="duplicateLevelBtn">Duplicate level</button>
+              </div>
+              <div class="reward-box" style="margin-top:1rem;">
+                <div class="section-head" style="margin-bottom:0.5rem;"><h3>Weekly goals</h3><span class="muted">Habit building</span></div>
+                <p>The app tracks how many separate days each child practises in the week and builds a streak when they hit the weekly goal consistently.</p>
+                <div style="height:0.8rem"></div>
+                <div class="star-row" id="rewardStarsPreview"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <div class="toast hidden" id="toast"></div>
+
+  <script>
+    const wordSets = {
+      l1: ['cat','dog','sun','jam','bed','leg','pin','top','run','hat','cup','box','man','hen','fox','rug','lip','net','bug','tap','mud','sock','fish','ship','shop','chat','thin','this','ring','sing','bell','hill','duck','back','rock','kick','milk','hand','sand','lamp','nest','frog','grin','stop','step','drum','flag','grab','clap','trip'],
+      l2: ['brush','clock','storm','train','green','sleep','brown','crisp','swing','float','dream','cheek','thorn','shark','whisk','split','crash','drink','plant','stamp','blush','globe','brick','track','fresh','smile','crane','twist','flame','scoop','drift','shelf','chest','thing','crunch','spring','thread','screen','branch','shrink','bright','cloud','stormy','thrive','clean','blend','frost','glide','splash','street'],
+      l3: ['cake','bike','home','cube','name','these','time','hope','smoke','grape','plane','stone','white','shine','brave','flute','drive','shape','theme','score','useful','inside','sunshine','bedtime','sunset','rainbow','sandpit','farmyard','football','windmill','weekday','seaside','bedroom','playground','teapot','moonlight','toothbrush','paintbrush','baseball','snowman','cowboy','weekday','mailbox','starlight','cupcake','sunbeam','sunflower','doorbell','backpack','railway'],
+      l4: ['jumped','jumping','played','playing','helped','helping','waited','waiting','cleaned','cleaning','painted','painting','looked','looking','hunted','hunting','faster','fastest','taller','tallest','smaller','smallest','older','oldest','boxes','wishes','dishes','foxes','babies','puppies','stories','tries','carried','carrying','happier','happiest','sadder','saddest','runner','teacher','farmer','singer','helper','reader','jumper','player','washer','painter','builder','listener'],
+      l5: ['careful','hopeful','playful','helpful','fearless','spotless','kindness','darkness','quickly','slowly','softly','sadly','badly','happily','teacherly','careless','restless','thankful','joyful','tidiness','messiness','goodness','quietly','loudly','neatly','bravely','politely','rudely','angrily','sleepy','windy','rainy','cloudy','sunny','foggy','dusty','rocky','salty','muddy','spotty','golden','wooden','broken','spoken','driver','writer','reader','sailor','actor','visitor'],
+      l6: ['unhappy','untidy','unfair','unsafe','unwell','dislike','disagree','disappear','misplace','misread','miscount','mistake','rewrite','replay','rebuild','return','redo','review','unclear','disobey','disconnect','mishear','mislead','reheat','repaint','preview','preheat','prepaid','subway','subsoil','indoor','outdoor','inside','outside','understand','overcook','overheat','underwater','midday','midnight','forehead','footballer','playground','sunflower','toothpaste','birthday','something','everyone','someone','nothing'],
+      l7: ['cant','dont','wont','isnt','arent','didnt','couldnt','shouldnt','wouldnt','im','youre','theyre','hes','shes','its','thats','whos','lets','childs','dogs','cats','girls','boys','mums','dads','teacher\'s','children\'s','dog\'s','cat\'s','girl\'s','boy\'s','mum\'s','dad\'s','teachers','children','families','brothers','sisters','friends','classmates','books','pencils','rulers','windows','tables','chairs','coats','bags','lunches'],
+      l8: ['there','their','they\'re','to','too','two','here','hear','one','won','be','bee','see','sea','sun','son','flower','flour','night','knight','write','right','new','knew','break','brake','mail','male','tail','tale','wear','where','which','witch','meet','meat','plain','plane','allowed','aloud','whole','hole','week','weak','berry','bury','pair','pear','main','mane'],
+      l9: ['station','action','fiction','caption','motion','nation','section','invention','discussion','revision','vision','decision','television','measure','treasure','usual','casual','pleasure','island','answer','sword','knock','wrist','write','gnome','lamb','climb','thumb','doubt','subtle','castle','listen','fasten','soften','honest','hour','ghost','school','scheme','chemist','chorus','machine','brochure','adventure','creature','picture','future','mixture','nature','capture'],
+      l10: ['beautiful','beautifully','wonderful','wonderfully','possible','possibly','terrible','terribly','regular','irregular','important','importance','different','difference','decide','decision','describe','description','invent','invention','collect','collection','act','action','educate','education','magic','magician','music','musician','hero','heroes','lady','ladies','family','families','knife','knives','leaf','leaves','mouse','mice','child','children','good','better','best','bad','worse','worst']
+    };
+    function makeTasks(){return[{id:'task-1',title:'Type the word',type:'Keyboard spelling',points:12,mode:'type'},{id:'task-2',title:'Missing letter game',type:'Fill the gap',points:14,mode:'missing'},{id:'task-3',title:'Pick the correct spelling',type:'Multiple choice',points:16,mode:'choice'},{id:'task-4',title:'Sentence grammar check',type:'Use in context',points:18,mode:'grammar'},{id:'task-5',title:'Mixed review',type:'Repeated practice',points:20,mode:'mixed'}]}
+    const levelDefs=[
+      {id:'level-1',title:'Level 1',pattern:'CVC words and simple sounds',grammar:'Capital letters and full stops',words:wordSets.l1,tasks:makeTasks()},
+      {id:'level-2',title:'Level 2',pattern:'Digraphs and blends',grammar:'Simple sentence reading',words:wordSets.l2,tasks:makeTasks()},
+      {id:'level-3',title:'Level 3',pattern:'Long vowels and compound words',grammar:'Sentence meaning and word choice',words:wordSets.l3,tasks:makeTasks()},
+      {id:'level-4',title:'Level 4',pattern:'Endings -s, -es, -ed, -ing, -er, -est',grammar:'Verb endings and plurals',words:wordSets.l4,tasks:makeTasks()},
+      {id:'level-5',title:'Level 5',pattern:'Suffixes and describing words',grammar:'Adjectives and adverbs',words:wordSets.l5,tasks:makeTasks()},
+      {id:'level-6',title:'Level 6',pattern:'Prefixes and longer words',grammar:'Meaning changes in words',words:wordSets.l6,tasks:makeTasks()},
+      {id:'level-7',title:'Level 7',pattern:'Contractions and apostrophes',grammar:'Possession and short forms',words:wordSets.l7,tasks:makeTasks()},
+      {id:'level-8',title:'Level 8',pattern:'Homophones and context clues',grammar:'Choose the right word in a sentence',words:wordSets.l8,tasks:makeTasks()},
+      {id:'level-9',title:'Level 9',pattern:'Silent letters and advanced patterns',grammar:'Sentence editing',words:wordSets.l9,tasks:makeTasks()},
+      {id:'level-10',title:'Level 10',pattern:'Morphology and tricky grammar links',grammar:'Word families, punctuation, and sentence repair',words:wordSets.l10,tasks:makeTasks()}
+    ];
+    const grammarPrompts={
+      'level-1':[{q:'Choose the correct sentence ending.',a:'The cat sat.',options:['The cat sat.','the cat sat','The cat sat']}],
+      'level-2':[{q:'Pick the sentence that starts correctly.',a:'The ship is big.',options:['the ship is big.','The ship is big.','The ship is big']}],
+      'level-3':[{q:'Which word fits the sentence?',a:'sunshine',options:['sunshine','bedtime','railway']}],
+      'level-4':[{q:'Pick the correct word: Yesterday I ___ high.',a:'jumped',options:['jumped','jumping','jump']}],
+      'level-5':[{q:'Pick the best adverb: She sang ___.',a:'softly',options:['softly','soft','softness']}],
+      'level-6':[{q:'Which prefix changes the meaning to “again”?',a:'replay',options:['misread','replay','untidy']}],
+      'level-7':[{q:'Which word shows possession?',a:"teacher's",options:["teacher's",'teachers','teacher']}],
+      'level-8':[{q:'Choose the right word: I can ___ the bell.',a:'hear',options:['hear','here','their']}],
+      'level-9':[{q:'Pick the correct spelling in the sentence: The train stopped at the ___.',a:'station',options:['station','stasion','staytion']}],
+      'level-10':[{q:'Pick the correct word family form: We made a good ___.',a:'decision',options:['decision','decide','deciding']}]
+    };
+    const appState={currentChildId:'owl',currentLevelId:'level-1',gameMode:'type',round:1,streak:0,gameWord:'',parentView:false,children:[{id:'owl',name:'Owl',color:'#ff7a59',icon:'O'},{id:'cub',name:'Cub',color:'#8b6dff',icon:'C'},{id:'bay',name:'Bay',color:'#f4b400',icon:'B'}],levels:levelDefs,progress:{}};
+    function createDefaultProgress(){const p={};appState.children.forEach(child=>{p[child.id]={totalStars:0,totalCorrect:0,euroTotal:0,completedLevels:[],levels:{},reviewPool:[],weeklyGoal:4,practiceDays:[],weeklyStreak:0,bestWeeklyStreak:0};appState.levels.forEach(level=>{p[child.id].levels[level.id]={correctAnswers:0,stars:0,rewardPaid:false,badges:[],taskStatus:Object.fromEntries(level.tasks.map(task=>[task.id,false]))};});});return p;}
+    function syncProgressWithLevels(){appState.children.forEach(child=>{if(!appState.progress[child.id])appState.progress[child.id]={totalStars:0,totalCorrect:0,euroTotal:0,completedLevels:[],levels:{},reviewPool:[],weeklyGoal:4,practiceDays:[],weeklyStreak:0,bestWeeklyStreak:0};const cp=appState.progress[child.id];cp.reviewPool ||= []; cp.weeklyGoal ||= 4; cp.practiceDays ||= []; cp.weeklyStreak ||= 0; cp.bestWeeklyStreak ||= 0;appState.levels.forEach(level=>{if(!cp.levels[level.id])cp.levels[level.id]={correctAnswers:0,stars:0,rewardPaid:false,badges:[],taskStatus:Object.fromEntries(level.tasks.map(task=>[task.id,false]))};});});}
+    function storageAvailable(){try{const k='__spell__';localStorage.setItem(k,'1');localStorage.removeItem(k);return true;}catch{return false;}}
+    const canStore=storageAvailable();
+    function saveState(){if(!canStore)return;localStorage.setItem('spellingStarsState',JSON.stringify({currentChildId:appState.currentChildId,currentLevelId:appState.currentLevelId,levels:appState.levels,progress:appState.progress,parentView:appState.parentView,theme:document.documentElement.getAttribute('data-theme')||'light'}));}
+    function loadState(){if(!canStore){appState.progress=createDefaultProgress();return;}const raw=localStorage.getItem('spellingStarsState');if(!raw){appState.progress=createDefaultProgress();return;}try{const parsed=JSON.parse(raw);appState.currentChildId=parsed.currentChildId||appState.currentChildId;appState.currentLevelId=parsed.currentLevelId||appState.currentLevelId;appState.levels=parsed.levels||appState.levels;appState.progress=parsed.progress||createDefaultProgress();appState.parentView=parsed.parentView||false;document.documentElement.setAttribute('data-theme',parsed.theme||'light');}catch{appState.progress=createDefaultProgress();}syncProgressWithLevels();}
+    const currentChild=()=>appState.children.find(c=>c.id===appState.currentChildId); const currentLevel=()=>appState.levels.find(l=>l.id===appState.currentLevelId)||appState.levels[0]; const childLevelProgress=(childId,levelId)=>appState.progress[childId].levels[levelId]; const randomItem=items=>items[Math.floor(Math.random()*items.length)]; const shuffle=arr=>[...arr].sort(()=>Math.random()-0.5);
+    function showToast(message){const t=document.getElementById('toast');t.textContent=message;t.classList.remove('hidden');clearTimeout(showToast.timer);showToast.timer=setTimeout(()=>t.classList.add('hidden'),2400);}
+    function ensureAwards(childId,levelId,mode){const lp=childLevelProgress(childId,levelId);const addBadge=name=>{if(!lp.badges.includes(name))lp.badges.push(name);};if(lp.correctAnswers>=1)addBadge('First Word');if(lp.correctAnswers>=25)addBadge('25 Correct');if(lp.correctAnswers>=50)addBadge('50 Correct');if(lp.correctAnswers>=100)addBadge('100 Correct');if(appState.streak>=5)addBadge('5 Streak');if(appState.streak>=10)addBadge('10 Streak');if(mode==='grammar')addBadge('Grammar Star');if(mode==='speak')addBadge('Speaking Star');if(Object.values(lp.taskStatus).every(Boolean))addBadge('Task Finisher');if(lp.rewardPaid)addBadge('Level Master');}
+    function addToReviewPool(word){const pool=appState.progress[appState.currentChildId].reviewPool;if(!pool.includes(word))pool.push(word);} function removeFromReviewPool(word){appState.progress[appState.currentChildId].reviewPool=appState.progress[appState.currentChildId].reviewPool.filter(w=>w!==word);}
+    function weekKey(){const d=new Date(); const onejan=new Date(d.getFullYear(),0,1); const day=Math.floor((d-onejan)/86400000); return `${d.getFullYear()}-W${Math.ceil((day+onejan.getDay()+1)/7)}`;}
+    function dayKey(){return new Date().toISOString().slice(0,10);} 
+    function logPracticeDay(){const cp=appState.progress[appState.currentChildId]; const key=dayKey(); if(!cp.practiceDays.includes(key)) cp.practiceDays.push(key); const currentWeek=weekKey(); const weekDays=cp.practiceDays.filter(d=>{const dt=new Date(d); const onejan=new Date(dt.getFullYear(),0,1); const day=Math.floor((dt-onejan)/86400000); return `${dt.getFullYear()}-W${Math.ceil((day+onejan.getDay()+1)/7)}`===currentWeek;}); if(weekDays.length>=cp.weeklyGoal){ cp.weeklyStreak = Math.max(cp.weeklyStreak, 1); cp.bestWeeklyStreak = Math.max(cp.bestWeeklyStreak, cp.weeklyStreak); } }
+    function pickNewWord(){const level=currentLevel();const pool=appState.progress[appState.currentChildId].reviewPool||[];const useReview=pool.length>0&&(appState.gameMode==='mixed'||Math.random()<0.35);appState.gameWord=useReview?randomItem(pool):randomItem(level.words);}
+    function recalcChildTotals(childId){const child=appState.progress[childId];let totalStars=0,totalCorrect=0,euroTotal=0,completed=[];Object.entries(child.levels).forEach(([levelId,progress])=>{totalStars+=progress.stars;totalCorrect+=progress.correctAnswers;if(progress.rewardPaid){euroTotal+=5;completed.push(levelId);}});child.totalStars=totalStars;child.totalCorrect=totalCorrect;child.euroTotal=euroTotal;child.completedLevels=completed;}
+    function levelCompletion(levelId,childId){const level=appState.levels.find(l=>l.id===levelId);const progress=childLevelProgress(childId,levelId);const taskFraction=Object.values(progress.taskStatus).filter(Boolean).length/level.tasks.length;const correctFraction=Math.min(progress.correctAnswers/100,1);return((taskFraction*0.5)+(correctFraction*0.5))*100;}
+    function masteryBand(levelId, childId){const v=levelCompletion(levelId, childId);return v>=85?'Strong':v>=60?'Building':'Needs review';}
+    function weeklyProgress(childId){const cp=appState.progress[childId]; const currentWeek=weekKey(); const weekDays=cp.practiceDays.filter(d=>{const dt=new Date(d); const onejan=new Date(dt.getFullYear(),0,1); const day=Math.floor((dt-onejan)/86400000); return `${dt.getFullYear()}-W${Math.ceil((day+onejan.getDay()+1)/7)}`===currentWeek;}); return { done: weekDays.length, goal: cp.weeklyGoal, streak: cp.weeklyStreak, best: cp.bestWeeklyStreak }; }
+    function renderChildren(){const wrap=document.getElementById('childList');wrap.innerHTML='';appState.children.forEach(child=>{const totals=appState.progress[child.id];const week=weeklyProgress(child.id);const btn=document.createElement('button');btn.className='child-card'+(child.id===appState.currentChildId?' active':'');btn.innerHTML=`<div class="child-header"><div style="display:flex; gap:0.75rem; align-items:center;"><div class="avatar" style="background:${child.color};">${child.icon}</div><div><div><strong>${child.name}</strong></div><div class="muted">${totals.totalStars} stars · €${totals.euroTotal}</div></div></div><span class="points">${totals.totalCorrect}</span></div><div class="muted">${totals.completedLevels.length} completed levels · Goal ${week.done}/${week.goal} days</div>`;btn.addEventListener('click',()=>{appState.currentChildId=child.id;render();saveState();});wrap.appendChild(btn);});}
+    function renderLevels(){const wrap=document.getElementById('levelList');wrap.innerHTML='';appState.levels.forEach((level,index)=>{const progress=childLevelProgress(appState.currentChildId,level.id);const doneTasks=Object.values(progress.taskStatus).filter(Boolean).length;const btn=document.createElement('button');btn.className='level-card'+(level.id===appState.currentLevelId?' active':'');btn.innerHTML=`<div class="level-header"><div><strong>${level.title}</strong><div class="muted">${level.pattern}</div></div><span class="points">${index+1}</span></div><div class="muted">${level.words.length} words · ${doneTasks}/${level.tasks.length} tasks done</div><div class="progress-bar"><div class="progress-fill" style="width:${Math.min(100,progress.correctAnswers)}%"></div></div>`;btn.addEventListener('click',()=>{appState.currentLevelId=level.id;pickNewWord();render();saveState();});wrap.appendChild(btn);});}
+    function renderHero(){const child=currentChild(),level=currentLevel(),prog=childLevelProgress(child.id,level.id),week=weeklyProgress(child.id);document.getElementById('childTitle').textContent=child.name;document.getElementById('heroAvatar').textContent=child.icon;document.getElementById('heroAvatar').style.background=child.color;document.getElementById('childSummary').textContent=`${child.name} is working on ${level.title}. This level has ${level.words.length} target words, adaptive review, speech support, and a ${week.goal}-day weekly goal.`;document.getElementById('chipBadge').textContent=(prog.badges&&prog.badges.length)?`Badge: ${prog.badges[prog.badges.length-1]}`:'Badge: ready to earn';document.getElementById('chipLevel').textContent=`${level.title} · ${level.pattern}`;document.getElementById('chipCorrect').textContent=`${prog.correctAnswers} correct`;document.getElementById('chipStars').textContent=`${prog.stars} stars`;document.getElementById('chipWordCount').textContent=`${level.words.length} words`;document.getElementById('chipGoal').textContent=`Goal ${week.goal} days · Streak ${week.streak}`;document.getElementById('completionText').textContent=`${Math.round(levelCompletion(level.id,child.id))}% done`;document.getElementById('correctProgress').style.width=`${Math.min(100,prog.correctAnswers)}%`;document.getElementById('weeklyGoalInput').value=String(appState.progress[child.id].weeklyGoal);}
+    function renderStats(){const totals=appState.progress[appState.currentChildId],level=currentLevel();document.getElementById('totalStars').textContent=totals.totalStars;document.getElementById('totalCorrect').textContent=totals.totalCorrect;document.getElementById('rewardEarned').textContent=`€${totals.euroTotal}`;document.getElementById('completedLevels').textContent=totals.completedLevels.length;document.getElementById('roundCount').textContent=appState.round;document.getElementById('streakCount').textContent=appState.streak;document.getElementById('levelWordsCount').textContent=level.words.length;document.getElementById('grammarFocus').textContent=level.grammar;document.getElementById('rewardStarsPreview').innerHTML='⭐'.repeat(10);}
+    function renderTasks(){const level=currentLevel(),progress=childLevelProgress(appState.currentChildId,level.id),wrap=document.getElementById('taskList');wrap.innerHTML='';document.getElementById('taskCountLabel').textContent=`${level.tasks.length} tasks`;level.tasks.forEach(task=>{const done=!!progress.taskStatus[task.id];const card=document.createElement('div');card.className='task-card'+(done?' complete':'');card.innerHTML=`<div class="task-top"><div><strong>${task.title}</strong><div class="muted">${task.type}</div></div><span class="points">${task.points} pts</span></div><div class="task-meta"><div class="meta-box"><div class="muted">Words</div><strong>${level.words.length}</strong></div><div class="meta-box"><div class="muted">Pattern</div><strong>${level.pattern}</strong></div><div class="meta-box"><div class="muted">Grammar</div><strong>${level.grammar}</strong></div></div><div class="task-actions" style="margin-top:1rem"><button class="mini-btn" data-play-mode="${task.mode}">Play task</button><button class="mini-btn" data-task-complete="${task.id}">${done?'Completed':'Mark task done'}</button></div>`;wrap.appendChild(card);});wrap.querySelectorAll('[data-play-mode]').forEach(btn=>btn.addEventListener('click',()=>{appState.gameMode=btn.dataset.playMode;pickNewWord();renderGame();}));wrap.querySelectorAll('[data-task-complete]').forEach(btn=>btn.addEventListener('click',()=>completeTask(btn.dataset.taskComplete)));}
+    function renderEditor(){const level=currentLevel();document.getElementById('levelNameInput').value=level.title;document.getElementById('patternInput').value=level.pattern;document.getElementById('grammarInput').value=level.grammar;document.getElementById('wordsInput').value=level.words.join('\n');}
+    function renderParentPanel(){const panel=document.getElementById('parentPanel');panel.classList.toggle('hidden',!appState.parentView);let stars=0,correct=0,euros=0,streaks=0;const cards=document.getElementById('parentCards');cards.innerHTML='';appState.children.forEach(child=>{const totals=appState.progress[child.id];const week=weeklyProgress(child.id);stars+=totals.totalStars;correct+=totals.totalCorrect;euros+=totals.euroTotal;streaks+=week.streak;let badgeCount=0,bestLevel='None yet',bestScore=0;Object.entries(totals.levels).forEach(([levelId,lp])=>{badgeCount+=(lp.badges||[]).length;const score=levelCompletion(levelId, child.id);if(score>bestScore){bestScore=score;bestLevel=appState.levels.find(l=>l.id===levelId)?.title||levelId;}});const div=document.createElement('div');div.className='task-card';div.innerHTML=`<div class="task-top"><div><strong>${child.name}</strong><div class="muted">Separate profile summary</div></div><span class="points">${badgeCount} badges</span></div><div class="task-meta"><div class="meta-box"><div class="muted">Correct</div><strong>${totals.totalCorrect}</strong></div><div class="meta-box"><div class="muted">Weekly goal</div><strong>${week.done}/${week.goal}</strong></div><div class="meta-box"><div class="muted">Best streak</div><strong>${week.best}</strong></div></div><div style="margin-top:0.8rem" class="muted">Best level: ${bestLevel} · Mastery: ${Math.round(bestScore)}%</div><div class="muted">Current level status: ${masteryBand(appState.currentLevelId, child.id)} · ${Math.round(levelCompletion(appState.currentLevelId, child.id))}%</div><div class="muted">Review pool: ${(totals.reviewPool.slice(0,6).join(', ')) || 'No saved review words yet'}</div>`;cards.appendChild(div);});document.getElementById('familyStars').textContent=stars;document.getElementById('familyCorrect').textContent=correct;document.getElementById('familyEuros').textContent=`€${euros}`;document.getElementById('familyStreaks').textContent=streaks;}
+    function recalcRewards(childId,levelId){const level=currentLevel(),progress=childLevelProgress(childId,levelId),allTasksDone=Object.values(progress.taskStatus).every(Boolean)&&level.tasks.length>0;if(progress.correctAnswers>=100&&allTasksDone&&!progress.rewardPaid){progress.rewardPaid=true;progress.stars+=5;ensureAwards(childId,levelId,'mixed');showToast('Level completed. €5 reward unlocked and +5 bonus stars.');}}
+    function completeTask(taskId){const progress=childLevelProgress(appState.currentChildId,appState.currentLevelId);if(progress.taskStatus[taskId])return;progress.taskStatus[taskId]=true;progress.stars+=2;progress.correctAnswers+=10;ensureAwards(appState.currentChildId,appState.currentLevelId,'mixed');logPracticeDay();recalcRewards(appState.currentChildId,appState.currentLevelId);recalcChildTotals(appState.currentChildId);render();saveState();showToast('Task completed. +2 stars and today was counted toward the weekly goal.');}
+    function markCorrect(taskMode){const level=currentLevel(),progress=childLevelProgress(appState.currentChildId,level.id),word=appState.gameWord;progress.correctAnswers+=1;progress.stars+=appState.streak>0&&appState.streak%5===0?2:1;const task=level.tasks.find(t=>t.mode===taskMode||(taskMode==='mixed'&&t.mode==='mixed'));if(task)progress.taskStatus[task.id]=true;appState.streak+=1;ensureAwards(appState.currentChildId,level.id,taskMode);removeFromReviewPool(word);logPracticeDay();appState.round+=1;recalcRewards(appState.currentChildId,level.id);recalcChildTotals(appState.currentChildId);pickNewWord();render();saveState();showToast('Correct! Progress saved and practice counted for today.');}
+    function markWrong(answer){appState.streak=0;appState.round+=1;addToReviewPool(answer);logPracticeDay();renderStats();showToast(`Not quite. ${answer} was saved for extra review.`);pickNewWord();renderGame();saveState();}
+    function buildMissingWord(word){if(word.length<=3)return word[0]+'_'+word.slice(2);const index=Math.max(1,Math.floor(word.length/2));return word.slice(0,index)+'_'+word.slice(index+1);} function choiceOptions(word,pool){const wrong=shuffle(pool.filter(w=>w!==word)).slice(0,2);while(wrong.length<2)wrong.push(word.split('').reverse().join(''));return shuffle([word,...wrong]);}
+    function speakWord(){if(!('speechSynthesis' in window)){showToast('Speech is not supported in this browser.');return;}const u=new SpeechSynthesisUtterance(appState.gameWord);u.lang='en-GB';window.speechSynthesis.cancel();window.speechSynthesis.speak(u);}
+    function startSpeechCheck(){if(!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)){showToast('Speech recognition is not supported in this browser.');return;}const Rec=window.SpeechRecognition||window.webkitSpeechRecognition;const rec=new Rec();rec.lang='en-GB';rec.interimResults=false;rec.maxAlternatives=1;rec.onresult=e=>{const heard=e.results[0][0].transcript.trim().toLowerCase(); if(heard===appState.gameWord.toLowerCase()) markCorrect('speak'); else markWrong(appState.gameWord);};rec.onerror=()=>showToast('Speech recognition did not catch that clearly.');rec.start();}
+    function renderGame(){const level=currentLevel();if(!appState.gameWord)pickNewWord();const word=appState.gameWord,stage=document.getElementById('gameStage');document.getElementById('gameBadge').textContent=appState.gameMode;document.getElementById('gameTitle').textContent=appState.gameMode==='type'?'Type the word':appState.gameMode==='missing'?'Fill the missing letter':appState.gameMode==='choice'?'Pick the correct spelling':appState.gameMode==='grammar'?'Grammar sentence check':appState.gameMode==='speak'?'Say the word':'Mixed review';
+      if(appState.gameMode==='type'){stage.innerHTML=`<div class="muted">Type the word exactly as shown or use the audio help.</div><div class="game-word">${word}</div><div class="task-actions"><button class="button" id="speakBtn">🔊 Say word</button><button class="button" id="speechPracticeBtn">🎤 Pronounce it</button></div><input class="answer-input" id="typeAnswer" placeholder="Type the word here" /><div class="task-actions"><button class="button primary" id="submitType">Check answer</button></div>`;document.getElementById('speakBtn').addEventListener('click',speakWord);document.getElementById('speechPracticeBtn').addEventListener('click',startSpeechCheck);document.getElementById('submitType').addEventListener('click',()=>document.getElementById('typeAnswer').value.trim().toLowerCase()===word.toLowerCase()?markCorrect('type'):markWrong(word));}
+      else if(appState.gameMode==='missing'){const prompt=buildMissingWord(word);stage.innerHTML=`<div class="muted">Fill in the missing letter.</div><div class="game-word">${prompt}</div><input class="answer-input" id="missingAnswer" maxlength="3" placeholder="Missing letter" /><div class="task-actions"><button class="button primary" id="submitMissing">Check answer</button></div>`;document.getElementById('submitMissing').addEventListener('click',()=>prompt.replace('_',document.getElementById('missingAnswer').value.trim().toLowerCase())===word.toLowerCase()?markCorrect('missing'):markWrong(word));}
+      else if(appState.gameMode==='choice'){const options=choiceOptions(word,level.words);stage.innerHTML=`<div class="muted">Choose the correctly spelled word.</div><div class="option-grid" id="choiceGrid"></div>`;const grid=document.getElementById('choiceGrid');options.forEach(option=>{const btn=document.createElement('button');btn.className='option-btn';btn.textContent=option;btn.addEventListener('click',()=>option===word?markCorrect('choice'):markWrong(word));grid.appendChild(btn);});}
+      else if(appState.gameMode==='grammar'){const prompt=randomItem(grammarPrompts[level.id]||grammarPrompts['level-1']);stage.innerHTML=`<div class="muted">Use spelling inside a grammar choice.</div><div class="game-word">${prompt.q}</div><div class="option-grid" id="grammarGrid"></div>`;const grid=document.getElementById('grammarGrid');prompt.options.forEach(option=>{const btn=document.createElement('button');btn.className='option-btn';btn.textContent=option;btn.addEventListener('click',()=>option===prompt.a?markCorrect('grammar'):markWrong(prompt.a));grid.appendChild(btn);});}
+      else if(appState.gameMode==='speak'){stage.innerHTML=`<div class="muted">Listen, then say the word aloud.</div><div class="game-word">${word}</div><div class="task-actions"><button class="button" id="speakWordBtn">🔊 Hear it</button><button class="button primary" id="checkSpeechBtn">🎤 Start speaking</button></div>`;document.getElementById('speakWordBtn').addEventListener('click',speakWord);document.getElementById('checkSpeechBtn').addEventListener('click',startSpeechCheck);}
+      else {appState.gameWord=appState.progress[appState.currentChildId].reviewPool.length?randomItem(appState.progress[appState.currentChildId].reviewPool):randomItem(level.words);appState.gameMode=randomItem(['type','missing','choice','grammar','speak']);renderGame();}}
+    function saveLevelEdits(){const level=currentLevel();level.title=document.getElementById('levelNameInput').value.trim()||level.title;level.pattern=document.getElementById('patternInput').value.trim()||level.pattern;level.grammar=document.getElementById('grammarInput').value.trim()||level.grammar;const words=document.getElementById('wordsInput').value.split(/[\n,]+/).map(w=>w.trim()).filter(Boolean);if(words.length>=50)level.words=words;else showToast('Please keep at least 50 words in each level.');syncProgressWithLevels();pickNewWord();render();saveState();}
+    function duplicateLevel(){const level=currentLevel(),copy=JSON.parse(JSON.stringify(level));copy.id=`level-${Date.now()}`;copy.title=`${level.title} Copy`;appState.levels.push(copy);syncProgressWithLevels();appState.currentLevelId=copy.id;pickNewWord();render();saveState();showToast('Level duplicated.');}
+    function addLevel(){const template=JSON.parse(JSON.stringify(currentLevel()));template.id=`level-${Date.now()}`;template.title=`Level ${appState.levels.length+1}`;appState.levels.push(template);syncProgressWithLevels();appState.currentLevelId=template.id;pickNewWord();render();saveState();showToast('New level added.');}
+    function resetCurrentChild(){appState.progress[appState.currentChildId]=createDefaultProgress()[appState.currentChildId];appState.round=1;appState.streak=0;pickNewWord();render();saveState();showToast('Child progress reset.');}
+    function exportReport(){const rows=[];appState.children.forEach(child=>{const totals=appState.progress[child.id];const week=weeklyProgress(child.id);Object.entries(totals.levels).forEach(([levelId,lp])=>{const level=appState.levels.find(l=>l.id===levelId);rows.push({child:child.name,level:level?.title||levelId,correct:lp.correctAnswers,stars:lp.stars,rewardPaid:lp.rewardPaid?'yes':'no',badges:(lp.badges||[]).join('; '),reviewWords:totals.reviewPool.join('; '),weeklyGoal:week.goal,weeklyDone:week.done,weeklyStreak:week.streak,mastery:Math.round(levelCompletion(levelId, child.id))});});});const headers=Object.keys(rows[0]||{child:'',level:'',correct:'',stars:'',rewardPaid:'',badges:'',reviewWords:'',weeklyGoal:'',weeklyDone:'',weeklyStreak:'',mastery:''});const csv=[headers.join(',')].concat(rows.map(r=>headers.map(h=>`"${String(r[h]).replaceAll('"','""')}"`).join(','))).join('\n');const blob=new Blob([csv],{type:'text/csv'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='spelling-stars-parent-report.csv';a.click();URL.revokeObjectURL(a.href);showToast('Parent report exported as CSV.');}
+    function saveGoal(){const v=Number(document.getElementById('weeklyGoalInput').value);appState.progress[appState.currentChildId].weeklyGoal=v;render();saveState();showToast(`Weekly goal updated to ${v} days.`);}
+    function bindGlobalActions(){document.getElementById('themeToggle').addEventListener('click',()=>{const root=document.documentElement,next=root.getAttribute('data-theme')==='dark'?'light':'dark';root.setAttribute('data-theme',next);saveState();});document.getElementById('viewToggleBtn').addEventListener('click',()=>{appState.parentView=!appState.parentView;document.getElementById('viewToggleBtn').textContent=appState.parentView?'Child view':'Parent view';renderParentPanel();saveState();});document.getElementById('exportReportBtn').addEventListener('click',exportReport);document.getElementById('addLevelBtn').addEventListener('click',addLevel);document.getElementById('resetChildBtn').addEventListener('click',resetCurrentChild);document.getElementById('saveLevelBtn').addEventListener('click',saveLevelEdits);document.getElementById('duplicateLevelBtn').addEventListener('click',duplicateLevel);document.getElementById('saveGoalBtn').addEventListener('click',saveGoal);document.getElementById('logTodayBtn').addEventListener('click',()=>{logPracticeDay(); render(); saveState(); showToast('Today was added to the weekly goal tracker.');});}
+    function render(){syncProgressWithLevels();appState.children.forEach(child=>recalcChildTotals(child.id));renderChildren();renderLevels();renderHero();renderStats();renderTasks();renderEditor();renderGame();renderParentPanel();if(!canStore)showToast('Storage is limited here. Progress works in this session, but permanent saving depends on where the app is hosted.');}
+    loadState();pickNewWord();bindGlobalActions();document.getElementById('viewToggleBtn').textContent=appState.parentView?'Child view':'Parent view';render();
+  </script>
+</body>
+</html>

@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Nunito',-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;background:#071020;min-height:100vh;color:#eee}
+.wrap{max-width:920px;margin:0 auto;padding:20px 16px}
+.hero{background:linear-gradient(135deg,#071020,#0d1e3a,#071528);border-radius:20px;padding:28px 24px;text-align:center;margin-bottom:22px;border:1px solid rgba(100,181,246,0.15)}
+.hero h1{font-family:'Fredoka One',cursive;font-size:2.2rem;color:#64b5f6;letter-spacing:2px}
+.hero p{color:#90caf9;font-size:0.9rem;margin-top:6px}
+.ks-badges{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:10px}
+.ks-badge{display:inline-block;background:rgba(100,181,246,0.1);border:1px solid rgba(100,181,246,0.2);color:#64b5f6;font-size:0.65rem;font-weight:800;padding:3px 10px;border-radius:20px;letter-spacing:.8px}
+.profile-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px}
+.profile-card{background:rgba(255,255,255,0.04);border:2px solid rgba(255,255,255,0.07);border-radius:16px;padding:20px 12px;text-align:center;cursor:pointer;transition:all .2s}
+.profile-card:hover,.profile-card.active{border-color:#64b5f6;background:rgba(100,181,246,0.07);transform:translateY(-3px)}
+.pname{font-family:'Fredoka One',cursive;font-size:1.3rem;color:#64b5f6;margin-top:7px}
+.plevel{color:#888;font-size:0.72rem;margin-top:2px}
+.pstars{margin-top:7px;font-size:0.8rem;color:#f0b429;min-height:18px}
+.nav-tabs{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:18px;background:rgba(255,255,255,0.03);border-radius:12px;padding:7px}
+.nav-tab{padding:7px 11px;border-radius:8px;border:none;font-family:'Nunito',sans-serif;font-weight:700;font-size:0.73rem;cursor:pointer;transition:all .15s;background:transparent;color:#777}
+.nav-tab:hover{background:rgba(255,255,255,0.06);color:#ccc}
+.nav-tab.active{background:#64b5f6;color:#071020}
+.nav-tab.done{color:#64b5f6}
+.nav-tab.done::after{content:" ✓"}
+.story-panel{background:linear-gradient(135deg,rgba(7,16,32,0.9),rgba(13,30,58,0.7));border:1px solid rgba(100,181,246,0.1);border-radius:18px;padding:24px;margin-bottom:18px}
+.chapter-label{font-family:'Fredoka One',cursive;color:#64b5f6;font-size:0.8rem;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;opacity:.8}
+.story-h{font-family:'Fredoka One',cursive;font-size:1.6rem;color:white;margin-bottom:14px}
+.story-body{font-size:0.93rem;line-height:1.88;color:#bbdefb}
+.story-body p{margin-bottom:12px}
+.hl{color:#64b5f6;font-weight:800}
+.fact-pull{background:rgba(100,181,246,0.07);border-left:3px solid #64b5f6;border-radius:0 10px 10px 0;padding:12px 15px;margin:12px 0;font-size:0.85rem;color:#bbdefb}
+.fact-pull strong{display:block;color:#64b5f6;margin-bottom:3px;font-size:0.75rem;text-transform:uppercase;letter-spacing:.5px}
+.ks3-pull{background:rgba(240,180,41,0.07);border-left:3px solid #f0b429;border-radius:0 10px 10px 0;padding:12px 15px;margin:12px 0;font-size:0.85rem;color:#ffe0b2}
+.ks3-pull strong{display:block;color:#f0b429;margin-bottom:3px;font-size:0.75rem;text-transform:uppercase;letter-spacing:.5px}
+.portugal-pull{background:rgba(79,195,247,0.07);border-left:3px solid #4fc3f7;border-radius:0 10px 10px 0;padding:12px 15px;margin:12px 0;font-size:0.85rem;color:#b3d9f0}
+.portugal-pull strong{display:block;color:#4fc3f7;margin-bottom:3px;font-size:0.75rem;text-transform:uppercase;letter-spacing:.5px}
+.story-emoji{font-size:3.5rem;text-align:center;margin:14px 0}
+.page-nav{display:flex;justify-content:space-between;align-items:center;margin-top:16px}
+.page-ctr{font-size:0.75rem;color:#555}
+.cont-btn{background:linear-gradient(135deg,#1565c0,#0d47a1);color:#bbdefb;border:none;border-radius:30px;padding:10px 24px;font-family:'Nunito',sans-serif;font-weight:800;font-size:0.88rem;cursor:pointer;transition:all .15s}
+.cont-btn:hover{transform:scale(1.04)}
+.explorer-wrap{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:18px;padding:20px;margin-bottom:18px}
+.explorer-title{font-family:'Fredoka One',cursive;color:#64b5f6;font-size:1.2rem;margin-bottom:4px}
+.explorer-sub{color:#777;font-size:0.78rem;margin-bottom:14px}
+.continent-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px}
+.continent-card{background:rgba(255,255,255,0.04);border:2px solid rgba(255,255,255,0.07);border-radius:12px;padding:14px;cursor:pointer;transition:all .2s}
+.continent-card:hover,.continent-card.selected{border-color:#64b5f6;background:rgba(100,181,246,0.06)}
+.cont-emoji{font-size:1.8rem;margin-bottom:6px}
+.cont-name{font-family:'Fredoka One',cursive;color:white;font-size:1rem}
+.cont-sub{font-size:0.7rem;color:#888;margin-top:2px}
+.cont-detail{background:rgba(255,255,255,0.05);border-radius:14px;padding:18px;margin-top:8px;animation:fadeIn .3s ease}
+.cont-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:10px}
+.cstat{background:rgba(255,255,255,0.04);border-radius:8px;padding:8px}
+.cstat-label{font-size:0.6rem;color:#777;margin-bottom:2px;text-transform:uppercase;letter-spacing:.5px}
+.cstat-val{font-size:0.82rem;font-weight:700;color:white}
+.flag-game{background:rgba(255,255,255,0.04);border:1px solid rgba(100,181,246,0.1);border-radius:18px;padding:20px;margin-bottom:18px}
+.fg-title{font-family:'Fredoka One',cursive;color:#64b5f6;font-size:1.2rem;margin-bottom:4px}
+.flag-display{font-size:4rem;text-align:center;margin:14px 0;animation:pop .3s ease}
+.flag-q{font-size:0.95rem;font-weight:700;color:white;margin-bottom:10px;text-align:center}
+.flag-opts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.flag-opt{background:rgba(255,255,255,0.06);border:2px solid rgba(255,255,255,0.1);border-radius:10px;padding:10px;font-family:'Nunito',sans-serif;font-size:0.85rem;font-weight:600;cursor:pointer;transition:all .15s;color:#ddd;text-align:center}
+.flag-opt:hover:not(:disabled){border-color:#64b5f6;background:rgba(100,181,246,0.08)}
+.flag-opt.correct{background:rgba(46,125,50,0.22);border-color:#66bb6a;color:#a5d6a7}
+.flag-opt.wrong{background:rgba(198,40,40,0.18);border-color:#ef9a9a;color:#ef9a9a}
+.score-dots{display:flex;gap:4px;margin-bottom:12px}
+.sdot{width:11px;height:11px;border-radius:50%;background:rgba(255,255,255,0.09);transition:all .3s}
+.sdot.done{background:#66bb6a}.sdot.current{background:#f0b429}.sdot.wrong{background:#f44336}
+.math-panel{background:rgba(240,180,41,0.04);border:1px solid rgba(240,180,41,0.12);border-radius:18px;padding:20px;margin-bottom:18px}
+.challenge-card{background:rgba(255,255,255,0.04);border-radius:12px;padding:16px;margin-bottom:12px}
+.ch-title{font-family:'Fredoka One',cursive;color:#f0b429;font-size:0.95rem;margin-bottom:6px}
+.ch-story{font-size:0.87rem;color:#bbdefb;line-height:1.7;margin-bottom:10px;font-style:italic;padding-left:10px;border-left:2px solid rgba(240,180,41,0.25)}
+.ch-q{font-size:0.95rem;font-weight:700;color:white;margin-bottom:8px}
+.math-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.math-in{background:rgba(255,255,255,0.06);border:2px solid rgba(255,255,255,0.1);border-radius:9px;padding:9px 13px;color:white;font-family:'Nunito',sans-serif;font-size:0.95rem;outline:none;width:160px;transition:border-color .2s}
+.math-in:focus{border-color:#f0b429}
+.math-unit{color:#888;font-size:0.8rem}
+.math-go{background:linear-gradient(135deg,#f57f17,#e65100);color:white;border:none;border-radius:22px;padding:8px 18px;font-family:'Nunito',sans-serif;font-weight:700;font-size:0.82rem;cursor:pointer;transition:all .15s}
+.math-go:hover{transform:scale(1.03)}
+.math-ok{color:#a5d6a7;font-weight:700;margin-top:7px;font-size:0.88rem;animation:pop .3s ease}
+.math-no{color:#ef9a9a;margin-top:7px;font-size:0.82rem}
+.math-fact{background:rgba(240,180,41,0.07);border-radius:8px;padding:9px;margin-top:7px;font-size:0.76rem;color:#ffe080;line-height:1.5}
+.quiz-wrap{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:18px;padding:20px;margin-bottom:18px}
+.q-text{font-size:0.97rem;font-weight:700;color:white;line-height:1.5;margin-bottom:12px}
+.q-opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.q-opt{background:rgba(255,255,255,0.05);border:2px solid rgba(255,255,255,0.09);border-radius:10px;padding:10px 12px;font-family:'Nunito',sans-serif;font-size:0.8rem;font-weight:600;cursor:pointer;transition:all .15s;color:#ccc;text-align:left;line-height:1.35}
+.q-opt:hover:not(:disabled){border-color:#64b5f6;background:rgba(100,181,246,0.07);color:white}
+.q-opt.correct{background:rgba(46,125,50,0.22);border-color:#66bb6a;color:#a5d6a7}
+.q-opt.wrong{background:rgba(198,40,40,0.18);border-color:#ef9a9a;color:#ef9a9a}
+.q-fact{background:rgba(100,181,246,0.06);border:1px solid rgba(100,181,246,0.12);border-radius:8px;padding:9px;margin-top:8px;font-size:0.77rem;color:#bbdefb;line-height:1.55}
+.score-banner{background:linear-gradient(135deg,rgba(21,101,192,0.2),rgba(13,71,161,0.2));border:1px solid rgba(100,181,246,0.2);border-radius:14px;padding:20px;text-align:center;animation:pop .4s ease}
+.score-banner h2{font-family:'Fredoka One',cursive;color:#64b5f6;font-size:1.5rem;margin-bottom:6px}
+.task-box{background:rgba(7,20,40,0.4);border:1px solid rgba(100,181,246,0.15);border-radius:18px;padding:20px;margin-bottom:18px}
+.task-title{font-family:'Fredoka One',cursive;color:#64b5f6;font-size:1.1rem;margin-bottom:3px}
+.task-level{font-size:0.68rem;color:#888;margin-bottom:10px}
+.task-brief{font-size:0.87rem;color:#bbdefb;line-height:1.72;margin-bottom:12px}
+.task-brief ul{padding-left:16px;margin:6px 0}
+.task-brief li{margin-bottom:5px;color:#90caf9}
+.task-ta{width:100%;background:rgba(255,255,255,0.04);border:2px solid rgba(255,255,255,0.09);border-radius:10px;padding:12px 14px;color:white;font-family:'Nunito',sans-serif;font-size:0.88rem;min-height:120px;outline:none;resize:vertical;transition:border-color .2s}
+.task-ta:focus{border-color:#64b5f6}
+.task-btn{background:linear-gradient(135deg,#1565c0,#0d47a1);color:white;border:none;border-radius:22px;padding:9px 20px;font-family:'Nunito',sans-serif;font-weight:700;font-size:0.85rem;cursor:pointer;margin-top:8px;transition:all .15s}
+.task-btn:hover{transform:scale(1.03)}
+.saved-ok{font-size:0.75rem;color:#64b5f6;margin-top:6px}
+.back-btn{background:rgba(255,255,255,0.07);color:#ccc;border:1px solid rgba(255,255,255,0.12);padding:9px 18px;border-radius:22px;font-family:'Nunito',sans-serif;font-size:0.85rem;font-weight:700;cursor:pointer;transition:all .15s;margin-bottom:14px;display:inline-block;text-decoration:none}
+.back-btn:hover{background:rgba(255,255,255,0.13);color:white}
+.btn-blue{background:linear-gradient(135deg,#1565c0,#0d47a1);color:#bbdefb;border:none;border-radius:22px;padding:9px 18px;font-family:'Nunito',sans-serif;font-size:0.85rem;font-weight:700;cursor:pointer;transition:all .15s}
+.btn-blue:hover{transform:scale(1.03)}
+.section-label{font-family:'Fredoka One',cursive;color:#64b5f6;font-size:0.78rem;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;opacity:.7}
+.ks-tag{display:inline-block;background:rgba(100,181,246,0.07);border:1px solid rgba(100,181,246,0.13);color:#64b5f6;font-size:0.62rem;font-weight:800;padding:2px 8px;border-radius:20px;margin-bottom:10px;letter-spacing:.5px}
+.ks-tag.ks3{background:rgba(240,180,41,0.07);border-color:rgba(240,180,41,.13);color:#f0b429}
+.progress-overview{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin-bottom:18px}
+.prog-tile{background:rgba(255,255,255,0.03);border-radius:9px;padding:8px 3px;text-align:center;border:1px solid rgba(255,255,255,0.05)}
+.prog-tile.done{border-color:rgba(100,181,246,0.35);background:rgba(100,181,246,0.06)}
+.prog-icon{font-size:1.1rem}
+.prog-name{font-size:0.52rem;color:#555;margin-top:2px}
+.prog-tile.done .prog-name{color:#64b5f6}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pop{0%{transform:scale(.85);opacity:0}70%{transform:scale(1.06)}100%{transform:scale(1);opacity:1}}
+@media(max-width:600px){.profile-grid,.continent-grid,.flag-opts,.q-opts{grid-template-columns:1fr}.progress-overview{grid-template-columns:repeat(3,1fr)}}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<script>
+const CHILDREN=[
+  {id:"owl",name:"Owl",age:12,avatar:"🦉",ks:"KS3",level:"KS3 — Secondary Level"},
+  {id:"cub",name:"Cub",age:9,avatar:"🐻",ks:"KS2",level:"KS2 — Primary Level"},
+  {id:"bay",name:"Bay",age:7,avatar:"🌿",ks:"KS1",level:"KS1/KS2 — Foundation"}
+];
+const STORY=[
+  {emoji:"🌍",text:(id)=>`<p>Atlas had never seen the whole world at once.</p><p>Then one day, from somewhere very high — a satellite, a dream, the top of an impossibly tall mountain — Atlas looked down and saw it all. Every continent, every ocean, every mountain range and river delta, the whole blue-green marble of it, wrapped in swirls of cloud.</p><p>It was, Atlas thought, the most beautiful thing imaginable. And also the most mysterious. Because from up here it looked simple — seven continents, five oceans, one world. But Atlas knew that getting closer would reveal complexity within complexity, stories within stories, worlds within worlds.</p><div class="fact-pull"><strong>🌍 Seven continents — some wild facts</strong>Asia is so big it contains 60% of all humans on Earth. Africa is larger than the USA, China, India and most of Europe combined — you'd never guess it from most maps. Antarctica has no permanent human population but contains 70% of Earth's fresh water, locked in ice. Australia is the only country that is also an entire continent. And all seven together? They only cover 29% of Earth's surface. The rest — 71% — is ocean.</div><p>The Earth is <span class="hl">4.5 billion years old</span>. For most of that time, the continents looked nothing like they do today. They have been drifting, colliding, breaking apart and reforming for billions of years — and they are still moving now, right beneath your feet, at the speed of a fingernail growing.</p>${id==="owl"?`<div class="ks3-pull"><strong>🦉 The scientist everyone laughed at — then proved right</strong>Alfred Wegener noticed in 1912 that South America and Africa look like puzzle pieces that fit together. He said they were once one landmass. Scientists mocked him for 50 years. Then in the 1960s, seafloor spreading was discovered — and Wegener was completely vindicated.<ul style="margin:8px 0 8px 16px;line-height:1.8"><li>300 million years ago: one supercontinent called <strong>Pangaea</strong></li><li>Evidence: matching coastlines, identical fossils on different continents, same rock types across oceans</li><li>The plates are still moving — at roughly the speed your fingernails grow</li><li>In 250 million years, the continents will have merged again into a new supercontinent</li></ul><em style="color:#f0b429;font-size:0.8rem">Think about this: if scientists mocked Wegener for 50 years and he was still right, what does that tell you about how science actually works?</em></div>`:""}`},
+  {emoji:"🌊",text:(id)=>`<p>Then Atlas looked at the water.</p><p>More than two-thirds of Earth's surface is ocean — and yet most maps show it as empty blue space, as if the ocean were merely the gap between the important parts. This, Atlas realised, was exactly backwards. The ocean is not the gap. The ocean is the story.</p><p>The five oceans — <span class="hl">Pacific, Atlantic, Indian, Arctic and Southern</span> — are really one connected body of water. Water flows between them all, in enormous circular currents called gyres, and in deep cold rivers that move slowly along the ocean floor, connecting every sea to every other. The Pacific alone covers more area than all of Earth's land combined.</p><div class="fact-pull"><strong>🌊 The ocean is not the gap — it's the story</strong>We've mapped more of the surface of Mars than we have of the ocean floor. More than 80% of Earth's oceans have never been explored. The deepest point — Challenger Deep in the Pacific — is 11,034m down. If you dropped Mount Everest into it, the peak would still be 2km underwater. The Pacific Ocean alone is bigger than all of Earth's land combined. We live on a water planet. We just drew the maps to make it look like a land one.</div><div class="portugal-pull"><strong>🇵🇹 YOUR CONNECTION — Portugal Faces the Atlantic</strong>Portugal sits at the western edge of Europe, facing directly onto the Atlantic Ocean. This position — once the edge of the known world — gave Portugal its greatest historical advantage: Atlantic winds that enabled the Age of Discovery. Cabo da Roca, 40km from Lisbon, is the westernmost point of mainland Europe. From there, the next land west is North America. When Portuguese explorers set sail in the 15th century, they were stepping off the edge of everything Europeans knew.</div>${id==="owl"?`<div class="ks3-pull"><strong>🦉 The ocean current keeping Portugal warm — and it's slowing down</strong>Portugal should be as cold as Canada. Same latitude as Quebec. The reason it isn't is a giant ocean conveyor belt — and climate change is breaking it.<ul style="margin:8px 0 8px 16px;line-height:1.8"><li><strong>AMOC</strong> carries warm tropical water north, keeping Europe 5-10°C warmer than it should be</li><li>Melting Greenland ice disrupts it — cold fresh water breaks the circulation pattern</li><li>Scientists confirmed AMOC is already slowing — fastest weakening in 1,000 years</li><li>A collapse could cool northwest Europe even as global temperatures rise</li></ul><em style="color:#f0b429;font-size:0.8rem">Think about this: climate change could make Portugal colder and wetter while also making it drier overall. How can both be true at once?</em></div>`:""}`},
+  {emoji:"🗺️",text:(id)=>`<p>Every map is a lie.</p><p>Not a malicious lie — a necessary one. The Earth is a sphere. A map is flat. Getting from sphere to flat requires distortion. Every map projection distorts something: area, shape, distance or direction. There is no perfect map.</p><p>The most famous map projection — the <span class="hl">Mercator projection</span>, invented in 1569 — preserves compass directions (useful for sailors) but massively distorts area near the poles. On a Mercator map, Greenland looks the same size as Africa. In reality, <span class="hl">Africa is 14× larger than Greenland</span>. The map most of us grew up with makes northern countries look far bigger than they are and makes tropical countries — where most of the world's population lives — look far smaller.</p><div class="fact-pull"><strong>🗺️ FACT — Map Projections and Power</strong>The choice of which map to use is never neutral. The Peters projection (1974) shows countries in correct relative size — and caused controversy because it made Africa and South America visually much larger than in the Mercator, while shrinking Europe and North America. A map is always a political statement about what the mapmaker considers important. The fact that most world maps put Europe or North America at the centre (rather than, say, the Pacific) reflects the cultural origins of modern cartography.</div>${id==="owl"?`<div class="ks3-pull"><strong>🦉 Every map is lying to you — and it knows it</strong>The map most of us grew up with makes Europe look huge and Africa look small. That's not a mistake. It's the consequence of who drew the maps, when, and why. Greenland looks the same size as Africa on a Mercator map. Africa is actually 14 times larger.<ul style="margin:8px 0 8px 16px;line-height:1.8"><li>The <strong>Peters projection</strong> (1974) showed correct sizes — caused huge controversy</li><li>Most world maps put Europe at the centre — that's a choice, not a fact</li><li>Colonial powers used maps to claim land they'd never even visited</li><li>Today GIS maps can show crime, poverty, health — whoever controls the data controls the story</li></ul><em style="color:#f0b429;font-size:0.8rem">Think about this: if you redrew the standard world map with the Pacific at the centre instead of the Atlantic, everything would look different. Why do you think that map never became the standard?</em></div>`:""}`},
+  {emoji:"🌐",text:(id)=>`<p>Where exactly was Atlas standing?</p><p>The answer required two numbers: <span class="hl">latitude</span> and <span class="hl">longitude</span>. Latitude measures how far north or south of the equator you are, from 0° at the equator to 90° at the poles. Longitude measures how far east or west of the prime meridian (an imaginary line through Greenwich, London) you are, from 0° to 180°.</p><p>Together, these two coordinates give an exact location for every point on Earth. <span class="hl">Lisbon</span> — if that is where Atlas was — sits at approximately <span class="hl">38.7°N, 9.1°W</span>. Which means it is 38.7 degrees north of the equator, and 9.1 degrees west of Greenwich.</p><div class="portugal-pull"><strong>🇵🇹 Where you live — on the edge of the world</strong>Portugal is at the far southwestern corner of Europe — the last land before the Atlantic Ocean begins. For most of human history, this meant Portugal was at the edge of the known world. Then one day, that edge became the perfect launch pad for exploring everything beyond it. Your home is at coordinates 38.7°N, 9.1°W — meaning Lisbon is roughly the same distance from the equator as Tokyo, Beijing and Washington DC. The Azores, technically also Portugal, sit almost halfway to North America in the middle of the Atlantic.</div><div class="fact-pull"><strong>🌐 Your coordinates — and what they actually mean</strong>One degree of latitude = roughly 111km. Lisbon at 38.7°N means it is about 4,300km from the equator — roughly the same distance as flying from Lisbon to New York. Longitude lines are trickier: they are wide apart at the equator but squeeze together at the poles, which is why Greenland looks huge on flat maps but is actually much smaller. Every time your phone shows your location, it is using exactly this coordinate system — the same one sailors invented hundreds of years ago to avoid getting lost at sea.</div>${id==="owl"?`<div class="ks3-pull"><strong>🦉 Why is 0° longitude through London? Because Britain said so.</strong>There's no geographical reason the prime meridian runs through Greenwich. It runs there because in 1884, Britain was the most powerful empire on Earth and most of the world's ships used British charts. Power decided where zero is.<ul style="margin:8px 0 8px 16px;line-height:1.8"><li>1884: International Meridian Conference — 25 countries voted, mostly went with Britain</li><li>France refused and kept using Paris as their meridian until 1911</li><li>All world time zones still measure from London — that's a political legacy, not a scientific one</li><li>This is one tiny example of how empire shaped everything — including things that seem neutral</li></ul><em style="color:#f0b429;font-size:0.8rem">Think about this: what other things that seem like neutral facts — numbers, standards, units — might actually reflect who had the most power when they were established?</em></div>`:""}`},
+  {emoji:"🌱",text:(id)=>`<p>Atlas understood something, looking at the whole world at once.</p><p>The world is not a collection of separate places. It is one system. The Amazon rainforest produces rain that falls on the Andes that feeds the rivers that water the farmlands of South America. The Arctic ice reflects sunlight that keeps the planet cool. The Atlantic currents carry heat that warms northwest Europe. Remove one part and the whole system shifts.</p><p>This is what geographers study — not just places, but connections. Not just what is where, but why, and what happens when things change.</p><div class="fact-pull"><strong>🌱 THE BIG IDEA — Earth as System</strong>Earth has four interconnected spheres: the <strong>lithosphere</strong> (rocks, tectonic plates), the <strong>hydrosphere</strong> (water — oceans, rivers, ice, groundwater), the <strong>atmosphere</strong> (air and weather), and the <strong>biosphere</strong> (all living things). These four spheres interact constantly. Volcanic eruptions (lithosphere) release gases that change the atmosphere. Climate change (atmosphere + hydrosphere) is killing coral reefs (biosphere). Human activity (biosphere) is reshaping the lithosphere through mining and building. Geography is the study of how these four spheres interact — and how humans fit within them.</div>${id==="owl"?`<div class="ks3-pull"><strong>🦉 The most important idea in geography — and nobody tells you it upfront</strong>Everything connects to everything else. That's not a nice metaphor — it's the actual structure of how the world works. Geographers call it systems thinking, and once you see it you can't unsee it.<ul style="margin:8px 0 8px 16px;line-height:1.8"><li><strong>Feedback loops:</strong> A causes B which makes A worse (positive) or better (negative)</li><li><strong>Example:</strong> Arctic ice melts → ocean absorbs more heat → more ice melts → repeat. That's a positive feedback loop running right now</li><li><strong>Threshold:</strong> the point where a small push causes a massive sudden change — like the last straw that breaks the camel's back</li><li><strong>The four spheres:</strong> lithosphere (rock), hydrosphere (water), atmosphere (air), biosphere (life) — all constantly affecting each other</li></ul><em style="color:#f0b429;font-size:0.8rem">Think about this: find one connection between something in Portugal and something happening on the other side of the world. The connection is there. You just have to look.</em></div>`:""}`}
+];
+const CONTINENTS=[
+  {id:"asia",name:"Asia",emoji:"🏔️",color:"rgba(239,83,80,0.2)",area:"44.6 million km²",population:"4.7 billion (60% of world)",countries:"49",highest:"Everest (8,849m)",rivers:"Yangtze, Ganges, Mekong",story:"Asia is the world's largest and most populous continent. It contains the world's highest mountains (Himalayas), the world's largest lake by volume (Baikal), the world's longest coastline, and enormous cultural diversity — from Arctic Siberia to tropical Southeast Asia. China and India together contain nearly 3 billion people — more than the rest of the world outside Asia.",portugal:"Portugal's Age of Discovery was largely motivated by finding sea routes to Asia — specifically to the spice-producing regions of India and Southeast Asia. Vasco da Gama reached India in 1498. Portugal established trading posts across Asia including in Goa (India), Malacca (Malaysia) and Macao (China). Macao remained Portuguese territory until 1999.",ks3:"Asia's economic rise — particularly China and India — is the defining geopolitical shift of the 21st century. China became the world's largest economy by purchasing power parity in 2014. India is projected to overtake the USA by 2030. The centre of global economic gravity is moving east. Understanding Asian geography, history and development is essential for KS3 geopolitics."},
+  {id:"africa",name:"Africa",emoji:"🌍",color:"rgba(240,180,41,0.2)",area:"30.4 million km²",population:"1.4 billion (18% of world)",countries:"54",highest:"Kilimanjaro (5,895m)",rivers:"Nile (longest), Congo, Niger",story:"Africa is the second-largest continent and the most genetically diverse — because modern humans evolved here approximately 300,000 years ago. It contains the world's largest hot desert (Sahara), the world's longest river (Nile), and extraordinary biodiversity in the Congo Basin and East African savanna. Africa's 54 countries make it the continent with the most nations.",portugal:"Portugal was the first European country to establish sustained contact with sub-Saharan Africa, beginning in the 1440s. Portuguese traders established forts along the West African coast and were the first Europeans to round the Cape of Good Hope (1488) and sail up the East African coast. Tragically, Portugal also initiated the transatlantic slave trade. Portuguese colonies in Africa (Angola, Mozambique, Guinea-Bissau, Cape Verde, São Tomé and Príncipe) gained independence in 1974-75.",ks3:"Africa has the world's fastest-growing population — projected to reach 2.5 billion by 2050 and over 4 billion by 2100. By mid-century, Africa will have more young people than anywhere else on Earth. Understanding African geography, economics and politics is increasingly central to KS3 development geography. The continent has vast natural resources (minerals, agricultural land, renewable energy potential) but also faces significant challenges from artificial colonial borders, climate vulnerability and governance issues."},
+  {id:"north_america",name:"North America",emoji:"🗽",color:"rgba(100,181,246,0.2)",area:"24.7 million km²",population:"597 million",countries:"23",highest:"Denali (6,190m)",rivers:"Mississippi, Missouri, Rio Grande",story:"North America stretches from the Arctic tundra of Canada and Alaska to the tropical forests of Central America. It contains extraordinary geographical diversity: the Rocky Mountains, the Great Plains, the Great Lakes (20% of world's fresh surface water), the Mississippi river system, and the desert Southwest. The USA alone has 9.8 million km² making it the world's third or fourth largest country.",portugal:"Portuguese explorer João Vaz Corte-Real may have reached Newfoundland in 1472 — before Columbus. Portuguese fishermen certainly visited the Grand Banks (off Newfoundland) from the late 1400s, catching the salt cod that became central to Portuguese cuisine. The Portuguese word for the region that became 'Labrador' comes from the Portuguese explorer Gaspar Corte-Real.",ks3:"The USA's geography has shaped its history and politics in fundamental ways: the vast interior plains enabled industrial-scale agriculture; the east-west mountain ranges channelled westward expansion; the Atlantic and Pacific coasts enabled global trade while the continent's size initially encouraged isolationism. Today, the USA-Mexico border — one of the world's sharpest economic divides — generates enormous migration pressure that illustrates push-pull factors in real time."},
+  {id:"south_america",name:"South America",emoji:"🌿",color:"rgba(129,199,132,0.2)",area:"17.8 million km²",population:"434 million",countries:"12",highest:"Aconcagua (6,961m)",rivers:"Amazon (largest by flow), Paraná, Orinoco",story:"South America contains the Amazon rainforest — the world's largest tropical rainforest, covering 5.5 million km² and producing approximately 20% of the world's oxygen. The Andes run the entire length of the continent's west coast. The continent has extraordinary biodiversity — the Amazon alone contains 10% of all species on Earth. The Atacama Desert in Chile is the world's driest non-polar desert.",portugal:"Brazil — the largest country in South America and fifth largest country in the world — speaks Portuguese because Portuguese navigator Pedro Álvares Cabral claimed it for Portugal in 1500. With 215 million people, Brazil has more Portuguese speakers than Portugal itself. Brazilian culture — a unique fusion of indigenous, African and Portuguese influences — is one of the world's most vibrant.",ks3:"The Amazon is both a geography and a politics topic at KS3. Deforestation (currently losing approximately 4,000 km²/year under various pressures) affects global carbon cycling, biodiversity, indigenous peoples' rights and Brazil's development path simultaneously. The tension between Brazil's sovereign right to develop its territory and the global importance of the Amazon ecosystem is a classic example of the conflict between national interest and global commons — one of the central themes in KS3 environmental geography."},
+  {id:"europe",name:"Europe",emoji:"🏰",color:"rgba(206,147,216,0.2)",area:"10.5 million km²",population:"748 million",countries:"44",highest:"Mont Blanc (4,808m) — or Elbrus (5,642m) depending on definition",rivers:"Danube, Rhine, Volga",story:"Europe is the second-smallest continent but has had outsized global influence through its imperial history, scientific revolutions and cultural output. It contains the world's oldest wine regions (Georgia, then France, Italy, Spain and Portugal), the world's oldest democracy traditions (Athens), and the European Union — the world's most ambitious experiment in multinational governance. Europe's geography — mild climate, navigable rivers, long coastlines — facilitated trade and communication.",portugal:"Portugal is the westernmost country in continental Europe. It occupies the southwestern corner of the Iberian Peninsula, sharing a land border only with Spain. Portugal has been a stable nation-state since 1143 CE — with essentially the same borders for nearly 900 years, making it one of Europe's oldest countries. It joined the EU in 1986 and has been a democracy since 1974.",ks3:"The European Union is a KS3 case study in supranational governance. 27 member states share a single market, a common currency (for 20 of them), open internal borders and a parliament. Brexit (UK's departure in 2020) demonstrated both the tensions within European integration and the economic costs of reversing it. Understanding the EU requires engaging with questions of sovereignty, identity, economics and political union simultaneously."}
+];
+const FLAG_GAME={
+  owl:[
+    {flag:"🇧🇷",q:"Which country's flag is this?",opts:["Argentina","Brazil","Portugal","Colombia"],ans:1,fact:"Brazil's flag features a blue circle with stars representing the constellations visible from Rio de Janeiro on the night of 15 November 1889 — the day the republic was declared. The green represents the forests, yellow the mineral wealth, and the motto 'Ordem e Progresso' (Order and Progress) reflects the positivist philosophy of the republic's founders."},
+    {flag:"🇿🇦",q:"Which country's flag is this?",opts:["Zimbabwe","Kenya","South Africa","Nigeria"],ans:2,fact:"South Africa's flag was designed in 1994 for the first democratic elections after apartheid ended. The Y-shape represents the convergence of diverse elements of South African society moving forward united. It is the only national flag in the world with 6 colours and no coat of arms."},
+    {flag:"🇯🇵",q:"Which country's flag is this?",opts:["South Korea","China","Japan","Taiwan"],ans:2,fact:"Japan's flag — the Hinomaru (circle of the sun) — is one of the world's simplest and most recognisable flags. Red disc on white. Japan calls itself Nippon — 'origin of the sun' — because from China's perspective, the sun rises from Japan's direction. The flag design dates back at least to the 14th century."},
+    {flag:"🇧🇷",q:"Which language do people in Brazil speak?",opts:["Spanish","English","Portuguese","French"],ans:2,fact:"Brazil speaks Portuguese because Pedro Álvares Cabral claimed it for Portugal in 1500. With 215 million Portuguese speakers, Brazil has more Portuguese speakers than Portugal (10 million) by a factor of 21. This makes Portuguese one of the world's most widely spoken languages despite Portugal being a small country."},
+    {flag:"🇮🇳",q:"India's flag has a blue wheel at its centre. What is it?",opts:["The wheel of a bullock cart","The Ashoka Chakra — the wheel of law, from the Maurya Emperor Ashoka who lived 268-232 BCE","A spinning wheel representing Gandhi's independence movement","A compass rose"],ans:1,fact:"The Ashoka Chakra has 24 spokes representing the 24 hours of the day — eternal movement, progress, and dharma (righteous living). Emperor Ashoka converted to Buddhism after the bloody Kalinga War and became one of history's most remarkable rulers — renouncing violence and promoting religious tolerance across his vast empire 2,300 years ago."},
+    {flag:"🇵🇹",q:"Portugal's flag has two vertical stripes. What colours are they?",opts:["Red and yellow","Blue and white","Green and red","Green and yellow"],ans:2,fact:"Green represents hope and the Age of Discovery. Red represents the blood of those who defended the nation. The coat of arms at the centre contains armillary spheres (navigational instruments used by Portuguese explorers) and medieval shields. The design dates from the 1910 Portuguese Republic, though the colours have been associated with Portugal for centuries."},
+    {flag:"🇳🇬",q:"Nigeria's flag has three vertical stripes. What colours are they?",opts:["Red, white, green","Green, white, green","Blue, white, red","Yellow, green, red"],ans:1,fact:"Nigeria's simple green-white-green flag was designed by a student, Taiwo Akinkunmi, in 1959 for an independence flag competition. Green represents Nigeria's agricultural wealth; white represents peace. Nigeria is Africa's most populous country (220 million people) and largest economy — a fact that makes its geography, politics and development central to understanding Africa's future."},
+    {flag:"🇨🇳",q:"How many stars are on China's flag?",opts:["1","4","5","10"],ans:2,fact:"One large star (the Communist Party) surrounded by four smaller stars (the four social classes: workers, peasants, urban petty bourgeoisie, and national bourgeoisie). The red represents revolution; yellow represents the golden future. China's flag was adopted on 1 October 1949 when the People's Republic was proclaimed. China is now the world's most populous country (1.4 billion) and largest economy by purchasing power."},
+    {flag:"🇺🇸",q:"How many stripes are on the US flag, and what do they represent?",opts:["13 stripes — the original 13 colonies","50 stripes — one per state","13 stripes — the founding year 1776 CE","25 stripes — half the current number of states"],ans:0,fact:"13 stripes for the original 13 colonies that declared independence from Britain in 1776. 50 stars for the current 50 states. The flag has been modified 27 times as states were added. The most recent change was in 1960 when Hawaii joined. The USA's flag is one of the world's most recognisable symbols — and one of the most frequently flown."},
+    {flag:"🇸🇦",q:"Saudi Arabia's flag has Arabic text on it. What does it say?",opts:["There is no god but Allah, and Muhammad is His messenger","Saudi Arabia, Land of the Holy","In the name of God","Peace and prosperity"],ans:0,fact:"The Shahada — the Islamic declaration of faith — on a national flag is highly significant. Saudi Arabia is the birthplace of Islam and home to its two holiest cities (Mecca and Medina). The sword below the text represents the strength of Islam. Saudi Arabia has some of the world's largest oil reserves, making its geography central to global energy politics."},
+    {flag:"🇧🇷",q:"The Amazon rainforest, mostly in Brazil, is sometimes called 'the lungs of the Earth'. Why?",opts:["Because it sounds like breathing when wind blows through it","Because it produces approximately 20% of the world's oxygen through photosynthesis","Because it absorbs all carbon dioxide globally","Because early explorers named it after lungs"],ans:1,fact:"The Amazon basin contains approximately 10% of all species on Earth, 20% of all freshwater on Earth, and processes enormous amounts of carbon through photosynthesis and respiration. However, the 'lungs' metaphor is somewhat misleading — the Amazon absorbs as much oxygen as it produces. Its real climate value is in carbon storage and rainfall generation through transpiration."},
+    {flag:"🇦🇺",q:"Australia is a country, a continent AND an island. How is this possible?",opts:["It isn't — it's only a country","Australia is surrounded by water on all sides, making it technically a continental landmass that is also an island — the only country that occupies an entire continent","Only large islands are called continents","It's only called a continent to give it more political importance"],ans:1,fact:"Australia meets all three definitions simultaneously: it's a sovereign nation, it occupies an entire continental landmass (the Australian tectonic plate), and it's surrounded by water. This makes it unique. Australia was settled by Aboriginal peoples approximately 65,000 years ago — one of the longest continuous cultures on Earth. European colonisation (from 1788) had devastating effects on indigenous populations."},
+    {flag:"🇿🇦",q:"South Africa has THREE capital cities. Why?",opts:["Because it's such a large country","Because three different countries merged to form South Africa","As a compromise between competing regions and historical power centres — Pretoria (executive), Cape Town (legislative), Bloemfontein (judicial)","Because one capital kept getting flooded"],ans:2,fact:"South Africa's three capitals reflect a compromise made when the Union of South Africa was formed in 1910, balancing the power of different British colonies and former Boer republics. It's highly unusual — most countries have one capital. The system is expensive and inefficient but changing it is politically very difficult 115 years later."},
+    {flag:"🇮🇸",q:"Iceland has almost no trees despite its name. Greenland is covered in ice. Why are their names backwards?",opts:["The names were accidentally swapped by early mapmakers","Viking settlers gave Iceland a misleading name to discourage rivals, while Greenland got an optimistic name to attract settlers","The names described conditions thousands of years ago","They're not backwards — Iceland has lots of ice"],ans:1,fact:"Erik the Red, exiled from Iceland, settled Greenland around 985 CE and named it 'Greenland' to attract settlers to what is mostly ice-covered. Iceland was named for the sea ice visible from its shores in winter — though the country itself is relatively green, warmed by the Gulf Stream. This early example of geographical branding shows how names can be deliberate misdirection."},
+    {flag:"🇲🇽",q:"Mexico's flag features an eagle eating a snake while standing on a cactus. Where does this image come from?",opts:["Spanish colonial design","An Aztec prophecy — the gods told the Aztecs to found their city where they saw this image, which they saw at Tenochtitlan (modern Mexico City)","A Spanish coat of arms","A European heraldic tradition"],ans:1,fact:"According to Aztec mythology, the god Huitzilopochtli told the wandering Mexica people to found their city where they saw an eagle on a cactus eating a snake. They saw this vision on an island in Lake Texcoco and built Tenochtitlan — the greatest city in the Americas, with a population of 200,000-300,000 people when the Spanish arrived in 1519. Modern Mexico City is built on its ruins."}
+  ],
+  cub:[
+    {flag:"🇧🇷",q:"Which country has this flag?",opts:["Portugal","Brazil","Argentina","Mexico"],ans:1,fact:"Brazil speaks Portuguese because Portuguese explorer Pedro Álvares Cabral landed there in 1500. Brazil is huge — the fifth largest country in the world. The Amazon rainforest, mostly in Brazil, is the biggest tropical forest on Earth, home to millions of species of plants and animals."},
+    {flag:"🇫🇷",q:"France's flag has three vertical stripes. What are the colours?",opts:["Red, white, blue","Green, white, red","Blue, white, red","Yellow, blue, red"],ans:2,fact:"Blue, white and red — called the Tricolore. These colours come from the French Revolution (1789) and represent liberty, equality and fraternity. The French flag inspired many other countries' flags. France is the most visited country in the world — over 90 million tourists per year."},
+    {flag:"🇯🇵",q:"Which country has a red circle on a white background as its flag?",opts:["China","South Korea","Japan","Singapore"],ans:2,fact:"Japan! The red circle represents the sun — Japan calls itself Nippon meaning 'origin of the sun.' Japan is a chain of islands in the Pacific with about 125 million people. It's famous for technology, food (sushi, ramen), manga comics and some of the world's most beautiful temples and gardens."},
+    {flag:"🇮🇳",q:"India is the world's most populous country. Approximately how many people live there?",opts:["500 million","750 million","1.4 billion","3 billion"],ans:2,fact:"India has 1.4 billion people — slightly more than China. India has an extraordinary diversity of languages (447 recognised), religions, cuisines and landscapes — from the Himalayas in the north to tropical Kerala in the south. India is also home to the world's largest democracy."},
+    {flag:"🇦🇺",q:"Australia is both a country AND a continent. Which ocean completely surrounds it?",opts:["Atlantic Ocean","Indian and Pacific Oceans","Arctic Ocean","Mediterranean Sea"],ans:1,fact:"Australia is surrounded by the Indian Ocean to the west and south, and the Pacific Ocean to the east. It's the world's smallest continent but sixth largest country. Australia has unique wildlife — kangaroos, koalas, platypuses and wombats — found nowhere else on Earth, because Australia separated from other continents 80 million years ago."},
+    {flag:"🇿🇦",q:"Which continent has the most countries?",opts:["Asia","Europe","Africa","South America"],ans:2,fact:"Africa has 54 countries — more than any other continent. For comparison, Europe has 44, Asia 49, the Americas about 35, and Australia/Oceania about 14. Many of Africa's country borders were drawn by European colonial powers in the 1800s, which is why so many borders are straight lines that don't follow natural features like rivers and mountains."},
+    {flag:"🇧🇷",q:"The Amazon River in South America carries more water than any other river. What percentage of the world's river water does it carry?",opts:["5%","10%","20%","50%"],ans:2,fact:"The Amazon carries approximately 20% of all the fresh water that flows into the world's oceans — more than the next seven largest rivers combined. During flood season, the Amazon can be up to 50km wide in places. The Amazon basin covers 7 million km² and contains the world's largest tropical rainforest."},
+    {flag:"🇺🇸",q:"How many stars are on the United States flag, and what do they represent?",opts:["13 stars — the founding states","50 stars — one for each state","48 stars — the continental states","52 stars — one for each week of the year"],ans:1,fact:"50 stars for the 50 states of America! The most recent addition was Hawaii in 1960. The 13 stripes represent the original 13 colonies that broke away from Britain in 1776. The US flag is one of the most changed flags in history — it's been updated 27 times as new states joined."},
+    {flag:"🇨🇦",q:"Canada has the largest coastline of any country in the world. Approximately how long is it?",opts:["10,000 km","50,000 km","202,080 km","500,000 km"],ans:2,fact:"Canada's coastline is 202,080 km long — the longest in the world! It borders three oceans (Pacific, Atlantic and Arctic). Canada is the second largest country in the world by area (9.98 million km²) but has a relatively small population of about 38 million — most living within 200km of the US border."},
+    {flag:"🇵🇹",q:"Portugal's flag is green and red. What does the armillary sphere (the golden circle device) in the middle represent?",opts:["The sun","A navigational instrument used by Portuguese explorers during the Age of Discovery","A crown from the monarchy","The world's first clock"],ans:1,fact:"The armillary sphere is an ancient astronomical and navigational instrument — a model of the celestial sphere showing how the stars and planets move around the Earth. Portuguese navigators used them to measure the position of the sun and stars to navigate at sea. It represents Portugal's Age of Discovery when Portuguese explorers mapped the world's oceans."},
+    {flag:"🇳🇬",q:"Nigeria is Africa's most populous country. Approximately how many people live there?",opts:["50 million","120 million","220 million","400 million"],ans:2,fact:"220 million people — and growing fast. Nigeria is projected to become the world's third most populous country by 2050, overtaking the USA. Lagos, Nigeria's commercial capital, is already one of Africa's largest cities with 15-20 million people. Nigeria has the largest economy in Africa and is one of the world's major oil producers."},
+    {flag:"🇲🇽",q:"Mexico is in which continent?",opts:["South America","North America","Central America (it's its own continent)","Europe"],ans:1,fact:"Mexico is in North America — it shares a land border with the USA to the north, and with Guatemala and Belize to the south. Mexico has 130 million people and was home to some of the greatest ancient civilisations in the Americas — including the Aztecs (whose capital Tenochtitlan is under modern Mexico City) and the Maya."}
+  ],
+  bay:[
+    {flag:"🇧🇷",q:"Which country has a green flag with a yellow diamond?",opts:["Portugal","Mexico","Brazil","Argentina"],ans:2,fact:"Brazil! It's the biggest country in South America. Brazil has the Amazon — the world's largest rainforest — with millions of animals and plants, including jaguars, macaws, anacondas and thousands of kinds of butterflies. Brazil also gave the world carnival, samba and amazing football!"},
+    {flag:"🇫🇷",q:"Which country has a blue, white and red flag called the Tricolore?",opts:["Italy","France","Netherlands","Russia"],ans:1,fact:"France! France is famous for the Eiffel Tower, croissants, the Louvre museum (home to the Mona Lisa), and the River Seine flowing through Paris. France is the most visited country in the world — people come from everywhere to see its beautiful cities, countryside and food!"},
+    {flag:"🇯🇵",q:"Japan's flag is a red circle on white. What does the circle represent?",opts:["The moon","The sun","A flower","A wheel"],ans:1,fact:"The sun! Japan calls itself Nippon which means 'land of the rising sun.' Japan is made up of thousands of islands in the Pacific Ocean. It's famous for beautiful cherry blossom trees (sakura), sushi, bullet trains, Pokémon and some of the most amazing technology in the world!"},
+    {flag:"🇵🇹",q:"Portugal's flag has two colours. What are they?",opts:["Blue and white","Red and yellow","Green and red","Orange and purple"],ans:2,fact:"Green and red — YOUR flag! Portugal is the country you live in. Portugal is at the western edge of Europe, facing the Atlantic Ocean. 600 years ago, brave Portuguese sailors set off from here in wooden ships to explore the unknown world. They discovered Brazil, sailed to India and mapped the whole coastline of Africa!"},
+    {flag:"🇦🇺",q:"What special animal is on Australia's coat of arms?",opts:["Koala and platypus","Kangaroo and emu","Crocodile and snake","Wombat and echidna"],ans:1,fact:"A kangaroo and an emu! These animals were chosen partly because they can't walk backwards — symbolising Australia moving forward. Australia is completely surrounded by ocean and has the most unique wildlife on Earth because it's been separate from other continents for millions of years. Kangaroos, koalas, platypuses and wombats are found nowhere else!"},
+    {flag:"🇿🇦",q:"Africa is the second biggest continent. How many countries are in it?",opts:["About 20","About 35","54","100"],ans:2,fact:"54 countries — more than any other continent! Africa is also where the very first humans lived, hundreds of thousands of years ago. Scientists have found the oldest human bones and tools in Africa. Every single person on Earth is descended from African ancestors!"},
+    {flag:"🇺🇸",q:"The United States flag has stars and stripes. How many stripes are there?",opts:["7","10","13","50"],ans:2,fact:"13 stripes for the 13 original states that first formed America in 1776! And 50 stars for the 50 states today. America is a huge country — the third biggest in the world. It stretches from the Atlantic Ocean all the way to the Pacific, crossing through deserts, mountains, great plains and forests!"},
+    {flag:"🇨🇳",q:"China has the most people of any country. About how many people live there?",opts:["500 million","1 billion","1.4 billion","3 billion"],ans:2,fact:"1.4 billion people! That's nearly 1 in 5 people on Earth living in one country. China has a very long history — Chinese civilisation is one of the oldest in the world, going back thousands of years. China invented paper, printing, fireworks and the compass. Today China makes a huge amount of the world's products and technology."}
+  ]
+};
+const MATHS={
+  owl:[
+    {title:"Continent Area — Percentages",story:"Total land area of Earth: approximately 149 million km². Africa: 30.4 million km². Europe: 10.5 million km².",q:"What percentage of Earth's total land does Africa cover? And how many times larger is Africa than Europe?",working:"Africa %: 30.4 ÷ 149 × 100 = 20.4%. Times larger: 30.4 ÷ 10.5 = 2.9 times larger.",answer:"20.4",unit:"% of land (2.9× larger than Europe)",fact:"Africa covers over 20% of all Earth's land — yet on a Mercator map projection (the most common world map) it often appears smaller than Greenland, which is only 2.2 million km². This distortion has had real political consequences — making African nations appear smaller and 'less important' on the maps that dominated colonial-era thinking."},
+    {title:"Distance from the Equator",story:"Each degree of latitude = approximately 111km. Lisbon is at 38.7°N. The North Pole is at 90°N.",q:"How far is Lisbon from the equator? And how far is Lisbon from the North Pole?",working:"From equator: 38.7 × 111 = 4,295.7km. From North Pole: (90 − 38.7) × 111 = 51.3 × 111 = 5,694.3km.",answer:"4296",unit:"km from equator (5,694km from North Pole)",fact:"Lisbon sits in the temperate zone — far enough from the equator to have mild seasons, close enough to have warm summers and mild winters. This Mediterranean-Atlantic climate is one reason Portugal is so agriculturally productive and one reason the Portuguese were able to grow the food surpluses needed to fund long ocean voyages."},
+    {title:"Ocean Proportions",story:"Total surface area of Earth: 510 million km². Total ocean area: 361 million km². Total land area: 149 million km².",q:"What percentage of Earth's surface is ocean? And how many times larger is the Pacific Ocean (165 million km²) than all of Europe (10.5 million km²)?",working:"Ocean %: 361 ÷ 510 × 100 = 70.8%. Pacific vs Europe: 165 ÷ 10.5 = 15.7 times larger.",answer:"70.8",unit:"% ocean (Pacific is 15.7× larger than Europe)",fact:"The Pacific Ocean is almost incomprehensibly vast — 15.7 times the size of all of Europe. Early Pacific navigators (Polynesian people who colonised Hawaii, New Zealand and Easter Island using only stars, ocean currents and wave patterns for navigation) crossed this ocean thousands of years before European explorers did. Their navigational achievement is arguably the greatest in human history."}
+  ],
+  cub:[
+    {title:"How Big Is Africa?",story:"Africa covers 30.4 million km². The UK covers approximately 243,000 km².",q:"How many UKs could fit inside Africa?",working:"30,400,000 ÷ 243,000 = approximately 125 UKs",answer:"125",unit:"UKs fit inside Africa",fact:"You could fit 125 United Kingdoms inside Africa! On most maps, Africa looks much smaller than it really is because of the Mercator projection (a way of drawing a round Earth flat). Africa is actually bigger than the USA, China, India and most of Europe combined."},
+    {title:"Population Percentages",story:"World population: approximately 8 billion. Asia: 4.7 billion. Africa: 1.4 billion. Europe: 748 million.",q:"What percentage of the world's population lives in Asia?",working:"4.7 ÷ 8 × 100 = 58.75% ≈ 59%",answer:"59",unit:"% of world population in Asia",fact:"Nearly 6 in 10 people on Earth live in Asia! China (1.4 billion) and India (1.4 billion) together have nearly 3 billion people — more than North America, South America and Europe combined. This is why understanding Asian geography and politics is so important for understanding the world today."},
+    {title:"Ocean Depths",story:"The deepest point in the ocean is Challenger Deep in the Mariana Trench: 11,034 metres. Mount Everest is 8,849 metres tall.",q:"How much deeper is Challenger Deep than Everest is tall? If you dropped Everest into the Mariana Trench, how many metres of water would still cover it?",working:"11,034 − 8,849 = 2,185 metres of water would still cover Everest.",answer:"2185",unit:"metres of water above Everest",fact:"Over 2km of water would still be above Everest's summit if you dropped it into the Mariana Trench! The ocean is staggeringly deep. The pressure at Challenger Deep is about 1,086 times atmospheric pressure — like having 50 jumbo jets sitting on top of you. Only 3 people have been to the deepest point; over 500 have been to space."}
+  ],
+  bay:[
+    {title:"Counting Continents",story:"There are 7 continents. The biggest is Asia (4.7 billion people) and the smallest populated one is Australia/Oceania (43 million people).",q:"How many more people live in Asia than in Australia/Oceania?",working:"4,700,000,000 − 43,000,000 = 4,657,000,000",answer:"4657000000",unit:"more people in Asia than Oceania",fact:"Asia has nearly 4.7 billion people — that's over 100 times more than Australia and Oceania! China and India alone each have more people than all of the Americas combined. The world's people are not spread evenly — most of us live in Asia, and most of us live near coasts and rivers."},
+    {title:"Ocean Size",story:"The Pacific Ocean covers 165 million km². Portugal covers 92,000 km².",q:"How many Portugals could fit inside the Pacific Ocean?",working:"165,000,000 ÷ 92,000 = approximately 1,793 Portugals",answer:"1793",unit:"Portugals fit in the Pacific",fact:"Almost 1,800 Portugals could fit in just the Pacific Ocean! The Pacific is so big that all of Earth's land could fit inside it and there would still be room left over. Portuguese sailors were some of the first Europeans to cross the Atlantic and reach Asia — but the Pacific was so enormous it took the world's explorers much longer to cross it."},
+    {title:"Countries in Africa",story:"Africa has 54 countries. Asia has 49 countries. Europe has 44 countries.",q:"How many countries are in Africa, Asia and Europe combined?",working:"54 + 49 + 44 = 147 countries",answer:"147",unit:"countries combined",fact:"147 countries in just three continents — and there are 195 countries in the whole world! That means North America, South America, Australia/Oceania and Antarctica together have only about 48 countries. Africa has the most countries of any continent, partly because it was divided by European colonial powers in the 1800s."}
+  ]
+};
+const QUIZ={
+  owl:[
+    {q:"What evidence supports the theory that the continents were once joined as a single landmass called Pangaea?",opts:["The continents look similar in size","Matching coastlines, identical fossils found on now-separated continents, and matching rock formations across different continents","The names of the continents suggest they were joined","Scientists discovered ancient maps showing Pangaea"],ans:1,fact:"Pangaea evidence comes from three independent sources: geometric (South America and Africa fit together like puzzle pieces), biological (identical Mesosaurus fossils found in both South America and Africa — an animal that couldn't have swum the Atlantic), and geological (identical rock sequences and mountain chains that continue across continents now separated by ocean). Alfred Wegener proposed continental drift in 1912 but was ridiculed because he couldn't explain the mechanism — which was only discovered with seafloor spreading theory in the 1960s."},
+    {q:"Why does the Mercator map projection make Greenland appear the same size as Africa, when Africa is actually 14 times larger?",opts:["Greenland is actually the same size as Africa","Mercator projection preserves compass directions (angle) but distorts area — areas near the poles are stretched enormously relative to areas near the equator","The projection was deliberately made to make European countries look larger","Greenland has been measured incorrectly"],ans:1,fact:"The Mercator projection conformal — it preserves local angles and shapes, making it useful for navigation (compass bearings are straight lines). But preserving angle distorts area. On a Mercator map, every point on Earth is at the correct angle from every other point — but areas near the poles are massively exaggerated. This is why Greenland (2.2M km²) looks the same size as Africa (30.4M km²) on most common world maps."},
+    {q:"The Atlantic Meridional Overturning Circulation (AMOC) keeps northwest Europe significantly warmer than equivalent latitudes elsewhere. What threatens it?",opts:["Air pollution from European industry","Melting Greenland ice adding cold fresh water, disrupting the salinity-driven density differences that power the circulation","Increased shipping in the Atlantic","Changes in Atlantic wind patterns"],ans:1,fact:"AMOC is driven by the sinking of cold, salty, dense water in the North Atlantic — which pulls warm surface water northward from the tropics. Melting Greenland ice adds enormous quantities of fresh, less dense water, potentially disrupting this sinking mechanism. Studies show AMOC has weakened significantly since the mid-20th century. A collapse would dramatically cool northwest Europe — making Britain's climate more like equivalent latitudes in Canada."},
+    {q:"The prime meridian (0° longitude) runs through Greenwich, London rather than any geographically logical location. What does this tell us about how scientific standards are established?",opts:["London is the geographic centre of the world","Scientific standards reflect power at the moment they are established — Britain's imperial dominance in 1884 made Greenwich the internationally accepted reference point","The Greenwich meridian was chosen because it passes through the most land","It was established randomly by vote"],ans:1,fact:"The 1884 International Meridian Conference chose Greenwich partly because British navigation charts (using Greenwich as reference) were already used by 72% of the world's shipping. Britain's naval and commercial dominance made its system the de facto standard. France continued using Paris as its prime meridian until 1911. This is one of many examples where apparently neutral scientific or technical standards embed the power relations of the era that created them."},
+    {q:"Africa is the most genetically diverse continent on Earth despite containing only about 17% of the world's population. Why?",opts:["African people have mutated more rapidly","Humans evolved in Africa approximately 300,000 years ago — all other populations are descended from a subset of African genetic diversity that left in waves from 70,000 years ago, carrying only a fraction of African genetic variation","Africa has more varied environments","African populations have been less isolated historically"],ans:1,fact:"This is the 'founder effect' and 'Out of Africa' theory confirmed by genetic analysis. When small groups left Africa, they carried only a subset of the genetic diversity existing in Africa. Each successive founding population further reduced diversity. This explains why African populations are more genetically diverse than all non-African populations combined — and why the Khoisan people of southern Africa have the oldest genetic lineages on Earth, diverging from other human populations approximately 100,000-150,000 years ago."}
+  ],
+  cub:[
+    {q:"What is the name of the supercontinent that existed about 300 million years ago, before the continents separated?",opts:["Atlantis","Pangaea","Gondwana","Eurasia"],ans:1,fact:"Pangaea (meaning 'all Earth' in Greek) was the supercontinent that existed roughly 300-175 million years ago. You can see evidence for it today: South America and Africa fit together like puzzle pieces, and identical fossils are found on both continents even though they're now separated by thousands of kilometres of ocean."},
+    {q:"Which ocean is the largest on Earth?",opts:["Atlantic Ocean","Indian Ocean","Arctic Ocean","Pacific Ocean"],ans:3,fact:"The Pacific Ocean! It covers 165 million km² — bigger than all of Earth's land combined. It stretches from the Arctic in the north to the Antarctic in the south, and from the Americas in the east to Asia and Australia in the west. The deepest point on Earth (Challenger Deep, 11,034m) is in the Pacific."},
+    {q:"What are the four main layers (spheres) of Earth's system?",opts:["Crust, mantle, outer core, inner core","Lithosphere, hydrosphere, atmosphere, biosphere","Land, water, air, fire","Mountains, oceans, forests, deserts"],ans:1,fact:"The four spheres interact constantly! The lithosphere (rock) is shaped by the hydrosphere (water). The atmosphere (air) is affected by the biosphere (living things — including us releasing CO₂). Understanding Earth as a system — where everything affects everything else — is one of the most important ideas in geography."},
+    {q:"Approximately what percentage of Earth's surface is covered by ocean?",opts:["50%","60%","71%","90%"],ans:2,fact:"71% of Earth is ocean! Yet we've explored less than 20% of the ocean floor. More people have been to space than to the deepest parts of the ocean. The ocean regulates our climate, produces half our oxygen (from phytoplankton), and is home to the vast majority of life on Earth."},
+    {q:"Portugal is located at the western edge of which continent?",opts:["Africa","South America","Asia","Europe"],ans:3,fact:"Europe — specifically the southwestern corner of the Iberian Peninsula, facing the Atlantic Ocean. Portugal's Atlantic position was crucial in history: it meant Portuguese sailors were closest to the open ocean and understood Atlantic winds and currents better than any other Europeans. This geographic advantage is why Portugal led the Age of Discovery."}
+  ],
+  bay:[
+    {q:"How many continents are there on Earth?",opts:["5","6","7","8"],ans:2,fact:"7 continents: Asia, Africa, North America, South America, Antarctica, Europe, and Australia/Oceania. Together they make up about 29% of Earth's surface — the rest is ocean! Some geography textbooks teach 6 continents by combining Europe and Asia into 'Eurasia', but most English-speaking countries teach 7."},
+    {q:"Which is the biggest ocean on Earth?",opts:["Atlantic Ocean","Arctic Ocean","Indian Ocean","Pacific Ocean"],ans:3,fact:"The Pacific Ocean! It's so huge that all of Earth's land could fit inside it. The Pacific touches the Americas on one side and Asia and Australia on the other. Portuguese explorer Magellan was the first European to cross it — it took his crew 3 months and they nearly starved before reaching land."},
+    {q:"What shape is the Earth?",opts:["Flat like a pancake","Perfectly round like a ball","Slightly squashed sphere — wider at the equator than at the poles","A cube"],ans:2,fact:"Earth is an oblate spheroid — a sphere that bulges slightly at the equator and is flattened at the poles. The equatorial diameter (12,756km) is about 43km wider than the polar diameter (12,714km). This bulge happens because Earth rotates — the spin pushes material outward at the equator."},
+    {q:"Which continent do you live on?",opts:["Asia","Africa","Australia","Europe"],ans:3,fact:"Europe! Portugal is in the southwestern corner of Europe, on a piece of land called the Iberian Peninsula. Europe is connected to Asia (together they're sometimes called Eurasia) and has 44 countries. From Portugal, if you sail west across the Atlantic Ocean, the next continent you'd reach is North America!"},
+    {q:"The Amazon rainforest — the biggest forest on Earth — is in which continent?",opts:["Africa","Asia","South America","North America"],ans:2,fact:"South America! The Amazon rainforest covers most of Brazil and parts of neighbouring countries. It's home to about 10% of all species on Earth — including jaguars, pink river dolphins, poison dart frogs, and millions of kinds of insects. The Amazon River carries more water than any other river in the world."}
+  ]
+};
+const SAVE_KEY="atlas_geo_v1";
+function defaultState(){const s={};CHILDREN.forEach(c=>{s[c.id]={storyPage:0,selectedContinent:null,flagIdx:0,flagAnswers:[],flagDone:false,flagScore:0,flagChosen:null,mathInputs:{},mathAnswered:{},quizIdx:0,quizAnswers:[],quizDone:false,quizScore:0,taskText:"",taskSaved:false,sectionsComplete:[]};});return s;}
+function loadState(){try{const s=localStorage.getItem(SAVE_KEY);if(s)return{...defaultState(),...JSON.parse(s)};}catch(e){}return defaultState();}
+function saveState(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(state));}catch(e){}}
+let state=loadState();
+let ui={view:"profiles",child:null,section:"story"};
+function render(){
+  const app=document.getElementById("app");
+  const child=CHILDREN.find(c=>c.id===ui.child);
+  let h=`<div class="hero"><h1>🌍 The Atlas Chronicles</h1><p>Chapter 1: The World Wakes Up</p><div class="ks-badges"><span class="ks-badge">📚 KS1 Bay</span><span class="ks-badge">📚 KS2 Cub</span><span class="ks-badge" style="background:rgba(240,180,41,0.1);border-color:rgba(240,180,41,0.2);color:#f0b429">📚 KS3 Owl</span></div></div>`;
+  if(ui.view==="profiles")h+=renderProfiles();
+  else if(ui.view==="learn"&&child)h+=renderLearn(child);
+  app.innerHTML=h;
+}
+function renderProfiles(){
+  let h=`<div class="section-label">Choose your explorer</div><div class="profile-grid">`;
+  CHILDREN.forEach(c=>{const s=state[c.id];const comp=(s.sectionsComplete||[]).length;
+    h+=`<div class="profile-card ${ui.child===c.id?"active":""}" onclick="selectChild('${c.id}')">
+      <div style="font-size:2.8rem">${c.avatar}</div><div class="pname">${c.name}</div>
+      <div class="plevel">${c.level}</div><div class="pstars">${comp>0?"⭐".repeat(comp)+" ("+comp+"/5)":"Ready!"}</div></div>`;});
+  return h+`</div>`;
+}
+function renderLearn(child){
+  const s=state[child.id];const comp=s.sectionsComplete||[];
+  const sections=[{id:"story",icon:"📖",name:"Story"},{id:"continents",icon:"🌍",name:"Continents"},{id:"flags",icon:"🚩",name:"Flags"},{id:"maths",icon:"📐",name:"Maths"},{id:"quiz",icon:"✅",name:"Quiz"}];
+  let h=`<a href="index.html" class="back-btn">← Home</a>`;
+  h+=`<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px"><span style="font-size:2rem">${child.avatar}</span>
+    <div><div style="font-family:'Fredoka One',cursive;font-size:1.4rem;color:#64b5f6">${child.name} — Chapter 1</div>
+    <div style="color:#666;font-size:0.73rem">${child.level} · ⭐ ${comp.length}/${sections.length} done</div></div></div>`;
+  h+=`<div class="progress-overview">`;
+  sections.forEach(sec=>{const done=comp.includes(sec.id);h+=`<div class="prog-tile ${done?"done":""}"><div class="prog-icon">${sec.icon}</div><div class="prog-name">${done?"✓ ":""}${sec.name}</div></div>`;});
+  h+=`</div><div class="nav-tabs">`;
+  sections.forEach(sec=>{const done=comp.includes(sec.id);h+=`<button class="nav-tab ${ui.section===sec.id?"active":""} ${done?"done":""}" onclick="switchSection('${sec.id}')">${sec.icon} ${sec.name}</button>`;});
+  h+=`</div>`;
+  if(ui.section==="story")h+=renderStory(child,s);
+  else if(ui.section==="continents")h+=renderContinents(child,s);
+  else if(ui.section==="flags")h+=renderFlags(child,s);
+  else if(ui.section==="maths")h+=renderMaths(child,s);
+  else if(ui.section==="quiz")h+=renderQuiz(child,s);
+  return h;
+}
+function renderStory(child,s){
+  const pg=Math.min(s.storyPage,STORY.length-1);const page=STORY[pg];const isLast=pg>=STORY.length-1;
+  let h=`<div class="story-panel"><div class="chapter-label">Chapter 1 · Page ${pg+1} of ${STORY.length}</div>
+    <div class="story-h">The World Wakes Up</div>
+    <div class="story-emoji">${page.emoji}</div><div class="story-body">${page.text(child.id)}</div>
+    <div class="page-nav"><span class="page-ctr">${pg+1}/${STORY.length}</span>`;
+  if(!isLast)h+=`<button class="cont-btn" onclick="nextPage()">Continue →</button>`;
+  else h+=`<button class="cont-btn" onclick="completeSection('story');switchSection('continents')">Explore Continents! 🌍</button>`;
+  return h+`</div></div>`;
+}
+function renderContinents(child,s){
+  let h=`<div class="explorer-wrap"><div class="ks-tag ${child.ks==="KS3"?"ks3":""}">🌍 ${child.ks}: Continents & Oceans</div>
+    <div class="explorer-title">🌍 Continent Explorer</div>
+    <div class="explorer-sub">Click each continent to explore — geography, people, animals, and your Portugal connection</div>
+    <div class="continent-grid">`;
+  CONTINENTS.forEach(c=>{h+=`<div class="continent-card ${s.selectedContinent===c.id?"selected":""}" onclick="selectContinent('${c.id}')">
+    <div class="cont-emoji">${c.emoji}</div><div class="cont-name">${c.name}</div><div class="cont-sub">Area: ${c.area}</div></div>`;});
+  h+=`</div>`;
+  if(s.selectedContinent){
+    const cont=CONTINENTS.find(c=>c.id===s.selectedContinent);
+    if(cont){
+      h+=`<div class="cont-detail"><div style="font-family:'Fredoka One',cursive;color:#64b5f6;font-size:1.2rem;margin-bottom:8px">${cont.emoji} ${cont.name}</div>
+        <div class="cont-stats">`;
+      [["📍 Area",cont.area],["👥 Population",cont.population],["🏳️ Countries",cont.countries],["🏔️ Highest Point",cont.highest]].forEach(([l,v])=>{
+        h+=`<div class="cstat"><div class="cstat-label">${l}</div><div class="cstat-val" style="font-size:0.78rem">${v}</div></div>`;
+      });
+      h+=`</div><div style="font-size:0.85rem;color:#bbdefb;line-height:1.65;margin-bottom:8px">${cont.story}</div>
+        <div class="portugal-pull"><strong>🇵🇹 Portugal Connection</strong>${cont.portugal}</div>`;
+      if(child.id==="owl")h+=`<div class="ks3-pull"><strong>🦉 KS3 Analysis</strong>${cont.ks3}</div>`;
+      h+=`</div>`;
+    }
+    h+=`<div style="margin-top:12px;text-align:center"><button class="btn-blue" onclick="completeSection('continents');switchSection('flags')">Play the Flag Game! 🚩</button></div>`;
+  } else h+=`<div style="text-align:center;padding:14px;color:#555;font-size:0.82rem">👆 Click any continent to explore</div>`;
+  return h+`</div>`;
+}
+function renderFlags(child,s){
+  const id=child.id;const flagSet=FLAG_GAME[id==="owl"?"owl":id==="cub"?"cub":"bay"];
+  const max=id==="owl"?15:id==="cub"?12:8;
+  const flags=flagSet.slice(0,max);
+  const idx=s.flagIdx||0;
+  if(s.flagDone||idx>=flags.length){
+    const score=s.flagScore||0;const pct=Math.round((score/flags.length)*100);
+    return`<div class="flag-game"><div class="fg-title">🚩 Flag Expert!</div>
+      <div style="text-align:center;padding:20px">
+        <div style="font-size:3rem;margin-bottom:10px">${pct>=80?"🏆":pct>=60?"⭐":"💪"}</div>
+        <div style="font-family:'Fredoka One',cursive;color:#64b5f6;font-size:1.4rem">${score}/${flags.length}</div>
+        <div style="display:flex;gap:8px;justify-content:center;margin-top:12px">
+          <button onclick="resetFlags()" style="background:rgba(255,255,255,0.07);color:#ccc;border:1px solid rgba(255,255,255,0.12);padding:9px 18px;border-radius:22px;font-family:'Nunito',sans-serif;font-size:0.85rem;font-weight:700;cursor:pointer">Try Again 🔄</button>
+          <button class="btn-blue" onclick="completeSection('flags');switchSection('maths')">Maths! 📐</button>
+        </div></div></div>`;
+  }
+  const q=flags[idx];const chosen=s.flagChosen;const answered=chosen!==undefined&&chosen!==null;
+  let h=`<div class="flag-game"><div class="ks-tag ${child.ks==="KS3"?"ks3":""}">🚩 ${child.ks}: Flags & World Knowledge</div>
+    <div class="fg-title">🚩 Flag Challenge</div>
+    <div style="color:#777;font-size:0.78rem;margin-bottom:10px">Q${idx+1}/${flags.length} · Score: ${s.flagScore||0} ⭐</div>
+    <div class="score-dots">`;
+  flags.forEach((_,i)=>{const a=(s.flagAnswers||[])[i];h+=`<div class="sdot ${i===idx?"current":a===undefined?"":a?"done":"wrong"}"></div>`;});
+  h+=`</div><div class="flag-display">${q.flag}</div>
+    <div class="flag-q">${q.q}</div>
+    <div class="flag-opts">`;
+  q.opts.forEach((opt,i)=>{
+    let cls="flag-opt";
+    if(answered){if(i===q.ans)cls+=" correct";else if(i===chosen&&i!==q.ans)cls+=" wrong";}
+    h+=`<button class="${cls}" ${answered?"disabled":""} onclick="answerFlag(${i})">${opt}</button>`;
+  });
+  h+=`</div>`;
+  if(answered){
+    h+=`<div style="background:rgba(100,181,246,0.07);border:1px solid rgba(100,181,246,0.15);border-radius:9px;padding:10px;margin-top:8px;font-size:0.78rem;color:#bbdefb;line-height:1.55">🤩 ${q.fact}</div>`;
+    h+=`<div style="text-align:right;margin-top:10px"><button class="btn-blue" onclick="nextFlag()">Next →</button></div>`;
+  }
+  return h+`</div>`;
+}
+function renderMaths(child,s){
+  const id=child.id;const chs=MATHS[id==="owl"?"owl":id==="cub"?"cub":"bay"];
+  let h=`<div class="math-panel"><div class="ks-tag ${child.ks==="KS3"?"ks3":""}">📐 ${child.ks}: Geography Maths</div>
+    <div style="font-family:'Fredoka One',cursive;color:#f0b429;font-size:1.2rem;margin-bottom:4px">📐 Numbers of the World</div>
+    <div style="color:#777;font-size:0.78rem;margin-bottom:14px">Real geography calculations using actual data</div>`;
+  chs.forEach((ch,idx)=>{
+    const answered=s.mathAnswered&&s.mathAnswered[idx];const inputVal=(s.mathInputs&&s.mathInputs[idx])||"";
+    h+=`<div class="challenge-card"><div class="ch-title">📐 ${ch.title}</div><div class="ch-story">${ch.story}</div>
+      <div class="ch-q">${ch.q}</div>`;
+    if(!answered){
+      h+=`<div class="math-row"><input class="math-in" type="text" value="${inputVal.replace(/"/g,'&quot;')}" placeholder="Answer..." oninput="updateMath(${idx},this.value)" onkeydown="if(event.key==='Enter')checkMath(${idx})">
+        <span class="math-unit">${ch.unit}</span><button class="math-go" onclick="checkMath(${idx})">Check ✓</button></div>`;
+      if(s.mathAnswered&&s.mathAnswered[idx]==="wrong")h+=`<div class="math-no">Not quite — try again!</div>`;
+    } else {
+      h+=`<div class="math-ok">✅ Correct!</div><div style="background:rgba(255,255,255,0.04);border-radius:8px;padding:8px 12px;font-size:0.78rem;color:#aaa;line-height:1.6;margin-top:6px"><strong style="color:#f0b429">Full working:</strong> ${ch.working}</div>`;
+      h+=`<div class="math-fact">🤩 ${ch.fact}</div>`;
+    }
+    h+=`</div>`;
+  });
+  const allDone=chs.every((_,i)=>s.mathAnswered&&s.mathAnswered[i]==="correct");
+  if(allDone)h+=`<div style="text-align:center;margin-top:12px"><button class="btn-blue" onclick="completeSection('maths');switchSection('quiz')">Take the Quiz! ✅</button></div>`;
+  return h+`</div>`;
+}
+function renderQuiz(child,s){
+  const id=child.id;const qs=QUIZ[id==="owl"?"owl":id==="cub"?"cub":"bay"];const idx=s.quizIdx||0;
+  if(s.quizDone||idx>=qs.length){
+    const score=s.quizScore||0;const pct=Math.round((score/qs.length)*100);
+    return`<div class="quiz-wrap"><div class="score-banner"><h2>Chapter 1 Complete! 🌍</h2>
+      <div style="font-size:3rem;margin:8px 0">${pct>=80?"🏆":pct>=60?"⭐":"💪"}</div>
+      <div style="color:#ccc">${score}/${qs.length} (${pct}%)</div>
+      <div style="display:flex;gap:8px;justify-content:center;margin-top:12px">
+        <button onclick="resetQuiz()" style="background:rgba(255,255,255,0.07);color:#ccc;border:1px solid rgba(255,255,255,0.12);padding:9px 18px;border-radius:22px;font-family:'Nunito',sans-serif;font-size:0.85rem;font-weight:700;cursor:pointer">Try Again 🔄</button>
+        <a href="chapter2.html" class="btn-blue" style="padding:9px 18px;text-decoration:none">Chapter 2 → Cities</a>
+      </div></div></div>`;
+  }
+  const q=qs[idx];const answers=s.quizAnswers||[];const thisAns=answers[idx];
+  let h=`<div class="quiz-wrap"><div class="ks-tag ${child.ks==="KS3"?"ks3":""}">✅ ${child.ks} Quiz</div>
+    <div class="section-label">Quiz · Q${idx+1} of ${qs.length}</div>
+    <div class="score-dots">`;
+  qs.forEach((_,i)=>{const a=answers[i];h+=`<div class="sdot ${i===idx?"current":a===undefined?"":a===qs[i].ans?"done":"wrong"}"></div>`;});
+  h+=`</div><div class="q-text">${q.q}</div><div class="q-opts">`;
+  q.opts.forEach((opt,i)=>{
+    let cls="q-opt";
+    if(thisAns!==undefined){if(i===q.ans)cls+=" correct";else if(i===thisAns&&i!==q.ans)cls+=" wrong";}
+    h+=`<button class="${cls}" ${thisAns!==undefined?"disabled":""} onclick="answerQuiz(${i})">${opt}</button>`;
+  });
+  h+=`</div>`;
+  if(thisAns!==undefined){
+    h+=`<div class="q-fact">🤩 ${q.fact}</div>`;
+    h+=`<div style="text-align:right;margin-top:8px"><button class="btn-blue" onclick="nextQuiz()">Next →</button></div>`;
+  }
+  return h+`</div>`;
+}
+function selectChild(id){ui.child=id;ui.view="learn";ui.section="story";render();}
+function backToProfiles(){ui.view="profiles";render();}
+function switchSection(s){ui.section=s;render();}
+function completeSection(s){const comp=state[ui.child].sectionsComplete||[];if(!comp.includes(s))state[ui.child].sectionsComplete=[...comp,s];saveState();}
+function nextPage(){if(state[ui.child].storyPage<STORY.length-1){state[ui.child].storyPage++;saveState();render();}}
+function selectContinent(id){state[ui.child].selectedContinent=id;saveState();render();}
+function answerFlag(i){
+  const id=ui.child;const s=state[id];const flagSet=FLAG_GAME[id==="owl"?"owl":id==="cub"?"cub":"bay"];
+  const max=id==="owl"?15:id==="cub"?12:8;const flags=flagSet.slice(0,max);
+  const idx=s.flagIdx||0;const q=flags[idx];
+  const answers=[...(s.flagAnswers||[])];while(answers.length<=idx)answers.push(undefined);
+  answers[idx]=i===q.ans;if(i===q.ans)state[id].flagScore=(s.flagScore||0)+1;
+  state[id].flagAnswers=answers;state[id].flagChosen=i;saveState();render();
+}
+function nextFlag(){
+  const id=ui.child;const s=state[id];const flagSet=FLAG_GAME[id==="owl"?"owl":id==="cub"?"cub":"bay"];
+  const max=id==="owl"?15:id==="cub"?12:8;
+  const next=(s.flagIdx||0)+1;state[id].flagIdx=next;state[id].flagChosen=null;
+  if(next>=flagSet.slice(0,max).length)state[id].flagDone=true;saveState();render();
+}
+function resetFlags(){const id=ui.child;state[id].flagIdx=0;state[id].flagAnswers=[];state[id].flagDone=false;state[id].flagScore=0;state[id].flagChosen=null;saveState();render();}
+function updateMath(idx,v){if(!state[ui.child].mathInputs)state[ui.child].mathInputs={};state[ui.child].mathInputs[idx]=v;}
+function checkMath(idx){
+  const id=ui.child;const chs=MATHS[id==="owl"?"owl":id==="cub"?"cub":"bay"];const ch=chs[idx];
+  const input=(state[id].mathInputs&&state[id].mathInputs[idx]||"").trim().replace(/,/g,"");
+  const correctVal=ch.answer.replace(/,/g,"");
+  const userNum=parseFloat(input);const correctNum=parseFloat(correctVal);
+  const correct=!isNaN(userNum)&&!isNaN(correctNum)&&Math.abs(userNum-correctNum)/Math.max(correctNum,0.001)<0.05;
+  if(!state[id].mathAnswered)state[id].mathAnswered={};
+  state[id].mathAnswered[idx]=correct?"correct":"wrong";saveState();render();
+}
+function answerQuiz(i){
+  const id=ui.child;const s=state[id];const qs=QUIZ[id==="owl"?"owl":id==="cub"?"cub":"bay"];
+  const idx=s.quizIdx||0;const q=qs[idx];
+  const answers=[...(s.quizAnswers||[])];while(answers.length<=idx)answers.push(undefined);
+  answers[idx]=i;if(i===q.ans)state[id].quizScore=(s.quizScore||0)+1;
+  state[id].quizAnswers=answers;saveState();render();
+}
+function nextQuiz(){
+  const id=ui.child;const s=state[id];const qs=QUIZ[id==="owl"?"owl":id==="cub"?"cub":"bay"];
+  const next=(s.quizIdx||0)+1;state[id].quizIdx=next;
+  if(next>=qs.length)state[id].quizDone=true;saveState();render();
+}
+function resetQuiz(){const id=ui.child;state[id].quizIdx=0;state[id].quizAnswers=[];state[id].quizDone=false;state[id].quizScore=0;saveState();render();}
+render();
+</script>
+</body>
+</html>
