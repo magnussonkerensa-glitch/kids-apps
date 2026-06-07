@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bay's World!</title>
+<link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100vh;overflow-x:hidden}
+body{font-family:'Nunito',sans-serif;background:#f5f0ff;color:#3a1a5e}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(circle at 15% 25%,rgba(200,160,255,0.5) 0%,transparent 35%),
+  radial-gradient(circle at 85% 15%,rgba(255,255,150,0.5) 0%,transparent 30%),
+  radial-gradient(circle at 75% 75%,rgba(180,230,255,0.5) 0%,transparent 35%),
+  radial-gradient(circle at 20% 80%,rgba(200,255,200,0.5) 0%,transparent 30%),
+  radial-gradient(circle at 50% 50%,rgba(230,200,255,0.3) 0%,transparent 50%)}
+.confetti{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.dot{position:absolute;border-radius:50%;animation:fall var(--ft) var(--fd) linear infinite}
+@keyframes fall{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(360deg);opacity:0}}
+.floaties{position:fixed;inset:0;z-index:0;pointer-events:none}
+.floatie{position:absolute;font-size:var(--fs);opacity:0.15;animation:floatUp var(--ft) var(--fd) ease-in-out infinite alternate}
+@keyframes floatUp{from{transform:translateY(0) rotate(-5deg)}to{transform:translateY(-20px) rotate(5deg)}}
+.wrap{position:relative;z-index:1;max-width:860px;margin:0 auto;padding:40px 24px 100px;text-align:center}
+header{margin-bottom:44px}
+
+/* characters row */
+.chars{display:flex;justify-content:center;align-items:flex-end;gap:30px;margin-bottom:20px;flex-wrap:wrap}
+.char{animation:bounc var(--bd) var(--bdy) ease-in-out infinite;display:inline-block}
+@keyframes bounc{0%,100%{transform:translateY(0) rotate(var(--br,0deg))}50%{transform:translateY(-14px) rotate(var(--br,0deg))}}
+
+h1{font-family:'Lilita One',cursive;font-size:clamp(3.5rem,11vw,6.5rem);background:linear-gradient(135deg,#b06bff,#ff6bcd,#ffb347,#6bcb77,#4db8ff,#b06bff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;margin-bottom:8px;filter:drop-shadow(0 3px 0 rgba(0,0,0,0.08))}
+.sub{font-size:1rem;font-weight:800;color:#b06bff;letter-spacing:1px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:20px}
+.bubble{width:100%;position:relative;border-radius:999px;padding:32px 18px 28px;text-align:center;text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:10px;transition:all .2s cubic-bezier(.34,1.6,.64,1);cursor:pointer;box-shadow:0 6px 0 rgba(0,0,0,0.1),0 10px 24px rgba(0,0,0,0.08)}
+.bubble:hover{transform:translateY(-10px) scale(1.08);box-shadow:0 14px 0 rgba(0,0,0,0.08),0 24px 40px rgba(0,0,0,0.1)}
+.bubble:nth-child(1){background:linear-gradient(160deg,#ddb3ff,#c080ff);color:#2a0050}
+.bubble:nth-child(2){background:linear-gradient(160deg,#ffecb3,#ffd54f);color:#6a3a00}
+.bubble::before{content:'✨';position:absolute;top:-8px;right:8px;font-size:1.1rem;animation:sp 2s ease-in-out infinite alternate}
+.bubble::after{content:'⭐';position:absolute;bottom:-8px;left:8px;font-size:0.9rem;animation:sp 2.5s ease-in-out infinite alternate}
+@keyframes sp{from{transform:scale(0.7) rotate(-10deg)}to{transform:scale(1.1) rotate(10deg)}}
+.b-emoji{font-size:3rem}
+.b-name{font-family:'Lilita One',cursive;font-size:1rem;line-height:1.3}
+footer{margin-top:50px;font-family:'Lilita One',cursive;font-size:1rem;color:#c080ff;letter-spacing:1px}
+</style>
+</head>
+<body>
+<div class="confetti" id="confetti"></div>
+<div class="floaties" id="floaties"></div>
+
+<div class="wrap">
+  <header>
+    <div class="chars">
+
+      <!-- CUPCAKE — big clear readable -->
+      <div class="char" style="--bd:2.2s;--bdy:0s;--br:-4deg">
+        <svg width="120" height="145" viewBox="0 0 120 145" xmlns="http://www.w3.org/2000/svg">
+          <!-- case/wrapper -->
+          <path d="M18 72 Q15 100 19 118 L101 118 Q105 100 102 72 Z" fill="#ff9a6c"/>
+          <!-- wrapper pleats -->
+          <line x1="30" y1="72" x2="25" y2="118" stroke="#e06030" stroke-width="1.8" opacity="0.45"/>
+          <line x1="46" y1="72" x2="44" y2="118" stroke="#e06030" stroke-width="1.8" opacity="0.45"/>
+          <line x1="60" y1="72" x2="60" y2="118" stroke="#e06030" stroke-width="1.8" opacity="0.45"/>
+          <line x1="74" y1="72" x2="76" y2="118" stroke="#e06030" stroke-width="1.8" opacity="0.45"/>
+          <line x1="90" y1="72" x2="95" y2="118" stroke="#e06030" stroke-width="1.8" opacity="0.45"/>
+          <!-- wrapper rim -->
+          <rect x="18" y="112" width="84" height="10" rx="5" fill="#e06030"/>
+
+          <!-- BIG frosting blob — unmistakable swirl -->
+          <!-- base layer wide -->
+          <ellipse cx="60" cy="68" rx="46" ry="18" fill="#c080ff"/>
+          <!-- middle mound -->
+          <ellipse cx="60" cy="56" rx="36" ry="22" fill="#c880ff"/>
+          <!-- top swirl mound -->
+          <ellipse cx="60" cy="42" rx="24" ry="18" fill="#d49fff"/>
+          <!-- tippy top -->
+          <ellipse cx="60" cy="30" rx="13" ry="10" fill="#e4baff"/>
+          <!-- swirl line suggestion -->
+          <path d="M48 50 Q60 42 72 50" stroke="#b060e8" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.5"/>
+          <path d="M52 36 Q60 30 68 36" stroke="#b060e8" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.4"/>
+
+          <!-- CHERRY on top - big and obvious -->
+          <circle cx="60" cy="20" r="11" fill="#ff3355"/>
+          <ellipse cx="56" cy="16" rx="3.5" ry="2.5" fill="rgba(255,255,255,0.4)"/>
+          <!-- stem -->
+          <path d="M60 12 Q65 4 70 6" stroke="#22aa44" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <!-- leaf -->
+          <ellipse cx="68" cy="5" rx="5" ry="3" fill="#22aa44" transform="rotate(-20 68 5)"/>
+
+          <!-- FACE on the frosting — big and clear -->
+          <!-- heart eyes -->
+          <g transform="translate(46,54)">
+            <path d="M0,-9 C-2.5,-13 -10,-13 -10,-6 C-10,0 0,8 0,8 C0,8 10,0 10,-6 C10,-13 2.5,-13 0,-9Z" fill="#ff1493"/>
+            <ellipse cx="-3" cy="-8" rx="2.5" ry="1.8" fill="rgba(255,255,255,0.45)"/>
+          </g>
+          <g transform="translate(74,54)">
+            <path d="M0,-9 C-2.5,-13 -10,-13 -10,-6 C-10,0 0,8 0,8 C0,8 10,0 10,-6 C10,-13 2.5,-13 0,-9Z" fill="#ff1493"/>
+            <ellipse cx="-3" cy="-8" rx="2.5" ry="1.8" fill="rgba(255,255,255,0.45)"/>
+          </g>
+          <!-- chubby cheeks -->
+          <ellipse cx="32" cy="62" rx="10" ry="7" fill="#ffaacc" opacity="0.55"/>
+          <ellipse cx="88" cy="62" rx="10" ry="7" fill="#ffaacc" opacity="0.55"/>
+          <!-- happy smile -->
+          <path d="M46 68 Q60 80 74 68" stroke="#9933cc" stroke-width="3" fill="none" stroke-linecap="round"/>
+
+          <!-- sprinkles -->
+          <rect x="36" y="44" width="9" height="3.5" rx="1.8" fill="#ff6b6b" transform="rotate(25 40 46)"/>
+          <rect x="72" y="40" width="9" height="3.5" rx="1.8" fill="#6bcb77" transform="rotate(-18 76 42)"/>
+          <rect x="56" y="34" width="7" height="3" rx="1.5" fill="#ffd700" transform="rotate(8 59 35)"/>
+          <rect x="78" y="52" width="8" height="3" rx="1.5" fill="#4db8ff" transform="rotate(-30 82 54)"/>
+          <rect x="30" y="48" width="7" height="3" rx="1.5" fill="#ff9a6c" transform="rotate(40 33 50)"/>
+        </svg>
+      </div>
+
+      <!-- BAY LEAF CHARACTER — cute round leaf with face -->
+      <div class="char" style="--bd:2.5s;--bdy:-0.3s;--br:2deg">
+        <svg width="110" height="145" viewBox="0 0 110 145" xmlns="http://www.w3.org/2000/svg">
+          <!-- little legs -->
+          <line x1="40" y1="118" x2="32" y2="138" stroke="#3ab840" stroke-width="9" stroke-linecap="round"/>
+          <line x1="70" y1="118" x2="78" y2="138" stroke="#3ab840" stroke-width="9" stroke-linecap="round"/>
+          <!-- shoes -->
+          <ellipse cx="30" cy="140" rx="11" ry="7" fill="#2a8a30"/>
+          <ellipse cx="80" cy="140" rx="11" ry="7" fill="#2a8a30"/>
+          <!-- little arms -->
+          <line x1="28" y1="88" x2="10" y2="72" stroke="#3ab840" stroke-width="8" stroke-linecap="round"/>
+          <line x1="82" y1="88" x2="100" y2="72" stroke="#3ab840" stroke-width="8" stroke-linecap="round"/>
+          <!-- tiny hands -->
+          <circle cx="9" cy="70" r="8" fill="#3ab840"/>
+          <circle cx="101" cy="70" r="8" fill="#3ab840"/>
+
+          <!-- LEAF BODY — big round teardrop -->
+          <path d="M55 10 C20 10 8 40 8 70 C8 100 25 122 55 125 C85 122 102 100 102 70 C102 40 90 10 55 10 Z" fill="#4cce52"/>
+          <!-- leaf shine -->
+          <path d="M55 10 C38 10 22 30 18 55" stroke="rgba(255,255,255,0.3)" stroke-width="8" fill="none" stroke-linecap="round"/>
+          <!-- leaf vein centre -->
+          <line x1="55" y1="18" x2="55" y2="115" stroke="#3ab840" stroke-width="2.5" opacity="0.4"/>
+          <!-- side veins -->
+          <line x1="55" y1="40" x2="30" y2="58" stroke="#3ab840" stroke-width="1.5" opacity="0.3"/>
+          <line x1="55" y1="40" x2="80" y2="58" stroke="#3ab840" stroke-width="1.5" opacity="0.3"/>
+          <line x1="55" y1="60" x2="24" y2="74" stroke="#3ab840" stroke-width="1.5" opacity="0.3"/>
+          <line x1="55" y1="60" x2="86" y2="74" stroke="#3ab840" stroke-width="1.5" opacity="0.3"/>
+          <line x1="55" y1="80" x2="30" y2="90" stroke="#3ab840" stroke-width="1.5" opacity="0.25"/>
+          <line x1="55" y1="80" x2="80" y2="90" stroke="#3ab840" stroke-width="1.5" opacity="0.25"/>
+
+          <!-- CUTE FACE -->
+          <!-- big sparkly eyes -->
+          <circle cx="40" cy="72" r="11" fill="white"/>
+          <circle cx="70" cy="72" r="11" fill="white"/>
+          <circle cx="42" cy="74" r="7" fill="#1a5500"/>
+          <circle cx="72" cy="74" r="7" fill="#1a5500"/>
+          <circle cx="40" cy="72" r="4" fill="#111"/>
+          <circle cx="70" cy="72" r="4" fill="#111"/>
+          <!-- eye shine -->
+          <circle cx="38" cy="70" r="3" fill="white"/>
+          <circle cx="68" cy="70" r="3" fill="white"/>
+          <circle cx="43" cy="76" r="1.5" fill="white" opacity="0.7"/>
+          <circle cx="73" cy="76" r="1.5" fill="white" opacity="0.7"/>
+
+          <!-- eyelashes -->
+          <line x1="30" y1="64" x2="34" y2="60" stroke="#2a8a30" stroke-width="2" stroke-linecap="round"/>
+          <line x1="38" y1="62" x2="39" y2="57" stroke="#2a8a30" stroke-width="2" stroke-linecap="round"/>
+          <line x1="64" y1="62" x2="65" y2="57" stroke="#2a8a30" stroke-width="2" stroke-linecap="round"/>
+          <line x1="72" y1="64" x2="76" y2="60" stroke="#2a8a30" stroke-width="2" stroke-linecap="round"/>
+
+          <!-- button nose -->
+          <circle cx="55" cy="84" r="4" fill="#2a8a30"/>
+          <circle cx="54" cy="83" r="1.5" fill="rgba(255,255,255,0.4)"/>
+
+          <!-- BIG cute smile -->
+          <path d="M38 93 Q55 108 72 93" stroke="#1a5500" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <!-- tiny tongue -->
+          <ellipse cx="55" cy="104" rx="7" ry="5" fill="#ff9999"/>
+
+          <!-- rosy cheeks -->
+          <ellipse cx="27" cy="88" rx="10" ry="7" fill="#ffccaa" opacity="0.5"/>
+          <ellipse cx="83" cy="88" rx="10" ry="7" fill="#ffccaa" opacity="0.5"/>
+
+          <!-- sparkles around -->
+          <text x="0" y="30" font-size="14" fill="#ffd700" opacity="0.8">✨</text>
+          <text x="88" y="28" font-size="12" fill="#ffd700" opacity="0.7">⭐</text>
+        </svg>
+      </div>
+
+      <!-- CUTE SMILEY — very round, very simple, very cute -->
+      <div class="char" style="--bd:3s;--bdy:-0.6s;--br:-2deg">
+        <svg width="110" height="145" viewBox="0 0 110 145" xmlns="http://www.w3.org/2000/svg">
+          <!-- stubby legs -->
+          <ellipse cx="38" cy="128" rx="13" ry="10" fill="#ffd700"/>
+          <ellipse cx="72" cy="128" rx="13" ry="10" fill="#ffd700"/>
+          <!-- shoe details -->
+          <ellipse cx="36" cy="133" rx="10" ry="6" fill="#e6b800"/>
+          <ellipse cx="74" cy="133" rx="10" ry="6" fill="#e6b800"/>
+          <!-- stubby arms -->
+          <ellipse cx="14" cy="88" rx="12" ry="9" fill="#ffd700" transform="rotate(-30 14 88)"/>
+          <ellipse cx="96" cy="88" rx="12" ry="9" fill="#ffd700" transform="rotate(30 96 88)"/>
+
+          <!-- round body -->
+          <ellipse cx="55" cy="108" rx="30" ry="22" fill="#ffd700"/>
+
+          <!-- THE BIG ROUND HEAD - very yellow very round -->
+          <circle cx="55" cy="62" r="52" fill="#ffd700"/>
+          <!-- head shine top left -->
+          <ellipse cx="36" cy="36" rx="14" ry="9" fill="rgba(255,255,255,0.22)" transform="rotate(-30 36 36)"/>
+
+          <!-- BIG KAWAII eyes - white circles with pupils -->
+          <circle cx="38" cy="56" r="14" fill="white"/>
+          <circle cx="72" cy="56" r="14" fill="white"/>
+          <!-- pupils -->
+          <circle cx="40" cy="58" r="9" fill="#1a1a1a"/>
+          <circle cx="74" cy="58" r="9" fill="#1a1a1a"/>
+          <!-- eye shine big -->
+          <circle cx="37" cy="54" r="5" fill="white"/>
+          <circle cx="71" cy="54" r="5" fill="white"/>
+          <!-- tiny sparkle dot -->
+          <circle cx="43" cy="61" r="2" fill="white" opacity="0.8"/>
+          <circle cx="77" cy="61" r="2" fill="white" opacity="0.8"/>
+
+          <!-- little eyebrows — cute arched -->
+          <path d="M28 44 Q38 38 48 42" stroke="#e6a800" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <path d="M62 42 Q72 38 82 44" stroke="#e6a800" stroke-width="3" fill="none" stroke-linecap="round"/>
+
+          <!-- HUGE smile — w shape cute -->
+          <path d="M24 76 Q38 92 55 86 Q72 92 86 76" stroke="#e6a800" stroke-width="4" fill="none" stroke-linecap="round"/>
+          <!-- fill inside smile for cheekiness -->
+          <path d="M24 76 Q38 96 55 90 Q72 96 86 76 Q72 88 55 84 Q38 88 24 76Z" fill="#ffb300" opacity="0.4"/>
+
+          <!-- BIG rosy cheeks -->
+          <ellipse cx="20" cy="72" rx="13" ry="9" fill="#ff9999" opacity="0.5"/>
+          <ellipse cx="90" cy="72" rx="13" ry="9" fill="#ff9999" opacity="0.5"/>
+
+          <!-- flower bow on top -->
+          <circle cx="55" cy="14" r="8" fill="#ff6bcd"/>
+          <circle cx="55" cy="14" r="4.5" fill="white"/>
+          <circle cx="55" cy="14" r="2.5" fill="#ff6bcd"/>
+          <ellipse cx="44" cy="16" rx="6" ry="4.5" fill="#ff6bcd" transform="rotate(-20 44 16)"/>
+          <ellipse cx="66" cy="16" rx="6" ry="4.5" fill="#ff6bcd" transform="rotate(20 66 16)"/>
+          <ellipse cx="46" cy="8" rx="5.5" ry="4" fill="#ffb3e0" transform="rotate(-40 46 8)"/>
+          <ellipse cx="64" cy="8" rx="5.5" ry="4" fill="#ffb3e0" transform="rotate(40 64 8)"/>
+        </svg>
+      </div>
+
+    </div>
+
+    <h1>BAY!</h1>
+    <p class="sub">🍰 what shall we do today? 💃</p>
+  </header>
+
+  <div class="grid">
+    <a class="bubble" href="index.html"><span class="b-emoji">🌍</span><span class="b-name">Atlas Chronicles</span></a>
+    <a class="bubble" href="spelling-stars-app.html"><span class="b-emoji">⭐</span><span class="b-name">Spelling Stars</span></a>
+  </div>
+
+  <footer>Bay · KS1 · Age 7 🎀</footer>
+</div>
+
+<script>
+const colours=['#b06bff','#ff6bcd','#ffb347','#6bcb77','#4db8ff','#ffd700','#ff9999'];
+const c=document.getElementById('confetti');
+for(let i=0;i<45;i++){const el=document.createElement('div');el.className='dot';const sz=4+Math.random()*6;el.style.cssText=`width:${sz}px;height:${sz}px;background:${colours[Math.floor(Math.random()*colours.length)]};left:${Math.random()*100}%;top:${Math.random()*20-20}px;--ft:${4+Math.random()*6}s;--fd:${Math.random()*6}s`;c.appendChild(el)}
+const emojis=['🍰','🧁','🍪','🎂','🍓','💃','🎵','🌸','🌈','🦋','🎀','🍩','🎶','🌟','🌿'];
+const f=document.getElementById('floaties');
+emojis.forEach(em=>{const el=document.createElement('div');el.className='floatie';el.textContent=em;el.style.cssText=`left:${5+Math.random()*90}%;top:${10+Math.random()*80}%;--fs:${1.2+Math.random()*1.5}rem;--ft:${2+Math.random()*3}s;--fd:${Math.random()*3}s`;f.appendChild(el)})
+</script>
+</body>
+</html>

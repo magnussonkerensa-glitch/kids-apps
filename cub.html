@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cub's Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100vh;overflow-x:hidden}
+body{font-family:'Nunito',sans-serif;background:#006994;color:#1a1a2e}
+
+.sky{position:fixed;inset:0;z-index:0;background:linear-gradient(180deg,#87ceeb 0%,#b8e4f7 25%,#d4f0fa 40%,#e8f8ff 55%,#b8d4e8 65%,#5b9bc8 75%,#2a7aaa 85%,#006994 100%)}
+.sun{position:fixed;top:30px;right:80px;z-index:1;width:80px;height:80px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#fffde7,#ffd700 50%,#ffb300);box-shadow:0 0 0 15px rgba(255,215,0,0.12),0 0 50px rgba(255,200,0,0.3);animation:sungl 4s ease-in-out infinite alternate}
+@keyframes sungl{to{box-shadow:0 0 0 22px rgba(255,215,0,0.18),0 0 80px rgba(255,200,0,0.4)}}
+
+/* clouds */
+.cloud{position:fixed;z-index:1;pointer-events:none;animation:drift var(--ct) var(--cd) linear infinite}
+@keyframes drift{from{transform:translateX(-300px)}to{transform:translateX(calc(100vw + 300px))}}
+
+/* ── SURFER GIRL ── */
+.surfer-wrap{position:fixed;bottom:90px;right:-20px;z-index:4;pointer-events:none;animation:surfbob 3s ease-in-out infinite}
+@keyframes surfbob{0%,100%{transform:translateY(0) rotate(2deg)}50%{transform:translateY(-12px) rotate(-2deg)}}
+
+/* waves */
+.waves-wrap{position:fixed;bottom:0;left:0;right:0;z-index:3;pointer-events:none;height:260px}
+.wave-svg{position:absolute;bottom:0;left:0;width:200%;animation:wavemove var(--ws) linear infinite}
+@keyframes wavemove{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.wave1{--ws:8s;bottom:20px;opacity:0.6}
+.wave2{--ws:11s;bottom:10px;opacity:0.4;animation-direction:reverse}
+.wave3{--ws:6s;bottom:0;opacity:0.9}
+
+/* kisses */
+.kisses{position:fixed;inset:0;z-index:5;pointer-events:none;overflow:hidden}
+.kiss{position:absolute;font-size:var(--ks);opacity:0;animation:kissfl var(--kt) var(--kd) ease-in-out infinite}
+@keyframes kissfl{0%{opacity:0;transform:translateY(20px) scale(0.5) rotate(var(--kr))}20%{opacity:0.7}80%{opacity:0.4}100%{opacity:0;transform:translateY(-70px) scale(1.3) rotate(var(--kr))}}
+
+.wrap{position:relative;z-index:10;max-width:900px;margin:0 auto;padding:40px 24px 140px;text-align:center}
+
+header{margin-bottom:44px}
+.tiger-wrap{display:inline-block;margin-bottom:10px;animation:tigerbob 2.5s ease-in-out infinite;filter:drop-shadow(0 4px 16px rgba(255,140,0,0.35))}
+@keyframes tigerbob{0%,100%{transform:rotate(-4deg) translateY(0)}50%{transform:rotate(4deg) translateY(-10px)}}
+h1{font-family:'Pacifico',cursive;font-size:clamp(3rem,9vw,5.5rem);color:#fff;text-shadow:3px 3px 0 rgba(255,140,0,0.5);line-height:1.1;margin-bottom:8px}
+.sub{font-size:1rem;font-weight:800;color:rgba(255,255,255,0.7);letter-spacing:1px}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:18px}
+.bubble{position:relative;border-radius:24px;padding:28px 16px 24px;text-align:center;text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:12px;transition:all .25s cubic-bezier(.34,1.4,.64,1);cursor:pointer;box-shadow:0 4px 0 rgba(0,0,0,0.12),0 8px 20px rgba(0,0,0,0.1);overflow:hidden}
+.bubble::after{content:'';position:absolute;inset:4px;border-radius:20px;border:2px solid rgba(255,255,255,0.45);pointer-events:none}
+.bubble:hover{transform:translateY(-8px) rotate(-1deg) scale(1.03);box-shadow:0 14px 0 rgba(0,0,0,0.1),0 24px 40px rgba(0,0,0,0.15)}
+.bubble:nth-child(1){background:linear-gradient(135deg,#ffe4b5,#ffcc66)}
+.bubble:nth-child(2){background:linear-gradient(135deg,#e8d5ff,#c9a0ff)}
+.bubble:nth-child(3){background:linear-gradient(135deg,#d4f4dd,#90e4a8)}
+.bubble:nth-child(4){background:linear-gradient(135deg,#dde8ff,#aabbff)}
+.bubble:nth-child(5){background:linear-gradient(135deg,#ffe8d6,#ffb88c)}
+.bubble::before{content:'💋';position:absolute;top:6px;right:10px;font-size:0.9rem;opacity:0.35;animation:kp 3s ease-in-out infinite alternate}
+@keyframes kp{from{transform:scale(0.8) rotate(-10deg)}to{transform:scale(1.1) rotate(10deg)}}
+.b-emoji{font-size:2.6rem}
+.b-name{font-family:'Pacifico',cursive;font-size:0.85rem;line-height:1.3;color:#2a1a0a}
+
+footer{text-align:center;margin-top:50px;font-family:'Pacifico',cursive;font-size:0.85rem;color:rgba(255,255,255,0.5)}
+</style>
+</head>
+<body>
+<div class="sky"></div>
+<div class="sun"></div>
+
+<!-- clouds -->
+<div class="cloud" style="top:8%;--ct:28s;--cd:0s"><svg width="180" height="60" viewBox="0 0 180 60"><ellipse cx="90" cy="40" rx="80" ry="22" fill="white"/><ellipse cx="70" cy="30" rx="40" ry="28" fill="white"/><ellipse cx="110" cy="32" rx="36" ry="24" fill="white"/></svg></div>
+<div class="cloud" style="top:14%;--ct:38s;--cd:-12s"><svg width="130" height="50" viewBox="0 0 130 50"><ellipse cx="65" cy="35" rx="58" ry="18" fill="white"/><ellipse cx="50" cy="26" rx="30" ry="22" fill="white"/><ellipse cx="82" cy="28" rx="28" ry="18" fill="white"/></svg></div>
+
+<!-- SURFER GIRL -->
+<div class="surfer-wrap">
+  <svg width="200" height="320" viewBox="0 0 200 320" xmlns="http://www.w3.org/2000/svg">
+    <!-- surfboard -->
+    <ellipse cx="100" cy="300" rx="85" ry="18" fill="#ff6b6b" transform="rotate(-8 100 300)"/>
+    <ellipse cx="100" cy="300" rx="70" ry="12" fill="#ff9999" opacity="0.5" transform="rotate(-8 100 300)"/>
+    <line x1="40" y1="292" x2="160" y2="308" stroke="#cc0000" stroke-width="2" opacity="0.4"/>
+
+    <!-- legs -->
+    <path d="M82 230 Q78 260 72 285" stroke="#f4a460" stroke-width="14" fill="none" stroke-linecap="round"/>
+    <path d="M102 228 Q106 258 112 283" stroke="#f4a460" stroke-width="14" fill="none" stroke-linecap="round"/>
+    <!-- feet -->
+    <ellipse cx="70" cy="288" rx="10" ry="6" fill="#f4a460"/>
+    <ellipse cx="114" cy="286" rx="10" ry="6" fill="#f4a460"/>
+
+    <!-- bikini bottom -->
+    <path d="M72 222 Q92 232 112 222 L108 240 Q92 248 76 240 Z" fill="#ff6bcd"/>
+
+    <!-- torso -->
+    <path d="M74 180 Q92 175 110 180 L112 222 Q92 230 72 222 Z" fill="#f4a460"/>
+
+    <!-- bikini top -->
+    <path d="M74 180 Q84 172 92 178 Q100 172 110 180 Q104 190 92 186 Q80 190 74 180Z" fill="#ff6bcd"/>
+    <!-- bikini straps -->
+    <line x1="92" y1="178" x2="88" y2="165" stroke="#ff6bcd" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="92" y1="178" x2="96" y2="165" stroke="#ff6bcd" stroke-width="2.5" stroke-linecap="round"/>
+
+    <!-- arm up holding -->
+    <path d="M74 185 Q55 165 48 140" stroke="#f4a460" stroke-width="13" fill="none" stroke-linecap="round"/>
+    <!-- arm out for balance -->
+    <path d="M110 188 Q130 175 145 168" stroke="#f4a460" stroke-width="13" fill="none" stroke-linecap="round"/>
+    <!-- hand -->
+    <circle cx="48" cy="138" r="8" fill="#f4a460"/>
+    <circle cx="145" cy="166" r="7" fill="#f4a460"/>
+
+    <!-- neck -->
+    <rect x="86" y="158" width="14" height="20" rx="7" fill="#f4a460"/>
+
+    <!-- HEAD -->
+    <ellipse cx="92" cy="145" rx="30" ry="28" fill="#f4a460"/>
+
+    <!-- BLONDE HAIR - long flowing -->
+    <!-- back hair -->
+    <path d="M66 135 Q50 160 55 200 Q58 220 65 235" stroke="#ffd700" stroke-width="18" fill="none" stroke-linecap="round" opacity="0.9"/>
+    <path d="M70 132 Q52 155 56 195 Q59 215 68 228" stroke="#ffeb80" stroke-width="10" fill="none" stroke-linecap="round" opacity="0.7"/>
+    <!-- top hair -->
+    <ellipse cx="92" cy="128" rx="32" ry="16" fill="#ffd700"/>
+    <!-- hair flowing right side -->
+    <path d="M118 138 Q132 155 128 185 Q125 205 120 220" stroke="#ffd700" stroke-width="14" fill="none" stroke-linecap="round" opacity="0.7"/>
+    <!-- hair highlight -->
+    <path d="M78 120 Q92 116 106 120" stroke="#fff5b0" stroke-width="5" fill="none" stroke-linecap="round" opacity="0.6"/>
+    <!-- side fringe -->
+    <path d="M65 132 Q70 122 80 126" stroke="#ffd700" stroke-width="8" fill="none" stroke-linecap="round"/>
+    <!-- hair clip/flower -->
+    <circle cx="112" cy="126" r="7" fill="#ff6bcd"/>
+    <circle cx="112" cy="126" r="4" fill="#fff"/>
+    <circle cx="112" cy="126" r="2" fill="#ff6bcd"/>
+
+    <!-- FACE -->
+    <!-- sunglasses - cool round ones -->
+    <circle cx="82" cy="143" r="11" fill="#1a0a3e" opacity="0.85"/>
+    <circle cx="102" cy="143" r="11" fill="#1a0a3e" opacity="0.85"/>
+    <line x1="93" y1="143" x2="91" y2="143" stroke="#888" stroke-width="2"/>
+    <line x1="71" y1="143" x2="64" y2="140" stroke="#888" stroke-width="2"/>
+    <line x1="113" y1="143" x2="120" y2="140" stroke="#888" stroke-width="2"/>
+    <circle cx="82" cy="143" r="11" fill="none" stroke="#c0a000" stroke-width="2"/>
+    <circle cx="102" cy="143" r="11" fill="none" stroke="#c0a000" stroke-width="2"/>
+    <!-- lens sheen -->
+    <ellipse cx="78" cy="140" rx="3" ry="2" fill="rgba(255,255,255,0.2)"/>
+    <ellipse cx="98" cy="140" rx="3" ry="2" fill="rgba(255,255,255,0.2)"/>
+
+    <!-- smile -->
+    <path d="M82 158 Q92 165 102 158" stroke="#cc5500" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <!-- dimples -->
+    <circle cx="78" cy="157" r="2" fill="#e8936a" opacity="0.5"/>
+    <circle cx="106" cy="157" r="2" fill="#e8936a" opacity="0.5"/>
+
+    <!-- cheeks -->
+    <ellipse cx="73" cy="154" rx="8" ry="5" fill="#ffaaaa" opacity="0.4"/>
+    <ellipse cx="111" cy="154" rx="8" ry="5" fill="#ffaaaa" opacity="0.4"/>
+
+    <!-- shaka hand gesture -->
+    <g transform="translate(138,158)">
+      <ellipse cx="0" cy="0" rx="8" ry="10" fill="#f4a460"/>
+      <!-- thumb up -->
+      <path d="M-4,-8 Q-10,-14 -8,-18 Q-4,-20 -2,-15 L-2,-8" fill="#f4a460" stroke="#e8936a" stroke-width="0.5"/>
+      <!-- pinky out -->
+      <path d="M4,-7 Q10,-12 10,-17 Q8,-20 6,-16 L5,-7" fill="#f4a460" stroke="#e8936a" stroke-width="0.5"/>
+    </g>
+
+    <!-- spray splash -->
+    <g opacity="0.6">
+      <circle cx="30" cy="295" r="4" fill="white" opacity="0.7"/>
+      <circle cx="22" cy="288" r="3" fill="white" opacity="0.5"/>
+      <circle cx="38" cy="286" r="2.5" fill="white" opacity="0.6"/>
+      <circle cx="165" cy="290" r="4" fill="white" opacity="0.7"/>
+      <circle cx="172" cy="283" r="3" fill="white" opacity="0.5"/>
+    </g>
+  </svg>
+</div>
+
+<!-- waves -->
+<div class="waves-wrap">
+  <svg class="wave-svg wave1" viewBox="0 0 1440 120" preserveAspectRatio="none"><path d="M0,60 C180,20 360,100 540,60 C720,20 900,100 1080,60 C1260,20 1440,80 1440,60 L1440,120 L0,120 Z" fill="rgba(255,255,255,0.4)"/></svg>
+  <svg class="wave-svg wave2" viewBox="0 0 1440 120" preserveAspectRatio="none"><path d="M0,70 C200,30 400,110 600,70 C800,30 1000,100 1200,65 C1320,45 1440,75 1440,70 L1440,120 L0,120 Z" fill="rgba(100,180,255,0.35)"/></svg>
+  <svg class="wave-svg wave3" viewBox="0 0 1440 120" preserveAspectRatio="none"><path d="M0,80 C160,40 320,110 480,75 C640,40 800,100 960,70 C1120,40 1280,90 1440,75 L1440,120 L0,120 Z" fill="rgba(0,105,148,0.95)"/></svg>
+</div>
+
+<div class="kisses" id="kisses"></div>
+
+<div class="wrap">
+  <header>
+    <!-- CUTE TIGER CUB SVG -->
+    <div class="tiger-wrap">
+      <svg width="160" height="165" viewBox="0 0 160 165" xmlns="http://www.w3.org/2000/svg">
+        <!-- body - chubby round -->
+        <ellipse cx="80" cy="122" rx="44" ry="40" fill="#ff9a2e"/>
+        <!-- belly -->
+        <ellipse cx="80" cy="128" rx="26" ry="26" fill="#ffe0b2"/>
+        <!-- tummy stripes subtle -->
+        <path d="M62 118 Q66 126 62 134" stroke="#e07000" stroke-width="2" fill="none" opacity="0.3" stroke-linecap="round"/>
+        <path d="M98 118 Q94 126 98 134" stroke="#e07000" stroke-width="2" fill="none" opacity="0.3" stroke-linecap="round"/>
+
+        <!-- HEAD - big round cute -->
+        <ellipse cx="80" cy="72" rx="44" ry="42" fill="#ff9a2e"/>
+
+        <!-- forehead lighter -->
+        <ellipse cx="80" cy="60" rx="26" ry="20" fill="#ffb74d" opacity="0.4"/>
+
+        <!-- tiny round ears -->
+        <circle cx="46" cy="38" r="16" fill="#ff9a2e"/>
+        <circle cx="114" cy="38" r="16" fill="#ff9a2e"/>
+        <circle cx="46" cy="38" r="10" fill="#ffccb3"/>
+        <circle cx="114" cy="38" r="10" fill="#ffccb3"/>
+
+        <!-- forehead stripes - cute little ones -->
+        <path d="M70 44 Q73 52 71 58" stroke="#e07000" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.5"/>
+        <path d="M90 44 Q87 52 89 58" stroke="#e07000" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.5"/>
+        <path d="M80 41 Q80 48 80 54" stroke="#e07000" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.4"/>
+
+        <!-- ♥ HEART EYES ♥ bigger cuter -->
+        <!-- left -->
+        <g transform="translate(60,72)">
+          <path d="M0,-11 C-3,-16 -12,-16 -12,-8 C-12,0 0,9 0,9 C0,9 12,0 12,-8 C12,-16 3,-16 0,-11Z" fill="#ff1493"/>
+          <path d="M-5,-12 C-7,-15 -10,-14 -10,-11" stroke="rgba(255,255,255,0.5)" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        </g>
+        <!-- right -->
+        <g transform="translate(100,72)">
+          <path d="M0,-11 C-3,-16 -12,-16 -12,-8 C-12,0 0,9 0,9 C0,9 12,0 12,-8 C12,-16 3,-16 0,-11Z" fill="#ff1493"/>
+          <path d="M-5,-12 C-7,-15 -10,-14 -10,-11" stroke="rgba(255,255,255,0.5)" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        </g>
+
+        <!-- tiny cute nose -->
+        <ellipse cx="80" cy="88" rx="6" ry="4" fill="#e0506a"/>
+        <!-- nose shine -->
+        <ellipse cx="78" cy="87" rx="2" ry="1.5" fill="rgba(255,255,255,0.5)"/>
+
+        <!-- big cute smile -->
+        <path d="M66 96 Q80 110 94 96" stroke="#e0506a" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <!-- little tongue -->
+        <ellipse cx="80" cy="106" rx="7" ry="5" fill="#ff6b8a"/>
+        <line x1="80" y1="101" x2="80" y2="111" stroke="#d44060" stroke-width="1" opacity="0.5"/>
+
+        <!-- rosy cheeks BIG and cute -->
+        <ellipse cx="54" cy="90" rx="13" ry="9" fill="#ff9999" opacity="0.45"/>
+        <ellipse cx="106" cy="90" rx="13" ry="9" fill="#ff9999" opacity="0.45"/>
+
+        <!-- whiskers - thin cute -->
+        <line x1="38" y1="84" x2="64" y2="88" stroke="#fff" stroke-width="1.5" opacity="0.5" stroke-linecap="round"/>
+        <line x1="36" y1="90" x2="63" y2="90" stroke="#fff" stroke-width="1.5" opacity="0.5" stroke-linecap="round"/>
+        <line x1="97" y1="88" x2="122" y2="84" stroke="#fff" stroke-width="1.5" opacity="0.5" stroke-linecap="round"/>
+        <line x1="97" y1="90" x2="124" y2="90" stroke="#fff" stroke-width="1.5" opacity="0.5" stroke-linecap="round"/>
+
+        <!-- tiny paws -->
+        <circle cx="38" cy="130" r="16" fill="#ff9a2e"/>
+        <circle cx="122" cy="130" r="16" fill="#ff9a2e"/>
+        <!-- paw beans -->
+        <circle cx="30" cy="136" r="4" fill="#ffe0b2"/>
+        <circle cx="38" cy="142" r="4" fill="#ffe0b2"/>
+        <circle cx="46" cy="136" r="4" fill="#ffe0b2"/>
+        <circle cx="114" cy="136" r="4" fill="#ffe0b2"/>
+        <circle cx="122" cy="142" r="4" fill="#ffe0b2"/>
+        <circle cx="130" cy="136" r="4" fill="#ffe0b2"/>
+
+        <!-- little feet -->
+        <ellipse cx="64" cy="158" rx="14" ry="9" fill="#ff9a2e"/>
+        <ellipse cx="96" cy="158" rx="14" ry="9" fill="#ff9a2e"/>
+        <circle cx="57" cy="162" r="3.5" fill="#ffe0b2"/>
+        <circle cx="64" cy="164" r="3.5" fill="#ffe0b2"/>
+        <circle cx="71" cy="162" r="3.5" fill="#ffe0b2"/>
+        <circle cx="89" cy="162" r="3.5" fill="#ffe0b2"/>
+        <circle cx="96" cy="164" r="3.5" fill="#ffe0b2"/>
+        <circle cx="103" cy="162" r="3.5" fill="#ffe0b2"/>
+
+        <!-- curly tail -->
+        <path d="M122 148 Q148 140 150 120 Q152 104 138 108" stroke="#ff9a2e" stroke-width="11" fill="none" stroke-linecap="round"/>
+        <circle cx="138" cy="108" r="8" fill="#ffe0b2"/>
+
+        <!-- floating hearts -->
+        <text x="14" y="42" font-size="16" fill="#ff1493" opacity="0.9">💕</text>
+        <text x="128" y="38" font-size="14" fill="#ff69b4" opacity="0.8">💖</text>
+        <text x="8" y="72" font-size="11" fill="#ff1493" opacity="0.6">♥</text>
+        <text x="142" y="68" font-size="11" fill="#ff69b4" opacity="0.6">♥</text>
+      </svg>
+    </div>
+    <h1>Cub</h1>
+    <p class="sub">🌊 pick your vibe 💋</p>
+  </header>
+
+  <div class="grid">
+    <a class="bubble" href="index.html"><span class="b-emoji">🌍</span><span class="b-name">Atlas Chronicles</span></a>
+    <a class="bubble" href="fractions-fun-quest.html"><span class="b-emoji">🔢</span><span class="b-name">Fractions Fun Quest</span></a>
+    <a class="bubble" href="essay_adventure.html"><span class="b-emoji">✍️</span><span class="b-name">Essay Adventure</span></a>
+    <a class="bubble" href="teia-revision-quest.html"><span class="b-emoji">🎯</span><span class="b-name">Teia Revision Quest</span></a>
+    <a class="bubble" href="dinastias-portugal.html"><span class="b-emoji">🇵🇹</span><span class="b-name">Dinastias de Portugal</span></a>
+  </div>
+  <footer>Cub · KS2 · 🌊 riding the wave</footer>
+</div>
+
+<script>
+const kisses=document.getElementById('kisses');
+const ke=['💋','💋','💕','💖','♥','💋'];
+for(let i=0;i<18;i++){const el=document.createElement('div');el.className='kiss';el.textContent=ke[Math.floor(Math.random()*ke.length)];const sz=0.9+Math.random()*1.4;const rot=(Math.random()*40-20)+'deg';el.style.cssText=`left:${Math.random()*95}%;bottom:${10+Math.random()*60}%;--ks:${sz}rem;--kt:${3+Math.random()*4}s;--kd:${Math.random()*6}s;--kr:${rot}`;kisses.appendChild(el)}
+</script>
+</body>
+</html>
