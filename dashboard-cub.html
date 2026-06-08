@@ -1,13 +1,316 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
-    <title>Family Dashboard – Cub</title>
-    <script type="module" crossorigin src="./assets/index-DSM-H1h9.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-C9ocsp76.css">
-  </head>
-  <body>
-    <div id="root"></div>
-  </body>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>Cub · Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0d080f;--s1:#1a0f1e;--s2:#221228;--s3:#2a1830;
+  --g:#b388ff;--g2:#9c27b0;--gd:rgba(179,136,255,0.12);--gg:rgba(179,136,255,0.25);
+  --t:#fff;--t2:rgba(255,255,255,0.55);--t3:rgba(255,255,255,0.25);
+  --border:rgba(179,136,255,0.18);--border2:rgba(255,255,255,0.07);--r:20px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--t);
+  display:flex;flex-direction:column;height:100vh;max-width:430px;margin:0 auto;overflow:hidden}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");opacity:.4}
+.blob{position:fixed;border-radius:50%;filter:blur(80px);pointer-events:none;z-index:0}
+.blob1{width:300px;height:300px;background:rgba(179,136,255,0.07);top:-100px;right:-80px}
+.blob2{width:250px;height:250px;background:rgba(156,39,176,0.06);bottom:100px;left:-80px}
+.wrap{position:relative;z-index:1;display:flex;flex-direction:column;height:100%}
+
+.header{padding:14px 20px 10px;flex-shrink:0;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border2)}
+.back-btn{width:36px;height:36px;border-radius:11px;background:var(--s2);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--t2);font-size:1.1rem;text-decoration:none;transition:all .2s;flex-shrink:0}
+.back-btn:hover{color:var(--g);border-color:var(--border)}
+.header-avatar{flex-shrink:0;position:relative}
+.online{position:absolute;bottom:-2px;right:-2px;width:9px;height:9px;border-radius:50%;background:var(--g);border:2px solid var(--bg);animation:onl 2s ease-in-out infinite}
+@keyframes onl{0%,100%{box-shadow:0 0 0 0 var(--gg)}50%{box-shadow:0 0 0 4px transparent}}
+.header-name{font-size:1.05rem;font-weight:800}
+.date-chip{margin-left:auto;background:var(--s2);border:1px solid var(--border2);border-radius:20px;padding:5px 12px;font-size:0.68rem;font-weight:600;color:var(--t2)}
+
+.content{flex:1;overflow-y:auto;overflow-x:hidden}
+.content::-webkit-scrollbar{width:3px}
+.content::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px}
+.panel{display:none;padding:16px 20px 28px;animation:fadeup .22s ease}
+.panel.active{display:block}
+@keyframes fadeup{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+.week-label{font-size:0.62rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--t3);margin-bottom:10px}
+.week-strip{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;margin-bottom:20px}
+.week-strip::-webkit-scrollbar{display:none}
+.day-pill{display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 0;min-width:46px;border-radius:16px;background:var(--s1);border:1px solid var(--border2);cursor:pointer;flex-shrink:0;transition:all .2s}
+.day-pill.today{background:var(--g);border-color:var(--g)}
+.day-pill.today .dn,.day-pill.today .dd{color:#000}
+.day-pill.sel:not(.today){background:var(--gd);border-color:var(--border)}
+.dn{font-size:0.58rem;font-weight:700;letter-spacing:.5px;color:var(--t3);text-transform:uppercase}
+.dd{font-size:1.05rem;font-weight:800}
+.has-dot{width:4px;height:4px;border-radius:50%;background:var(--g);opacity:0}
+.day-pill.today .has-dot{background:#000}
+.day-pill.has .has-dot{opacity:1}
+
+.sec{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.sec-title{font-size:0.7rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--g)}
+
+.event-card{background:var(--s1);border:1px solid var(--border2);border-radius:var(--r);padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:14px;position:relative;overflow:hidden;transition:all .2s}
+.event-card::before{content:'';position:absolute;left:0;top:14%;bottom:14%;width:3px;border-radius:0 3px 3px 0;background:var(--g)}
+.event-card:hover{background:var(--s2);transform:translateX(2px)}
+.ev-time{flex-shrink:0;min-width:52px;text-align:right}
+.ev-ts{font-size:0.78rem;font-weight:700}
+.ev-te{font-size:0.66rem;color:var(--t3);font-weight:500}
+.ev-div{width:1px;height:32px;background:var(--border2);flex-shrink:0}
+.ev-info{flex:1;min-width:0}
+.ev-name{font-size:0.94rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ev-loc{font-size:0.7rem;color:var(--t2);margin-top:2px}
+.ev-badge{background:var(--gd);border:1px solid var(--border);color:var(--g);font-size:0.58rem;font-weight:700;padding:3px 8px;border-radius:20px;flex-shrink:0}
+.no-ev{text-align:center;padding:32px 16px;color:var(--t3);font-size:0.85rem}
+
+.rem-section{margin-top:20px}
+.reminder-card{background:var(--s1);border:1px solid var(--border2);border-radius:var(--r);padding:13px 16px;margin-bottom:8px;display:flex;align-items:center;gap:13px}
+.r-icon{width:36px;height:36px;border-radius:11px;background:var(--gd);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+.r-text{font-size:0.85rem;font-weight:600;line-height:1.4}
+.r-for{font-size:0.68rem;color:var(--t3);margin-top:2px}
+
+.reset-tag{display:inline-flex;align-items:center;gap:5px;background:var(--s2);border:1px solid var(--border2);border-radius:20px;padding:4px 10px;font-size:0.63rem;font-weight:600;color:var(--t3);margin-bottom:12px}
+.chore-item{background:var(--s1);border:1px solid var(--border2);border-radius:var(--r);padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:all .2s;user-select:none}
+.chore-item:active{transform:scale(0.98)}
+.chore-item.done{opacity:0.4}
+.chore-item.done .chore-name{text-decoration:line-through}
+.chore-item.done .chore-check{background:var(--g);border-color:var(--g)}
+.chore-check{width:28px;height:28px;border-radius:9px;border:2px solid rgba(255,255,255,0.18);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s}
+.chore-name{font-size:0.9rem;font-weight:600;flex:1}
+.chore-price{font-size:0.88rem;font-weight:700;color:var(--g)}
+
+.money-hero{background:linear-gradient(135deg,var(--s2),var(--s3));border:1px solid var(--border);border-radius:24px;padding:22px;margin-bottom:14px;position:relative;overflow:hidden}
+.money-hero::after{content:'€';position:absolute;right:-10px;top:-20px;font-size:8rem;font-weight:900;color:rgba(179,136,255,0.04);line-height:1;pointer-events:none}
+.mh-label{font-size:0.63rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--t3);margin-bottom:6px}
+.mh-amount{font-size:2.8rem;font-weight:800;color:var(--g);line-height:1;margin-bottom:20px}
+.split-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.split-tile{border-radius:16px;padding:12px 8px;text-align:center}
+.split-tile.sp{background:rgba(41,182,246,0.1);border:1px solid rgba(41,182,246,0.2)}
+.split-tile.sa{background:rgba(179,136,255,0.1);border:1px solid rgba(179,136,255,0.2)}
+.split-tile.iv{background:rgba(255,138,101,0.1);border:1px solid rgba(255,138,101,0.2)}
+.st-ico{font-size:1.3rem;margin-bottom:5px}
+.st-lbl{font-size:0.58rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:3px}
+.split-tile.sp .st-lbl{color:#29b6f6}
+.split-tile.sa .st-lbl{color:var(--g)}
+.split-tile.iv .st-lbl{color:#ff8a65}
+.st-amt{font-size:0.9rem;font-weight:800}
+.st-pct{font-size:0.6rem;color:var(--t3);margin-top:2px}
+.goal-card{background:var(--s1);border:1px solid var(--border2);border-radius:24px;padding:22px;margin-top:14px}
+.gc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.gc-label{font-size:0.63rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--t3)}
+.gc-edit{background:var(--s2);border:1px solid var(--border2);color:var(--t3);border-radius:8px;padding:5px 10px;font-size:0.68rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s}
+.gc-edit:hover{color:var(--g);border-color:var(--border)}
+.gc-name{font-size:1.2rem;font-weight:800;margin-bottom:18px}
+.ring-row{display:flex;align-items:center;gap:20px}
+.ring-wrap{position:relative;flex-shrink:0}
+.ring-wrap svg{transform:rotate(-90deg)}
+.ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ring-pct{font-size:1.4rem;font-weight:800;color:var(--g);line-height:1}
+.ring-sub{font-size:0.55rem;color:var(--t3);letter-spacing:1px;text-transform:uppercase}
+.goal-details{flex:1}
+.gd-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border2)}
+.gd-row:last-child{border-bottom:none}
+.gd-k{font-size:0.7rem;color:var(--t3);font-weight:500}
+.gd-v{font-size:0.84rem;font-weight:700}
+.gd-v.gr{color:var(--g)}
+.prog-bar{height:4px;background:var(--s3);border-radius:4px;margin-top:16px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--g2),var(--g));border-radius:4px;transition:width 1s ease}
+
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:100;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(4px)}
+.modal-bg.open{display:flex}
+.modal{background:var(--s2);border-radius:28px 28px 0 0;padding:24px 24px 48px;width:100%;max-width:430px;border-top:1px solid var(--border2)}
+.modal-handle{width:40px;height:4px;background:var(--border2);border-radius:4px;margin:0 auto 20px}
+.modal h3{font-size:1.1rem;font-weight:800;margin-bottom:18px}
+.modal-label{font-size:0.68rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--t3);margin-bottom:6px;display:block}
+.modal input{width:100%;background:var(--s1);border:1px solid var(--border2);border-radius:14px;padding:13px 16px;color:var(--t);font-size:1rem;font-family:inherit;font-weight:600;outline:none;transition:border-color .2s;margin-bottom:12px}
+.modal input:focus{border-color:var(--g)}
+.modal-save{width:100%;background:var(--g);border:none;border-radius:14px;padding:14px;color:#000;font-size:0.95rem;font-weight:800;cursor:pointer;font-family:inherit;margin-bottom:8px}
+.modal-cancel{width:100%;background:transparent;border:none;color:var(--t3);font-size:0.85rem;font-weight:600;cursor:pointer;padding:10px;font-family:inherit}
+
+.tab-bar{display:flex;border-top:1px solid var(--border2);flex-shrink:0;background:rgba(13,8,15,0.96);backdrop-filter:blur(12px)}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 4px 10px;cursor:pointer;color:var(--t3);font-size:0.58rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;border:none;background:none;transition:all .2s;position:relative;font-family:inherit}
+.tab.active{color:var(--g)}
+.tab.active::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:24px;height:2px;background:var(--g);border-radius:2px 2px 0 0}
+.tab svg{width:20px;height:20px;stroke-width:1.8;transition:transform .2s}
+.tab.active svg{transform:scale(1.1)}
+</style>
+</head>
+<body>
+<div class="blob blob1"></div>
+<div class="blob blob2"></div>
+<div class="wrap">
+
+  <div class="header">
+    <a href="family-dashboard.html" class="back-btn">‹</a>
+    <div class="header-avatar">
+      <!-- COOL TIGER CUB WITH SUNGLASSES SVG -->
+      <svg width="36" height="36" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
+        <rect width="36" height="36" rx="10" fill="#1a0f1e"/>
+        <!-- body -->
+        <ellipse cx="18" cy="27" rx="9" ry="7" fill="#cc6600"/>
+        <!-- belly -->
+        <ellipse cx="18" cy="29" rx="5" ry="4" fill="#ffcc88" opacity="0.6"/>
+        <!-- stripes body -->
+        <path d="M11 24 Q13 27 11 30" stroke="#994400" stroke-width="1.5" fill="none" opacity="0.5" stroke-linecap="round"/>
+        <path d="M25 24 Q23 27 25 30" stroke="#994400" stroke-width="1.5" fill="none" opacity="0.5" stroke-linecap="round"/>
+        <!-- head -->
+        <ellipse cx="18" cy="16" rx="10" ry="9" fill="#ff8c00"/>
+        <!-- ears -->
+        <polygon points="10,10 7,5 13,9" fill="#ff8c00"/>
+        <polygon points="26,10 29,5 23,9" fill="#ff8c00"/>
+        <polygon points="10,10 8,7 13,9" fill="#ffb3b3"/>
+        <polygon points="26,10 28,7 23,9" fill="#ffb3b3"/>
+        <!-- forehead stripes -->
+        <path d="M14 9 Q15 12 14 14" stroke="#cc5500" stroke-width="1.5" fill="none" opacity="0.5" stroke-linecap="round"/>
+        <path d="M22 9 Q21 12 22 14" stroke="#cc5500" stroke-width="1.5" fill="none" opacity="0.5" stroke-linecap="round"/>
+        <!-- COOL SUNGLASSES -->
+        <rect x="9" y="14" width="7" height="5" rx="2.5" fill="#1a0030" opacity="0.95"/>
+        <rect x="20" y="14" width="7" height="5" rx="2.5" fill="#1a0030" opacity="0.95"/>
+        <line x1="16" y1="16.5" x2="20" y2="16.5" stroke="#666" stroke-width="1"/>
+        <line x1="9" y1="16.5" x2="7" y2="15.5" stroke="#666" stroke-width="1"/>
+        <line x1="27" y1="16.5" x2="29" y2="15.5" stroke="#666" stroke-width="1"/>
+        <rect x="9" y="14" width="7" height="5" rx="2.5" fill="none" stroke="#b388ff" stroke-width="0.8" opacity="0.7"/>
+        <rect x="20" y="14" width="7" height="5" rx="2.5" fill="none" stroke="#b388ff" stroke-width="0.8" opacity="0.7"/>
+        <ellipse cx="11.5" cy="15.5" rx="1.5" ry="1" fill="rgba(255,255,255,0.15)"/>
+        <ellipse cx="22.5" cy="15.5" rx="1.5" ry="1" fill="rgba(255,255,255,0.15)"/>
+        <!-- cute nose -->
+        <ellipse cx="18" cy="21" rx="2.5" ry="1.8" fill="#cc3366"/>
+        <!-- cheeky smile -->
+        <path d="M15 23 Q18 26 21 23" stroke="#cc3366" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+        <!-- whiskers -->
+        <line x1="7" y1="20" x2="13" y2="21" stroke="rgba(255,255,255,0.4)" stroke-width="0.8" stroke-linecap="round"/>
+        <line x1="7" y1="22" x2="13" y2="22" stroke="rgba(255,255,255,0.4)" stroke-width="0.8" stroke-linecap="round"/>
+        <line x1="23" y1="21" x2="29" y2="20" stroke="rgba(255,255,255,0.4)" stroke-width="0.8" stroke-linecap="round"/>
+        <line x1="23" y1="22" x2="29" y2="22" stroke="rgba(255,255,255,0.4)" stroke-width="0.8" stroke-linecap="round"/>
+        <!-- wings/paws -->
+        <ellipse cx="10" cy="28" rx="3.5" ry="2.5" fill="#cc5500" transform="rotate(-15 10 28)"/>
+        <ellipse cx="26" cy="28" rx="3.5" ry="2.5" fill="#cc5500" transform="rotate(15 26 28)"/>
+      </svg>
+      <div class="online"></div>
+    </div>
+    <span class="header-name">Cub</span>
+    <div class="date-chip" id="date-chip"></div>
+  </div>
+
+  <div class="content">
+    <div class="panel active" id="panel-week">
+      <div class="week-label">This Week</div>
+      <div class="week-strip" id="week-strip"></div>
+      <div class="sec"><div class="sec-title">Schedule</div></div>
+      <div id="events-list">
+        <div class="no-ev">🌊 Nothing on today — enjoy!</div>
+      </div>
+      <div class="rem-section">
+        <div class="sec"><div class="sec-title">Reminders</div></div>
+        <div id="reminders-list">
+          <div class="reminder-card">
+            <div class="r-icon">📚</div>
+            <div><div class="r-text">Don't forget your homework</div><div class="r-for">For: Tutor sessions</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-chores">
+      <div class="sec"><div class="sec-title">Must Do</div></div>
+      <div class="reset-tag">🔄 Resets nightly · 11:30pm</div>
+      <div id="must-do-list"></div>
+      <div class="sec" style="margin-top:8px"><div class="sec-title">Earn Money 💰</div></div>
+      <div class="reset-tag">🔄 Resets every Sunday</div>
+      <div id="earn-list"></div>
+    </div>
+
+    <div class="panel" id="panel-money">
+      <div class="money-hero">
+        <div class="mh-label">Total Earned</div>
+        <div class="mh-amount" id="total-earned">€0.00</div>
+        <div class="split-grid">
+          <div class="split-tile sp"><div class="st-ico">🛍️</div><div class="st-lbl">Spend</div><div class="st-amt" id="spend-amt">€0.00</div><div class="st-pct">30%</div></div>
+          <div class="split-tile sa"><div class="st-ico">🏦</div><div class="st-lbl">Save</div><div class="st-amt" id="save-amt">€0.00</div><div class="st-pct">50%</div></div>
+          <div class="split-tile iv"><div class="st-ico">📈</div><div class="st-lbl">Invest</div><div class="st-amt" id="invest-amt">€0.00</div><div class="st-pct">20%</div></div>
+        </div>
+      </div>
+      <div class="goal-card">
+        <div class="gc-top"><div class="gc-label">My Goal</div><button class="gc-edit" onclick="openGoalModal()">✏️ Edit</button></div>
+        <div class="gc-name" id="goal-name">London Shopping</div>
+        <div class="ring-row">
+          <div class="ring-wrap">
+            <svg width="110" height="110" viewBox="0 0 110 110">
+              <circle cx="55" cy="55" r="42" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="12"/>
+              <circle cx="55" cy="55" r="42" fill="none" stroke="var(--g)" stroke-width="12"
+                stroke-dasharray="264" stroke-dashoffset="264" id="goal-ring"
+                stroke-linecap="round" style="transition:stroke-dashoffset 1.2s ease"/>
+            </svg>
+            <div class="ring-center"><div class="ring-pct" id="goal-pct">0%</div><div class="ring-sub">done</div></div>
+          </div>
+          <div class="goal-details">
+            <div class="gd-row"><span class="gd-k">Saved</span><span class="gd-v gr" id="goal-saved">€0.00</span></div>
+            <div class="gd-row"><span class="gd-k">Target</span><span class="gd-v" id="goal-target">€100.00</span></div>
+            <div class="gd-row"><span class="gd-k">Remaining</span><span class="gd-v" id="goal-rem">€100.00</span></div>
+          </div>
+        </div>
+        <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-bar">
+    <button class="tab active" onclick="switchTab('week',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Week
+    </button>
+    <button class="tab" onclick="switchTab('chores',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      Chores
+    </button>
+    <button class="tab" onclick="switchTab('money',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><path d="M12 6v2m0 8v2M9.5 9.5h2a1.5 1.5 0 0 1 0 3h-1a1.5 1.5 0 0 0 0 3H13"/></svg>
+      Money
+    </button>
+  </div>
+</div>
+
+<div class="modal-bg" id="goal-modal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <h3>Edit Savings Goal</h3>
+    <label class="modal-label">Goal Name</label>
+    <input type="text" id="m-name" placeholder="e.g. London Shopping"/>
+    <label class="modal-label">Target Amount (€)</label>
+    <input type="number" id="m-target" placeholder="e.g. 100" step="0.01"/>
+    <button class="modal-save" onclick="saveGoal()">Save Goal</button>
+    <button class="modal-cancel" onclick="closeGoalModal()">Cancel</button>
+  </div>
+</div>
+
+<script>
+const KID='cub';
+const sv=(k,v)=>{try{localStorage.setItem(KID+'_'+k,JSON.stringify(v))}catch(e){}};
+const ld=(k,d)=>{try{const v=localStorage.getItem(KID+'_'+k);return v?JSON.parse(v):d}catch(e){return d}};
+const MUST=['Make bed','Tidy room','Dishwasher (load & unload)','Homework'];
+const EARN=[{n:'Clean inside and outside of car',a:10},{n:'Hoover and mop house',a:5},{n:'Clean around outside of house',a:1},{n:'Extra learning',a:1,note:'per 30 mins'}];
+let CS=ld('chores',{m:{},e:{}});let MD=ld('money',{t:0});let GD=ld('goal',{n:'London Shopping',t:100});
+const now=new Date();
+document.getElementById('date-chip').textContent=now.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
+(()=>{const strip=document.getElementById('week-strip');const full=['SUN','MON','TUE','WED','THU','FRI','SAT'];for(let i=0;i<7;i++){const d=new Date(now);d.setDate(now.getDate()-(now.getDay()-i));const isToday=i===now.getDay();const pill=document.createElement('div');pill.className='day-pill'+(isToday?' today sel':'');pill.innerHTML=`<span class="dn">${full[d.getDay()]}</span><span class="dd">${d.getDate()}</span><div class="has-dot"></div>`;pill.onclick=()=>{document.querySelectorAll('.day-pill').forEach(p=>p.classList.remove('sel'));pill.classList.add('sel')};strip.appendChild(pill);}})();
+function renderChores(){
+  document.getElementById('must-do-list').innerHTML=MUST.map((n,i)=>{const d=CS.m[i];return`<div class="chore-item${d?' done':''}" onclick="tm(${i})"><div class="chore-check">${d?`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg>`:''}</div><span class="chore-name">${n}</span></div>`;}).join('');
+  document.getElementById('earn-list').innerHTML=EARN.map((c,i)=>{const d=CS.e[i];return`<div class="chore-item${d?' done':''}" onclick="te(${i})"><div class="chore-check">${d?`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg>`:''}</div><span class="chore-name">${c.n}${c.note?` <span style="font-size:.75em;color:var(--t3)">${c.note}</span>`:''}</span><span class="chore-price">€${c.a.toFixed(2)}</span></div>`;}).join('');
+}
+function tm(i){CS.m[i]=!CS.m[i];sv('chores',CS);renderChores();notify('must',MUST[i],CS.m[i],0)}
+function te(i){CS.e[i]=!CS.e[i];MD.t=Math.max(0,(MD.t||0)+(CS.e[i]?EARN[i].a:-EARN[i].a));sv('chores',CS);sv('money',MD);renderChores();renderMoney();notify('earn',EARN[i].n,CS.e[i],EARN[i].a)}
+function notify(type,name,done,amt){try{const log=JSON.parse(localStorage.getItem('mum_log_cub')||'[]');log.unshift({time:new Date().toISOString(),kid:'Cub',type,name,done,amt});if(log.length>50)log.pop();localStorage.setItem('mum_log_cub',JSON.stringify(log))}catch(e){}}
+function renderMoney(){const t=MD.t||0;document.getElementById('total-earned').textContent='€'+t.toFixed(2);document.getElementById('spend-amt').textContent='€'+(t*.3).toFixed(2);document.getElementById('save-amt').textContent='€'+(t*.5).toFixed(2);document.getElementById('invest-amt').textContent='€'+(t*.2).toFixed(2);const saved=t*.5;const target=GD.t||100;const pct=Math.min(100,Math.round((saved/target)*100));document.getElementById('goal-name').textContent=GD.n||'London Shopping';document.getElementById('goal-pct').textContent=pct+'%';document.getElementById('goal-saved').textContent='€'+saved.toFixed(2);document.getElementById('goal-target').textContent='€'+target.toFixed(2);document.getElementById('goal-rem').textContent='€'+Math.max(0,target-saved).toFixed(2);document.getElementById('prog-fill').style.width=pct+'%';setTimeout(()=>{document.getElementById('goal-ring').style.strokeDashoffset=264-(pct/100)*264},300);}
+function openGoalModal(){document.getElementById('m-name').value=GD.n||'';document.getElementById('m-target').value=GD.t||100;document.getElementById('goal-modal').classList.add('open')}
+function closeGoalModal(){document.getElementById('goal-modal').classList.remove('open')}
+function saveGoal(){GD.n=document.getElementById('m-name').value||GD.n;GD.t=parseFloat(document.getElementById('m-target').value)||GD.t;sv('goal',GD);renderMoney();closeGoalModal()}
+function switchTab(n,btn){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.getElementById('panel-'+n).classList.add('active');btn.classList.add('active')}
+renderChores();renderMoney();
+</script>
+</body>
 </html>

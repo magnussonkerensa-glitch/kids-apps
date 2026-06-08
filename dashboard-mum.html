@@ -1,13 +1,507 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
-    <title>Family Dashboard – Mum</title>
-    <script type="module" crossorigin src="./assets/index-DSM-H1h9.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-C9ocsp76.css">
-  </head>
-  <body>
-    <div id="root"></div>
-  </body>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>Mum · Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080a0f;--s1:#0e1118;--s2:#141720;--s3:#1a1e28;
+  --ac:#4fc3f7;--ac2:#0288d1;--acd:rgba(79,195,247,0.12);--acg:rgba(79,195,247,0.25);
+  --owl:#00e676;--cub:#b388ff;--bay:#ffd600;
+  --t:#fff;--t2:rgba(255,255,255,0.55);--t3:rgba(255,255,255,0.25);
+  --border:rgba(79,195,247,0.18);--border2:rgba(255,255,255,0.07);--r:18px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--t);
+  display:flex;flex-direction:column;height:100vh;max-width:430px;margin:0 auto;overflow:hidden}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");opacity:.4}
+.blob{position:fixed;border-radius:50%;filter:blur(80px);pointer-events:none;z-index:0}
+.blob1{width:300px;height:300px;background:rgba(79,195,247,0.07);top:-100px;right:-80px}
+.blob2{width:250px;height:250px;background:rgba(2,136,209,0.06);bottom:80px;left:-80px}
+.wrap{position:relative;z-index:1;display:flex;flex-direction:column;height:100%}
+
+/* HEADER */
+.header{padding:14px 20px 12px;flex-shrink:0;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border2)}
+.back-btn{width:36px;height:36px;border-radius:11px;background:var(--s2);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--t2);font-size:1.1rem;text-decoration:none;transition:all .2s;flex-shrink:0}
+.back-btn:hover{color:var(--ac);border-color:var(--border)}
+.mum-avatar{width:36px;height:36px;border-radius:11px;background:var(--acd);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0}
+.header-name{font-size:1.05rem;font-weight:800}
+.date-chip{margin-left:auto;background:var(--s2);border:1px solid var(--border2);border-radius:20px;padding:5px 12px;font-size:0.68rem;font-weight:600;color:var(--t2)}
+
+/* CONTENT */
+.content{flex:1;overflow-y:auto;overflow-x:hidden}
+.content::-webkit-scrollbar{width:3px}
+.content::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px}
+.panel{display:none;padding:16px 20px 28px;animation:fadeup .22s ease}
+.panel.active{display:block}
+@keyframes fadeup{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* SECTION */
+.sec{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;margin-top:4px}
+.sec-title{font-size:0.7rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--ac)}
+.sec-action{font-size:0.68rem;font-weight:600;color:var(--t3);cursor:pointer;background:none;border:none;font-family:inherit;transition:color .2s}
+.sec-action:hover{color:var(--ac)}
+
+/* WEEK STRIP */
+.week-label{font-size:0.62rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--t3);margin-bottom:10px}
+.week-strip{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;margin-bottom:20px}
+.week-strip::-webkit-scrollbar{display:none}
+.day-pill{display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 0;min-width:46px;border-radius:16px;background:var(--s1);border:1px solid var(--border2);cursor:pointer;flex-shrink:0;transition:all .2s}
+.day-pill.today{background:var(--ac);border-color:var(--ac)}
+.day-pill.today .dn,.day-pill.today .dd{color:#000}
+.day-pill.sel:not(.today){background:var(--acd);border-color:var(--border)}
+.dn{font-size:0.58rem;font-weight:700;letter-spacing:.5px;color:var(--t3);text-transform:uppercase}
+.dd{font-size:1.05rem;font-weight:800}
+.has-dot{width:4px;height:4px;border-radius:50%;background:var(--ac);opacity:0}
+.day-pill.today .has-dot{background:#000}
+.day-pill.has .has-dot{opacity:1}
+
+/* EVENT CARDS */
+.event-card{background:var(--s1);border:1px solid var(--border2);border-radius:var(--r);
+  padding:13px 16px;margin-bottom:8px;display:flex;align-items:center;gap:13px;
+  position:relative;overflow:hidden;transition:all .2s}
+.event-card::before{content:'';position:absolute;left:0;top:14%;bottom:14%;width:3px;border-radius:0 3px 3px 0}
+.event-card.owl-ev::before{background:var(--owl)}
+.event-card.cub-ev::before{background:var(--cub)}
+.event-card.bay-ev::before{background:var(--bay)}
+.event-card.all-ev::before{background:var(--ac)}
+.ev-time{flex-shrink:0;min-width:52px;text-align:right}
+.ev-ts{font-size:0.78rem;font-weight:700}
+.ev-te{font-size:0.66rem;color:var(--t3)}
+.ev-div{width:1px;height:28px;background:var(--border2);flex-shrink:0}
+.ev-info{flex:1;min-width:0}
+.ev-name{font-size:0.9rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ev-who{font-size:0.68rem;margin-top:2px;display:flex;align-items:center;gap:6px}
+.who-tag{font-size:0.62rem;font-weight:700;padding:2px 7px;border-radius:20px}
+.who-tag.owl{background:rgba(0,230,118,0.15);color:var(--owl)}
+.who-tag.cub{background:rgba(179,136,255,0.15);color:var(--cub)}
+.who-tag.bay{background:rgba(255,214,0,0.15);color:var(--bay)}
+.who-tag.all{background:var(--acd);color:var(--ac)}
+.no-ev{text-align:center;padding:32px 16px;color:var(--t3);font-size:0.85rem}
+
+/* REMINDER CARDS */
+.reminder-card{background:var(--s1);border:1px solid var(--border2);border-radius:var(--r);
+  padding:13px 16px;margin-bottom:8px;display:flex;align-items:center;gap:13px}
+.r-icon{width:36px;height:36px;border-radius:11px;background:var(--acd);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+.r-body{flex:1}
+.r-text{font-size:0.86rem;font-weight:600;line-height:1.4}
+.r-meta{font-size:0.68rem;color:var(--t3);margin-top:3px;display:flex;align-items:center;gap:6px}
+
+/* ACTIVITY FEED */
+.activity-item{background:var(--s1);border:1px solid var(--border2);border-radius:var(--r);
+  padding:13px 16px;margin-bottom:8px;display:flex;align-items:center;gap:13px}
+.ai-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.ai-dot.owl{background:var(--owl)}
+.ai-dot.cub{background:var(--cub)}
+.ai-dot.bay{background:var(--bay)}
+.ai-info{flex:1;min-width:0}
+.ai-main{font-size:0.86rem;font-weight:600;line-height:1.4}
+.ai-main strong{font-weight:800}
+.ai-time{font-size:0.65rem;color:var(--t3);margin-top:2px}
+.ai-approve{background:var(--acd);border:1px solid var(--border);color:var(--ac);border-radius:8px;
+  padding:6px 12px;font-size:0.68rem;font-weight:700;cursor:pointer;font-family:inherit;
+  white-space:nowrap;transition:all .2s;flex-shrink:0}
+.ai-approve:hover{background:rgba(232,180,255,0.22)}
+.ai-done{font-size:0.68rem;color:var(--t3);font-weight:600;flex-shrink:0}
+.no-activity{text-align:center;padding:28px 16px;color:var(--t3);font-size:0.85rem}
+
+/* MONEY */
+.money-overview{display:flex;flex-direction:column;gap:10px;margin-bottom:20px}
+.kid-money-card{background:var(--s1);border:1px solid var(--border2);border-radius:var(--r);padding:16px;display:flex;align-items:center;gap:14px}
+.km-bar{width:4px;height:44px;border-radius:4px;flex-shrink:0}
+.km-bar.owl{background:var(--owl)}
+.km-bar.cub{background:var(--cub)}
+.km-bar.bay{background:var(--bay)}
+.km-info{flex:1}
+.km-name{font-size:0.8rem;font-weight:800;margin-bottom:3px}
+.km-name.owl{color:var(--owl)}
+.km-name.cub{color:var(--cub)}
+.km-name.bay{color:var(--bay)}
+.km-detail{font-size:0.7rem;color:var(--t2)}
+.km-right{text-align:right}
+.km-total{font-size:1.3rem;font-weight:800}
+.km-label{font-size:0.6rem;color:var(--t3);margin-top:1px}
+.pay-btn{background:var(--acd);border:1px solid var(--border);color:var(--ac);border-radius:8px;
+  padding:5px 10px;font-size:0.68rem;font-weight:700;cursor:pointer;font-family:inherit;
+  transition:all .2s;margin-top:8px;display:inline-block}
+.pay-btn:hover{background:rgba(232,180,255,0.22)}
+
+/* CHORES GRID */
+.chore-row{background:var(--s1);border:1px solid var(--border2);border-radius:var(--r);padding:14px 16px;margin-bottom:8px}
+.chore-row-name{font-size:0.86rem;font-weight:700;color:var(--t);margin-bottom:10px;
+  padding-bottom:8px;border-bottom:1px solid var(--border2);display:flex;align-items:center;justify-content:space-between}
+.chore-amt{font-size:0.75rem;color:var(--t3);font-weight:600}
+.chore-row-kids{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.kid-tick{border-radius:12px;padding:8px 4px;text-align:center;border:1px solid var(--border2);background:var(--s2);transition:all .2s}
+.kid-tick.done-owl{background:rgba(0,230,118,0.14);border-color:rgba(0,230,118,0.35)}
+.kid-tick.done-cub{background:rgba(179,136,255,0.14);border-color:rgba(179,136,255,0.35)}
+.kid-tick.done-bay{background:rgba(255,214,0,0.14);border-color:rgba(255,214,0,0.35)}
+.kt-name{font-size:0.6rem;font-weight:700;color:var(--t3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:5px}
+.kt-name.owl{color:var(--owl)}
+.kt-name.cub{color:var(--cub)}
+.kt-name.bay{color:var(--bay)}
+.kt-check{width:26px;height:26px;border-radius:8px;border:1.5px solid var(--border2);margin:0 auto;
+  display:flex;align-items:center;justify-content:center;font-size:0.9rem}
+.kid-tick.done-owl .kt-check{background:var(--owl);border-color:var(--owl)}
+.kid-tick.done-cub .kt-check{background:var(--cub);border-color:var(--cub)}
+.kid-tick.done-bay .kt-check{background:var(--bay);border-color:var(--bay)}
+.kt-time{font-size:0.56rem;color:var(--t3);margin-top:3px}
+
+.reset-tag{display:inline-flex;align-items:center;gap:5px;background:var(--s2);border:1px solid var(--border2);border-radius:20px;padding:4px 10px;font-size:0.63rem;font-weight:600;color:var(--t3);margin-bottom:14px}
+
+/* approve list */
+.chore-approve-item{background:var(--s1);border:1px solid var(--border2);border-radius:var(--r);padding:13px 16px;margin-bottom:8px;display:flex;align-items:center;gap:12px}
+.ca-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.ca-dot.owl{background:var(--owl)}
+.ca-dot.cub{background:var(--cub)}
+.ca-dot.bay{background:var(--bay)}
+.ca-info{flex:1}
+.ca-name{font-size:0.88rem;font-weight:700}
+.ca-sub{font-size:0.68rem;color:var(--t3);margin-top:2px}
+.ca-amt{font-size:0.9rem;font-weight:800;color:var(--ac)}
+.ca-tick{width:30px;height:30px;border-radius:9px;background:rgba(0,230,118,0.1);border:1px solid rgba(0,230,118,0.3);display:flex;align-items:center;justify-content:center;cursor:pointer;color:#00e676;font-size:1rem;transition:all .2s;flex-shrink:0}
+.ca-tick:hover{background:rgba(0,230,118,0.22)}
+
+/* TAB BAR */
+.tab-bar{display:flex;border-top:1px solid var(--border2);flex-shrink:0;background:rgba(8,10,15,0.96);backdrop-filter:blur(12px)}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 2px;cursor:pointer;color:var(--t3);font-size:0.55rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;border:none;background:none;transition:all .2s;position:relative;font-family:inherit}
+.tab.active{color:var(--ac)}
+.tab.active::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:24px;height:2px;background:var(--ac);border-radius:2px 2px 0 0}
+.tab svg{width:19px;height:19px;stroke-width:1.8}
+.tab.active svg{transform:scale(1.1)}
+.notif-dot{position:absolute;top:6px;right:calc(50% - 13px);width:6px;height:6px;border-radius:50%;background:#ff5252;display:none}
+.tab.has-notif .notif-dot{display:block}
+</style>
+</head>
+<body>
+<div class="blob blob1"></div>
+<div class="blob blob2"></div>
+<div class="wrap">
+
+  <!-- HEADER -->
+  <div class="header">
+    <a href="family-dashboard.html" class="back-btn">‹</a>
+    <div class="mum-avatar">👩</div>
+    <span class="header-name">Mum</span>
+    <div class="date-chip" id="date-chip"></div>
+  </div>
+
+  <div class="content">
+
+    <!-- ── TAB 1: TODAY — schedule + reminders for all kids ── -->
+    <div class="panel active" id="panel-today">
+      <div class="week-label">This Week</div>
+      <div class="week-strip" id="week-strip"></div>
+
+      <div class="sec"><div class="sec-title">All Events Today</div></div>
+      <div id="events-list">
+        <!-- sample — will be replaced by Google Calendar -->
+        <div class="event-card owl-ev">
+          <div class="ev-time"><div class="ev-ts">3:30pm</div><div class="ev-te">5:00pm</div></div>
+          <div class="ev-div"></div>
+          <div class="ev-info">
+            <div class="ev-name">Kris (Tutor)</div>
+            <div class="ev-who"><span class="who-tag owl">🦉 Owl</span></div>
+          </div>
+        </div>
+        <div class="event-card cub-ev">
+          <div class="ev-time"><div class="ev-ts">4:00pm</div><div class="ev-te">5:00pm</div></div>
+          <div class="ev-div"></div>
+          <div class="ev-info">
+            <div class="ev-name">Art Class</div>
+            <div class="ev-who"><span class="who-tag cub">🐯 Cub</span></div>
+          </div>
+        </div>
+        <div class="event-card all-ev">
+          <div class="ev-time"><div class="ev-ts">6:30pm</div><div class="ev-te">7:30pm</div></div>
+          <div class="ev-div"></div>
+          <div class="ev-info">
+            <div class="ev-name">Family Dinner</div>
+            <div class="ev-who">
+              <span class="who-tag owl">🦉</span>
+              <span class="who-tag cub">🐯</span>
+              <span class="who-tag bay">🌿</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec" style="margin-top:20px"><div class="sec-title">Reminders Today</div></div>
+      <div id="reminders-list">
+        <div class="reminder-card">
+          <div class="r-icon">📚</div>
+          <div class="r-body">
+            <div class="r-text">Don't forget homework for Kris</div>
+            <div class="r-meta"><span class="who-tag owl" style="font-size:.6rem">🦉 Owl</span> · Kris (Tutor)</div>
+          </div>
+        </div>
+        <div class="reminder-card">
+          <div class="r-icon">🎨</div>
+          <div class="r-body">
+            <div class="r-text">Pack art supplies</div>
+            <div class="r-meta"><span class="who-tag cub" style="font-size:.6rem">🐯 Cub</span> · Art Class</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TAB 2: CHORES GRID ── -->
+    <div class="panel" id="panel-chores">
+      <div class="sec"><div class="sec-title">Today's Must Do</div></div>
+      <div class="reset-tag">🔄 Resets nightly · 11:30pm</div>
+      <div id="chores-grid-must"></div>
+      <div class="sec" style="margin-top:4px"><div class="sec-title">Earn Money Chores</div></div>
+      <div class="reset-tag">🔄 Resets every Sunday</div>
+      <div id="chores-grid-earn"></div>
+    </div>
+
+    <!-- ── TAB 3: ACTIVITY + APPROVE ── -->
+    <div class="panel" id="panel-activity">
+      <div class="sec">
+        <div class="sec-title">Recent Activity</div>
+        <button class="sec-action" onclick="clearActivity()">Clear all</button>
+      </div>
+      <div id="activity-feed">
+        <div class="no-activity">✨ No activity yet — chores will appear here when ticked</div>
+      </div>
+      <div class="sec" style="margin-top:8px"><div class="sec-title">Approve Paid Chores</div></div>
+      <div id="approve-list">
+        <div class="no-activity">No paid chores pending</div>
+      </div>
+    </div>
+
+    <!-- ── TAB 4: MONEY ── -->
+    <div class="panel" id="panel-money">
+      <div class="sec"><div class="sec-title">What I Owe</div></div>
+      <div class="money-overview">
+        <div class="kid-money-card">
+          <div class="km-bar owl"></div>
+          <div class="km-info">
+            <div class="km-name owl">Owl 🦉</div>
+            <div class="km-detail">Goal: Electric Bike · €500</div>
+            <button class="pay-btn" onclick="markPaid('owl')">Mark as paid ✓</button>
+          </div>
+          <div class="km-right">
+            <div class="km-total" id="mowed-owl">€0.00</div>
+            <div class="km-label">earned</div>
+          </div>
+        </div>
+        <div class="kid-money-card">
+          <div class="km-bar cub"></div>
+          <div class="km-info">
+            <div class="km-name cub">Cub 🐯</div>
+            <div class="km-detail">Goal: London Shopping · €100</div>
+            <button class="pay-btn" onclick="markPaid('cub')">Mark as paid ✓</button>
+          </div>
+          <div class="km-right">
+            <div class="km-total" id="mowed-cub">€0.00</div>
+            <div class="km-label">earned</div>
+          </div>
+        </div>
+        <div class="kid-money-card">
+          <div class="km-bar bay"></div>
+          <div class="km-info">
+            <div class="km-name bay">Bay 🌿</div>
+            <div class="km-detail">Goal: London Shopping · €100</div>
+            <button class="pay-btn" onclick="markPaid('bay')">Mark as paid ✓</button>
+          </div>
+          <div class="km-right">
+            <div class="km-total" id="mowed-bay">€0.00</div>
+            <div class="km-label">earned</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- TAB BAR -->
+  <div class="tab-bar">
+    <button class="tab active" onclick="switchTab('today',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Today
+    </button>
+    <button class="tab" onclick="switchTab('chores',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="12" y2="16"/></svg>
+      Chores
+    </button>
+    <button class="tab has-notif" id="tab-activity" onclick="switchTab('activity',this)">
+      <div class="notif-dot"></div>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      Activity
+    </button>
+    <button class="tab" id="tab-money" onclick="switchTab('money',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10"/><path d="M12 6v2m0 8v2M9.5 9.5h2a1.5 1.5 0 0 1 0 3h-1a1.5 1.5 0 0 0 0 3H13"/></svg>
+      Money
+    </button>
+  </div>
+
+</div>
+
+<script>
+const sv=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+const ld=(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}};
+
+const MUST_CHORES=['Make bed','Tidy room','Dishwasher (load & unload)','Homework'];
+const EARN_CHORES=[
+  {n:'Clean inside and outside of car',a:10},
+  {n:'Hoover and mop house',a:5},
+  {n:'Clean around outside of house',a:1},
+  {n:'Extra learning',a:1}
+];
+const KIDS=[
+  {id:'owl',label:'Owl',emoji:'🦉'},
+  {id:'cub',label:'Cub',emoji:'🐯'},
+  {id:'bay',label:'Bay',emoji:'🌿'}
+];
+
+const now=new Date();
+document.getElementById('date-chip').textContent=now.toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
+
+// Week strip
+(()=>{
+  const strip=document.getElementById('week-strip');
+  const full=['SUN','MON','TUE','WED','THU','FRI','SAT'];
+  for(let i=0;i<7;i++){
+    const d=new Date(now);d.setDate(now.getDate()-(now.getDay()-i));
+    const isToday=i===now.getDay();
+    const pill=document.createElement('div');
+    pill.className='day-pill'+(isToday?' today sel':'');
+    pill.innerHTML=`<span class="dn">${full[d.getDay()]}</span><span class="dd">${d.getDate()}</span><div class="has-dot"></div>`;
+    pill.onclick=()=>{document.querySelectorAll('.day-pill').forEach(p=>p.classList.remove('sel'));pill.classList.add('sel')};
+    strip.appendChild(pill);
+  }
+})();
+
+// Chores grid
+function loadChoresGrid(){
+  const mustGrid=document.getElementById('chores-grid-must');
+  const earnGrid=document.getElementById('chores-grid-earn');
+  if(!mustGrid||!earnGrid)return;
+  const kidsData=KIDS.map(k=>({...k,data:ld(k.id+'_chores',{m:{},e:{}})}));
+
+  function makeGrid(chores,type){
+    return chores.map((chore,i)=>{
+      const choreName=typeof chore==='string'?chore:chore.n;
+      const amt=typeof chore==='object'&&chore.a?chore.a:null;
+      const kidTicks=kidsData.map(k=>{
+        const done=type==='m'?k.data.m[i]:k.data.e[i];
+        const logs=ld('mum_log_'+k.id,[]);
+        const log=logs.find(l=>l.name===choreName&&l.done);
+        const timeStr=log?new Date(log.time).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',hour12:true}):'';
+        return`<div class="kid-tick${done?' done-'+k.id:''}">
+          <div class="kt-name ${k.id}">${k.label}</div>
+          <div class="kt-check">${done?'✓':''}</div>
+          ${done&&timeStr?`<div class="kt-time">${timeStr}</div>`:'<div class="kt-time">&nbsp;</div>'}
+        </div>`;
+      }).join('');
+      return`<div class="chore-row">
+        <div class="chore-row-name">
+          <span>${choreName}</span>
+          ${amt?`<span class="chore-amt">€${amt.toFixed(2)}</span>`:''}
+        </div>
+        <div class="chore-row-kids">${kidTicks}</div>
+      </div>`;
+    }).join('');
+  }
+  mustGrid.innerHTML=makeGrid(MUST_CHORES,'m');
+  earnGrid.innerHTML=makeGrid(EARN_CHORES,'e');
+}
+
+// Activity feed
+function loadActivity(){
+  const feed=document.getElementById('activity-feed');
+  const approveList=document.getElementById('approve-list');
+  let allLogs=[];
+  KIDS.forEach(k=>{
+    const logs=ld('mum_log_'+k.id,[]);
+    allLogs=allLogs.concat(logs.map(l=>({...l,kid_id:k.id})));
+  });
+  allLogs.sort((a,b)=>new Date(b.time)-new Date(a.time));
+
+  const pendingEarn=allLogs.filter(l=>l.type==='earn'&&l.done&&!ld('approved_'+l.time,false));
+
+  feed.innerHTML=allLogs.length===0
+    ?'<div class="no-activity">✨ No activity yet</div>'
+    :allLogs.slice(0,20).map(l=>{
+      const t=new Date(l.time);
+      const timeStr=t.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',hour12:true});
+      const dayStr=t.toDateString()===now.toDateString()?'Today':t.toLocaleDateString('en-GB',{weekday:'short',day:'numeric'});
+      const action=l.done?(l.type==='earn'?'completed paid chore':'ticked off'):'unchecked';
+      const amtStr=l.type==='earn'&&l.amt?` · €${parseFloat(l.amt).toFixed(2)}`:'';
+      const approved=ld('approved_'+l.time,false);
+      return`<div class="activity-item">
+        <div class="ai-dot ${l.kid_id}"></div>
+        <div class="ai-info">
+          <div class="ai-main"><strong>${l.kid}</strong> ${action}: ${l.name}${amtStr}</div>
+          <div class="ai-time">${dayStr} · ${timeStr}</div>
+        </div>
+        ${l.type==='earn'&&l.done&&!approved
+          ?`<button class="ai-approve" onclick="approve('${l.time}',this)">Approve</button>`
+          :l.type==='earn'&&l.done
+            ?`<span class="ai-done">✓ approved</span>`
+            :''}
+      </div>`;
+    }).join('');
+
+  approveList.innerHTML=pendingEarn.length===0
+    ?'<div class="no-activity">No paid chores pending</div>'
+    :pendingEarn.map(l=>`
+      <div class="chore-approve-item">
+        <div class="ca-dot ${l.kid_id}"></div>
+        <div class="ca-info">
+          <div class="ca-name">${l.name}</div>
+          <div class="ca-sub">${l.kid} · Paid chore</div>
+        </div>
+        <span class="ca-amt">€${parseFloat(l.amt||0).toFixed(2)}</span>
+        <button class="ca-tick" onclick="approve('${l.time}',this)">✓</button>
+      </div>`).join('');
+
+  // notif dot
+  const actTab=document.getElementById('tab-activity');
+  if(pendingEarn.length>0){actTab.classList.add('has-notif')}else{actTab.classList.remove('has-notif')}
+}
+
+function approve(time,btn){sv('approved_'+time,true);loadActivity()}
+
+function clearActivity(){
+  KIDS.forEach(k=>localStorage.removeItem('mum_log_'+k.id));
+  loadActivity();
+}
+
+// Money
+function loadMoney(){
+  KIDS.forEach(k=>{
+    const m=ld(k.id+'_money',{t:0});
+    const el=document.getElementById('mowed-'+k.id);
+    if(el)el.textContent='€'+(m.t||0).toFixed(2);
+  });
+}
+
+function markPaid(kid){
+  sv(kid+'_money',{t:0});
+  loadMoney();
+}
+
+function switchTab(n,btn){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('panel-'+n).classList.add('active');
+  btn.classList.add('active');
+  if(n==='chores')loadChoresGrid();
+  if(n==='activity')loadActivity();
+  if(n==='money')loadMoney();
+}
+
+setInterval(()=>{loadMoney();loadActivity();loadChoresGrid()},30000);
+loadMoney();
+loadActivity();
+loadChoresGrid();
+</script>
+</body>
 </html>
