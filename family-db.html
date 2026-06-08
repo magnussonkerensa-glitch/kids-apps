@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>Family Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0d1f1a;--surface:#132820;--surface2:#1a3528;--green:#2ecc71;--border:rgba(46,204,113,0.2);--text:#fff;--text-dim:rgba(255,255,255,0.45)}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100vh}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);max-width:480px;margin:0 auto;padding:30px 20px 40px}
+
+.header{text-align:center;margin-bottom:36px;padding-top:20px}
+.header-emoji{font-size:3rem;display:block;margin-bottom:12px;filter:drop-shadow(0 0 16px rgba(46,204,113,0.4))}
+.header-title{font-size:1.8rem;font-weight:900;color:var(--green);margin-bottom:4px}
+.header-sub{font-size:0.8rem;color:var(--text-dim);letter-spacing:1px}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:20px;margin-bottom:14px;display:flex;align-items:center;gap:16px;cursor:pointer;text-decoration:none;color:var(--text);transition:all .2s}
+.card:hover{transform:translateX(4px);border-color:rgba(46,204,113,0.5);background:var(--surface2)}
+.card-avatar{width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1.8rem;flex-shrink:0}
+.card.owl .card-avatar{background:rgba(46,204,113,0.15);border:2px solid rgba(46,204,113,0.4)}
+.card.cub .card-avatar{background:rgba(155,89,182,0.15);border:2px solid rgba(155,89,182,0.4)}
+.card.bay .card-avatar{background:rgba(241,196,15,0.15);border:2px solid rgba(241,196,15,0.4)}
+.card.mum .card-avatar{background:rgba(255,255,255,0.08);border:2px solid rgba(255,255,255,0.15)}
+.card-bar{width:4px;height:40px;border-radius:4px;flex-shrink:0}
+.card.owl .card-bar{background:var(--green)}
+.card.cub .card-bar{background:#9b59b6}
+.card.bay .card-bar{background:#f1c40f}
+.card.mum .card-bar{background:rgba(255,255,255,0.3)}
+.card-info{flex:1}
+.card-name{font-size:1.2rem;font-weight:900;margin-bottom:2px}
+.card.owl .card-name{color:var(--green)}
+.card.cub .card-name{color:#9b59b6}
+.card.bay .card-name{color:#f1c40f}
+.card-sub{font-size:0.8rem;color:var(--text-dim);font-weight:600}
+.card-arrow{color:var(--text-dim);font-size:1.2rem}
+
+.owed-preview{margin-top:6px;font-size:0.75rem;font-weight:800}
+.card.owl .owed-preview{color:rgba(46,204,113,0.7)}
+.card.cub .owed-preview{color:rgba(155,89,182,0.7)}
+.card.bay .owed-preview{color:rgba(241,196,15,0.7)}
+
+footer{text-align:center;margin-top:30px;color:var(--text-dim);font-size:0.75rem}
+</style>
+</head>
+<body>
+<div class="header">
+  <span class="header-emoji">🏠</span>
+  <div class="header-title">Family Dashboard</div>
+  <div class="header-sub">Choose a profile</div>
+</div>
+
+<a class="card owl" href="dashboard-owl.html">
+  <div class="card-bar"></div>
+  <div class="card-avatar">🦉</div>
+  <div class="card-info">
+    <div class="card-name">Owl</div>
+    <div class="card-sub">Open my dashboard</div>
+    <div class="owed-preview" id="owed-owl"></div>
+  </div>
+  <div class="card-arrow">›</div>
+</a>
+
+<a class="card cub" href="dashboard-cub.html">
+  <div class="card-bar"></div>
+  <div class="card-avatar">🐯</div>
+  <div class="card-info">
+    <div class="card-name">Cub</div>
+    <div class="card-sub">Open my dashboard</div>
+    <div class="owed-preview" id="owed-cub"></div>
+  </div>
+  <div class="card-arrow">›</div>
+</a>
+
+<a class="card bay" href="dashboard-bay.html">
+  <div class="card-bar"></div>
+  <div class="card-avatar">🌿</div>
+  <div class="card-info">
+    <div class="card-name">Bay</div>
+    <div class="card-sub">Open my dashboard</div>
+    <div class="owed-preview" id="owed-bay"></div>
+  </div>
+  <div class="card-arrow">›</div>
+</a>
+
+<a class="card mum" href="dashboard-mum.html">
+  <div class="card-bar"></div>
+  <div class="card-avatar">👩</div>
+  <div class="card-info">
+    <div class="card-name">Mum</div>
+    <div class="card-sub">View all kids & approve chores</div>
+  </div>
+  <div class="card-arrow">›</div>
+</a>
+
+<footer>Family Dashboard · Updated live</footer>
+
+<script>
+// Show money owed previews
+['owl','cub','bay'].forEach(kid => {
+  try {
+    const money = JSON.parse(localStorage.getItem(kid+'_money')||'{}');
+    const total = money.totalEarned || 0;
+    if(total > 0) document.getElementById('owed-'+kid).textContent = '💰 €'+total.toFixed(2)+' earned';
+  } catch(e){}
+});
+</script>
+</body>
+</html>
