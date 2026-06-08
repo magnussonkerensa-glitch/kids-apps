@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BikeQuest — Ride Tracker & Maths Missions</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080b10;--s1:#101420;--s2:#161c28;--s3:#222834;
+  --orange:#ff6b1a;--orange2:#e55a0a;--oranged:rgba(255,107,26,0.15);
+  --green:#22c55e;--yellow:#eab308;--red:#ef4444;--pink:#ff4499;
+  --t:#fff;--t2:rgba(255,255,255,0.85);--t3:rgba(255,255,255,0.55);
+  --border:rgba(255,255,255,0.15);--r:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;font-size:16px}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--t);min-height:100vh}
+
+/* HEADER */
+.app-header{background:var(--s1);border-bottom:1px solid var(--border);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.logo{display:flex;align-items:center;gap:12px}
+.logo-icon{font-size:1.8rem;color:var(--orange)}
+.logo-text .name{font-size:1.2rem;font-weight:800;color:var(--orange)}
+.logo-text .tagline{font-size:0.65rem;color:rgba(255,255,255,0.6);font-weight:600;letter-spacing:2px;text-transform:uppercase}
+.log-ride-btn{background:var(--orange);border:none;border-radius:10px;padding:10px 18px;color:#fff;font-size:0.9rem;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:6px;transition:all .2s}
+.log-ride-btn:hover{background:var(--orange2)}
+
+/* TABS */
+.tabs{display:flex;border-bottom:1px solid var(--border);padding:0 24px;background:var(--s1)}
+.tab-btn{padding:14px 20px;font-size:0.88rem;font-weight:600;color:rgba(255,255,255,0.6);border:none;background:none;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:8px;border-bottom:2px solid transparent;transition:all .2s;margin-bottom:-1px}
+.tab-btn.active{color:var(--orange);border-bottom-color:var(--orange)}
+.tab-btn svg{width:16px;height:16px;opacity:.7}
+.tab-btn.active svg{opacity:1}
+
+/* CONTENT */
+.content{max-width:1100px;margin:0 auto;padding:24px}
+.tab-panel{display:none}.tab-panel.active{display:block}
+
+/* STAT CARDS */
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-bottom:24px}
+.stat-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:18px}
+.stat-icon{font-size:1.3rem;margin-bottom:10px;display:block}
+.stat-val{font-size:1.8rem;font-weight:800;color:var(--t);line-height:1;margin-bottom:4px}
+.stat-label{font-size:0.72rem;color:rgba(255,255,255,0.6);font-weight:500;letter-spacing:.5px;text-transform:uppercase}
+.stat-card.orange .stat-val{color:var(--orange)}
+.stat-card.green .stat-val{color:var(--green)}
+.stat-card.yellow .stat-val{color:var(--yellow)}
+.stat-card.blue .stat-val{color:#60a5fa}
+
+/* SECTION */
+.section{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:20px}
+.section-title{font-size:1rem;font-weight:800;margin-bottom:16px}
+
+/* PERFORMANCE TABLE */
+.perf-table{width:100%;border-collapse:collapse}
+.perf-table th{font-size:0.65rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.6);padding:8px 12px;text-align:left;border-bottom:1px solid var(--border)}
+.perf-table td{padding:12px;font-size:0.85rem;color:#e0e0e0;border-bottom:1px solid rgba(255,255,255,0.04)}
+.perf-table td:first-child{font-weight:700}
+.diff-dot{display:inline-flex;align-items:center;gap:7px}
+.dot-easy{color:var(--green)}
+.dot-medium{color:var(--yellow)}
+.dot-hard{color:var(--orange)}
+.dot-extreme{color:var(--red)}
+.no-data{color:rgba(255,255,255,0.6);font-size:0.78rem}
+
+/* RIDES TABLE */
+.rides-table{width:100%;border-collapse:collapse;font-size:0.8rem}
+.rides-table th{font-size:0.62rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.6);padding:8px;text-align:left;border-bottom:1px solid var(--border)}
+.rides-table td{padding:10px 8px;color:#e0e0e0;border-bottom:1px solid rgba(255,255,255,0.04)}
+.rides-table tr:last-child td{border-bottom:none}
+.empty-state{text-align:center;padding:48px 20px;color:rgba(255,255,255,0.6)}
+.empty-icon{font-size:2.5rem;display:block;margin-bottom:12px;opacity:.4}
+.empty-title{font-size:1rem;font-weight:600;margin-bottom:6px;color:#e0e0e0}
+.empty-sub{font-size:0.82rem}
+
+/* MISSIONS TAB */
+.mission-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.ms-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:16px}
+.ms-label{font-size:0.62rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.6);margin-bottom:8px}
+.ms-val{font-size:1.6rem;font-weight:800;line-height:1;margin-bottom:2px}
+.ms-sub{font-size:0.7rem;color:rgba(255,255,255,0.6)}
+.ms-card:nth-child(1) .ms-val{color:var(--orange)}
+.ms-card:nth-child(2) .ms-val{color:var(--green)}
+.ms-card:nth-child(3) .ms-val{color:#60a5fa}
+.ms-card:nth-child(4) .ms-val{color:var(--yellow)}
+
+.filter-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.filter-btn{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:7px 14px;font-size:0.78rem;font-weight:600;color:rgba(255,255,255,0.6);cursor:pointer;font-family:inherit;transition:all .2s}
+.filter-btn.active{background:var(--orange);border-color:var(--orange);color:#fff}
+.filter-btn.easy{}.filter-btn.easy.active{background:var(--green);border-color:var(--green)}
+.filter-btn.medium.active{background:var(--yellow);border-color:var(--yellow);color:#000}
+.filter-btn.hard.active{background:var(--orange);border-color:var(--orange)}
+.filter-btn.extreme.active{background:var(--red);border-color:var(--red)}
+
+.mission-card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:18px;margin-bottom:12px;cursor:pointer;transition:all .2s}
+.mission-card:hover{background:var(--s2);border-color:rgba(255,107,26,0.3)}
+.mc-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.mc-title{font-size:0.95rem;font-weight:700}
+.mc-diff{font-size:0.65rem;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:.5px}
+.mc-diff.easy{background:rgba(34,197,94,0.15);color:var(--green);border:1px solid rgba(34,197,94,0.3)}
+.mc-diff.medium{background:rgba(234,179,8,0.15);color:var(--yellow);border:1px solid rgba(234,179,8,0.3)}
+.mc-diff.hard{background:rgba(255,107,26,0.15);color:var(--orange);border:1px solid rgba(255,107,26,0.3)}
+.mc-diff.extreme{background:rgba(239,68,68,0.15);color:var(--red);border:1px solid rgba(239,68,68,0.3)}
+.mc-ride{font-size:0.78rem;color:rgba(255,255,255,0.6);margin-bottom:12px}
+.mc-question{font-size:0.88rem;color:#e0e0e0;line-height:1.5;margin-bottom:14px}
+.mc-status{display:flex;align-items:center;gap:8px}
+.status-pending{color:var(--yellow);font-size:0.75rem;font-weight:700}
+.status-correct{color:var(--green);font-size:0.75rem;font-weight:700}
+.status-wrong{color:var(--red);font-size:0.75rem;font-weight:700}
+.solve-btn{background:var(--oranged);border:1px solid rgba(255,107,26,0.3);color:var(--orange);border-radius:8px;padding:6px 14px;font-size:0.78rem;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;margin-left:auto}
+.solve-btn:hover{background:rgba(255,107,26,0.25)}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:200;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
+.modal-overlay.open{display:flex}
+.modal{background:var(--s2);border:1px solid var(--border);border-radius:20px;padding:28px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
+.modal-title{font-size:1.1rem;font-weight:800;display:flex;align-items:center;gap:10px}
+.modal-close{width:32px;height:32px;border-radius:8px;background:var(--s3);border:1px solid var(--border);color:#e0e0e0;cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}
+.form-field{display:flex;flex-direction:column;gap:6px}
+.form-field.full{grid-column:1/-1}
+.form-label{font-size:0.72rem;font-weight:700;color:rgba(255,255,255,0.6);letter-spacing:.5px;text-transform:uppercase}
+.form-input{background:var(--s1);border:1px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--t);font-size:0.95rem;font-family:inherit;font-weight:600;outline:none;transition:border-color .2s;width:100%}
+.form-input:focus{border-color:var(--orange)}
+.diff-selector{display:flex;gap:8px;flex-wrap:wrap}
+.diff-opt{flex:1;min-width:80px;background:var(--s1);border:1px solid var(--border);border-radius:10px;padding:10px;text-align:center;cursor:pointer;font-size:0.85rem;font-weight:600;color:rgba(255,255,255,0.6);transition:all .2s;font-family:inherit}
+.diff-opt.active-easy{background:rgba(34,197,94,0.15);border-color:var(--green);color:var(--green)}
+.diff-opt.active-medium{background:rgba(234,179,8,0.15);border-color:var(--yellow);color:var(--yellow)}
+.diff-opt.active-hard{background:rgba(255,107,26,0.15);border-color:var(--orange);color:var(--orange)}
+.diff-opt.active-extreme{background:rgba(239,68,68,0.15);border-color:var(--red);color:var(--red)}
+.mission-note{background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.2);border-radius:10px;padding:12px 14px;font-size:0.82rem;color:rgba(255,255,255,0.65);line-height:1.5;margin-bottom:20px;display:flex;align-items:flex-start;gap:10px}
+.mission-note strong{color:var(--green)}
+.modal-footer{display:flex;gap:12px}
+.cancel-btn{flex:1;background:var(--s3);border:1px solid var(--border);border-radius:10px;padding:13px;color:#e0e0e0;font-size:0.9rem;font-weight:700;cursor:pointer;font-family:inherit}
+.submit-btn{flex:2;background:var(--orange);border:none;border-radius:10px;padding:13px;color:#fff;font-size:0.9rem;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .2s}
+.submit-btn:hover{background:var(--orange2)}
+.submit-btn:disabled{opacity:.4;cursor:default}
+
+/* SOLVE MODAL */
+.solve-question{font-size:1.05rem;font-weight:700;line-height:1.55;margin-bottom:20px;padding:16px;background:var(--s1);border-radius:12px}
+.solve-opts{display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
+.solve-opt{background:var(--s1);border:1px solid var(--border);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all .2s;font-size:0.9rem;font-weight:600}
+.solve-opt:hover:not(.disabled){background:var(--s2);border-color:rgba(255,255,255,0.15)}
+.solve-opt.correct{background:rgba(34,197,94,0.15);border-color:var(--green);color:var(--green)}
+.solve-opt.wrong{background:rgba(239,68,68,0.1);border-color:var(--red);color:rgba(239,68,68,0.9)}
+.solve-opt.disabled{cursor:default}
+.opt-l{font-size:0.7rem;font-weight:800;color:rgba(255,255,255,0.6);width:18px;flex-shrink:0}
+.solve-opt.correct .opt-l{color:var(--green)}
+.solve-opt.wrong .opt-l{color:rgba(239,68,68,0.9)}
+.solve-feedback{background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.25);border-radius:12px;padding:12px 16px;font-size:0.88rem;font-weight:600;color:var(--green);display:none;line-height:1.5}
+.solve-feedback.wrong{background:rgba(239,68,68,0.08);border-color:rgba(239,68,68,0.25);color:rgba(239,68,68,0.9)}
+.xp-badge{background:var(--oranged);border:1px solid rgba(255,107,26,0.3);border-radius:20px;padding:4px 12px;font-size:0.75rem;font-weight:700;color:var(--orange);display:inline-block;margin-top:8px}
+
+@media(max-width:640px){
+  .form-grid{grid-template-columns:1fr}
+  .mission-stats{grid-template-columns:1fr 1fr}
+  .stat-grid{grid-template-columns:1fr 1fr}
+  .content{padding:16px}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="app-header">
+  <div class="logo">
+    <span class="logo-icon">🚴</span>
+    <div class="logo-text">
+      <div class="name">BikeQuest</div>
+      <div class="tagline">Ride · Solve · Level Up</div>
+    </div>
+  </div>
+  <button class="log-ride-btn" onclick="openLogRide()">＋ Log Ride</button>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('overview',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+    Overview
+  </button>
+  <button class="tab-btn" onclick="switchTab('missions',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+    Missions
+  </button>
+  <button class="tab-btn" onclick="switchTab('performance',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+    Performance
+  </button>
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+
+  <!-- OVERVIEW -->
+  <div class="tab-panel active" id="panel-overview">
+    <div class="stat-grid">
+      <div class="stat-card orange">
+        <span class="stat-icon">🚴</span>
+        <div class="stat-val" id="ov-rides">0</div>
+        <div class="stat-label">Rides This Week</div>
+      </div>
+      <div class="stat-card green">
+        <span class="stat-icon">🎯</span>
+        <div class="stat-val" id="ov-missions-done">0</div>
+        <div class="stat-label">Missions Done</div>
+      </div>
+      <div class="stat-card yellow">
+        <span class="stat-icon">⚡</span>
+        <div class="stat-val" id="ov-pending">0</div>
+        <div class="stat-label">Pending Missions</div>
+      </div>
+      <div class="stat-card blue">
+        <span class="stat-icon">📊</span>
+        <div class="stat-val" id="ov-score">0</div>
+        <div class="stat-label">Week Score</div>
+      </div>
+    </div>
+    <div class="stat-grid">
+      <div class="stat-card">
+        <span class="stat-icon">📏</span>
+        <div class="stat-val" id="ov-dist">0.0 km</div>
+        <div class="stat-label">This Week Distance</div>
+      </div>
+      <div class="stat-card">
+        <span class="stat-icon">⏱️</span>
+        <div class="stat-val" id="ov-time">0 min</div>
+        <div class="stat-label">This Week Time</div>
+      </div>
+      <div class="stat-card">
+        <span class="stat-icon">🏆</span>
+        <div class="stat-val" id="ov-rank">Rookie</div>
+        <div class="stat-label">Current Rank</div>
+      </div>
+      <div class="stat-card orange">
+        <span class="stat-icon">⭐</span>
+        <div class="stat-val" id="ov-xp">0 XP</div>
+        <div class="stat-label">Total XP</div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">Recent Rides</div>
+      <div id="recent-rides-list">
+        <div class="empty-state">
+          <span class="empty-icon">🚴</span>
+          <div class="empty-title">No rides yet</div>
+          <div class="empty-sub">Click "+ Log Ride" to add your first ride!</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MISSIONS -->
+  <div class="tab-panel" id="panel-missions">
+    <div class="mission-stats">
+      <div class="ms-card"><div class="ms-label">Running Score</div><div class="ms-val" id="ms-xp">0</div><div class="ms-sub">total XP from missions</div></div>
+      <div class="ms-card"><div class="ms-label">Avg Score</div><div class="ms-val" id="ms-avg">0/100</div><div class="ms-sub">per completed mission</div></div>
+      <div class="ms-card"><div class="ms-label">Completed</div><div class="ms-val" id="ms-done">0</div><div class="ms-sub">missions solved</div></div>
+      <div class="ms-card"><div class="ms-label">Pending</div><div class="ms-val" id="ms-pending">0</div><div class="ms-sub">awaiting answer</div></div>
+    </div>
+    <div class="filter-row">
+      <button class="filter-btn active" data-status="all" onclick="filterMissions('status','all',this)">All</button>
+      <button class="filter-btn" data-status="pending" onclick="filterMissions('status','pending',this)">Pending</button>
+      <button class="filter-btn" data-status="completed" onclick="filterMissions('status','completed',this)">Completed</button>
+      <button class="filter-btn easy" data-diff="all" onclick="filterMissions('diff','all',this)">All</button>
+      <button class="filter-btn easy" data-diff="easy" onclick="filterMissions('diff','easy',this)">Easy</button>
+      <button class="filter-btn medium" data-diff="medium" onclick="filterMissions('diff','medium',this)">Medium</button>
+      <button class="filter-btn hard" data-diff="hard" onclick="filterMissions('diff','hard',this)">Hard</button>
+      <button class="filter-btn extreme" data-diff="extreme" onclick="filterMissions('diff','extreme',this)">Extreme</button>
+    </div>
+    <div id="missions-list">
+      <div class="empty-state">
+        <span class="empty-icon">🎯</span>
+        <div class="empty-title">No missions found</div>
+        <div class="empty-sub">Log a ride to generate your first mission!</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PERFORMANCE -->
+  <div class="tab-panel" id="panel-performance">
+    <div class="stat-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:20px">
+      <div class="stat-card orange"><div class="stat-label" style="margin-bottom:8px">This Week</div><div class="stat-val" id="pf-this">0.0 km</div><div class="stat-label" id="pf-this-rides">0 rides</div></div>
+      <div class="stat-card"><div class="stat-label" style="margin-bottom:8px">Last Week</div><div class="stat-val" id="pf-last">0.0 km</div><div class="stat-label" id="pf-last-rides">0 rides</div></div>
+      <div class="stat-card"><div class="stat-label" style="margin-bottom:8px">Change</div><div class="stat-val" id="pf-change">+0%</div><div class="stat-label">Week over week</div></div>
+    </div>
+    <div class="section">
+      <div class="section-title">Performance by Difficulty</div>
+      <div style="overflow-x:auto">
+        <table class="perf-table">
+          <thead><tr>
+            <th>Difficulty</th><th>Rides</th><th>Avg Dist</th><th>Avg Speed</th>
+            <th>Top Speed</th><th>Avg Elev</th><th>Avg Time</th><th>Math Score</th>
+          </tr></thead>
+          <tbody id="perf-table-body">
+            <tr><td><span class="diff-dot dot-easy">● Easy</span></td><td class="no-data">—</td><td class="no-data">—</td><td class="no-data">—</td><td class="no-data">—</td><td class="no-data">—</td><td class="no-data">—</td><td class="no-data">No data</td></tr>
+            <tr><td><span class="diff-dot dot-medium">● Medium</span></td><td class="no-data">—</td><td class="no-data">—</td><td class="no-data">—</td><td class="no-data">—</td><td class="no-data">—</td><td class="no-data">—</td><td class="no-data">No data</td></tr>
+            <tr><td><span class="diff-dot dot-hard">● Hard</span></td><td class="no-data">—</td><td class="no-data">—</td><td class="no-data">—</td><td class="no-data">—</td><td class="no-data">—</td><td class="no-data">—</td><td class="no-data">No data</td></tr>
+            <tr><td><span class="diff-dot dot-extreme">● Extreme</span></td><td class="no-data">—</td><td class="no-data">—</td><td class="no-data">—</td><td class="no-data">—</td><td class="no-data">—</td><td class="no-data">—</td><td class="no-data">No data</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">All Rides</div>
+      <div style="overflow-x:auto">
+        <table class="rides-table">
+          <thead><tr>
+            <th>Date</th><th>Route</th><th>Difficulty</th><th>Distance</th>
+            <th>Time</th><th>Avg Speed</th><th>Max Speed</th><th>Elevation</th><th>Calories</th>
+          </tr></thead>
+          <tbody id="all-rides-body">
+            <tr><td colspan="9" style="text-align:center;padding:32px;color:rgba(255,255,255,0.6)">No rides logged yet. Click "Log Ride" to get started!</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- LOG RIDE MODAL -->
+<div class="modal-overlay" id="log-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">🚴 Log a Ride</div>
+      <button class="modal-close" onclick="closeLogRide()">✕</button>
+    </div>
+    <div class="form-grid">
+      <div class="form-field">
+        <label class="form-label">Date</label>
+        <input class="form-input" type="date" id="f-date">
+      </div>
+      <div class="form-field">
+        <label class="form-label">Route Name</label>
+        <input class="form-input" type="text" id="f-route" placeholder="e.g. Riverside Loop">
+      </div>
+      <div class="form-field">
+        <label class="form-label">Distance (km)</label>
+        <input class="form-input" type="number" id="f-dist" placeholder="12.5" step="0.1" min="0">
+      </div>
+      <div class="form-field">
+        <label class="form-label">Duration (min)</label>
+        <input class="form-input" type="number" id="f-time" placeholder="45" min="0">
+      </div>
+      <div class="form-field">
+        <label class="form-label">Avg Speed (km/h)</label>
+        <input class="form-input" type="text" id="f-avgspeed" placeholder="Auto-calculate" readonly style="cursor:default;opacity:.6">
+      </div>
+      <div class="form-field">
+        <label class="form-label">Max Speed (km/h)</label>
+        <input class="form-input" type="number" id="f-maxspeed" placeholder="32.0" step="0.1" min="0">
+      </div>
+      <div class="form-field">
+        <label class="form-label">Elevation Gain (m)</label>
+        <input class="form-input" type="number" id="f-elev" placeholder="120" min="0">
+      </div>
+      <div class="form-field">
+        <label class="form-label">Calories Burned</label>
+        <input class="form-input" type="number" id="f-cal" placeholder="350" min="0">
+      </div>
+      <div class="form-field full">
+        <label class="form-label">Difficulty</label>
+        <div class="diff-selector">
+          <button class="diff-opt active-easy" data-diff="easy" onclick="selectDiff('easy')">Easy</button>
+          <button class="diff-opt" data-diff="medium" onclick="selectDiff('medium')">Medium</button>
+          <button class="diff-opt" data-diff="hard" onclick="selectDiff('hard')">Hard</button>
+          <button class="diff-opt" data-diff="extreme" onclick="selectDiff('extreme')">Extreme</button>
+        </div>
+      </div>
+    </div>
+    <div class="mission-note">
+      <span>⚡</span>
+      <span>After logging, a <strong>maths mission</strong> will be auto-generated based on your ride data. Solve it to earn XP and level up your rank!</span>
+    </div>
+    <div class="modal-footer">
+      <button class="cancel-btn" onclick="closeLogRide()">Cancel</button>
+      <button class="submit-btn" onclick="logRide()">🗺️ Log Ride & Generate Mission</button>
+    </div>
+  </div>
+</div>
+
+<!-- SOLVE MISSION MODAL -->
+<div class="modal-overlay" id="solve-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="solve-title">🎯 Solve Mission</div>
+      <button class="modal-close" onclick="closeSolve()">✕</button>
+    </div>
+    <div class="solve-question" id="solve-q"></div>
+    <div class="solve-opts" id="solve-opts"></div>
+    <div class="solve-feedback" id="solve-fb"></div>
+    <div style="margin-top:16px;display:flex;justify-content:flex-end">
+      <button class="submit-btn" id="solve-close-btn" onclick="closeSolve()" style="display:none;flex:0;padding:10px 20px">Done</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── STORAGE ──
+const sv=(k,v)=>{try{localStorage.setItem('bq_'+k,JSON.stringify(v))}catch(e){}};
+const ld=(k,d)=>{try{const v=localStorage.getItem('bq_'+k);return v?JSON.parse(v):d}catch(e){return d}};
+
+let rides=ld('rides',[]);
+let missions=ld('missions',[]);
+let selectedDiff='easy';
+let statusFilter='all';
+let diffFilter='all';
+let solvingId=null;
+
+const RANKS=['Rookie','Bronze Rider','Silver Rider','Gold Rider','Platinum Rider','Elite Rider','Champion','Legend'];
+const XP_PER_CORRECT={easy:10,medium:20,hard:35,extreme:50};
+
+function getRank(xp){
+  if(xp>=500)return RANKS[7];if(xp>=300)return RANKS[6];if(xp>=200)return RANKS[5];
+  if(xp>=120)return RANKS[4];if(xp>=70)return RANKS[3];if(xp>=30)return RANKS[2];
+  if(xp>=10)return RANKS[1];return RANKS[0];
+}
+
+// ── TAB SWITCHING ──
+function switchTab(name,btn){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('panel-'+name).classList.add('active');
+  btn.classList.add('active');
+  refreshAll();
+}
+
+// ── MISSION GENERATION ──
+function generateMission(ride){
+  const dist=parseFloat(ride.dist);
+  const time=parseFloat(ride.time);
+  const avgSpeed=dist/(time/60);
+  const maxSpeed=parseFloat(ride.maxspeed)||0;
+  const elev=parseFloat(ride.elev)||0;
+  const cal=parseFloat(ride.cal)||0;
+  const diff=ride.diff;
+
+  const templates=[
+    // Easy
+    {diff:'easy',
+      q:`You rode ${dist} km in ${time} minutes. Your friend rode ${(dist*0.75).toFixed(1)} km. How much further did you ride?`,
+      gen:(d)=>{const ans=(d.dist-(d.dist*0.75)).toFixed(1);return{q:`You rode ${d.dist} km in ${d.time} minutes. Your friend rode ${(d.dist*0.75).toFixed(1)} km. How much further did you ride?`,opts:shuffle([ans+' km',(d.dist*0.5).toFixed(1)+' km',(d.dist*0.3).toFixed(1)+' km',(d.dist*0.4).toFixed(1)+' km']),ansIdx:0,explain:`${d.dist} − ${(d.dist*0.75).toFixed(1)} = ${ans} km`}},
+    },
+    {diff:'easy',
+      gen:(d)=>{const total=(d.dist*3).toFixed(1);return{q:`You ride this ${d.dist} km route 3 days in a row. How far do you ride in total?`,opts:shuffle([total+' km',(d.dist*2).toFixed(1)+' km',(d.dist*4).toFixed(1)+' km',(d.dist*2.5).toFixed(1)+' km']),ansIdx:0,explain:`${d.dist} × 3 = ${total} km`}},
+    },
+    // Medium
+    {diff:'medium',
+      gen:(d)=>{const spd=(d.dist/(d.time/60)).toFixed(1);return{q:`You rode ${d.dist} km in ${d.time} minutes. What was your average speed in km/h?`,opts:shuffle([spd+' km/h',((d.dist/(d.time/60))*0.85).toFixed(1)+' km/h',((d.dist/(d.time/60))*1.15).toFixed(1)+' km/h',((d.dist/(d.time/60))*0.7).toFixed(1)+' km/h']),ansIdx:0,explain:`Speed = Distance ÷ Time. ${d.dist} ÷ (${d.time}/60) = ${spd} km/h`}},
+    },
+    {diff:'medium',
+      gen:(d)=>{const pct=Math.round((parseFloat(d.elev)||100)/10);return{q:`Your elevation gain was ${d.elev||100} m over ${d.dist} km. If you increase your distance by 20% but keep the same elevation-per-km ratio, what will be the new elevation gain?`,opts:shuffle([(Math.round((parseFloat(d.elev)||100)*1.2))+' m',(Math.round((parseFloat(d.elev)||100)*1.1))+' m',(Math.round((parseFloat(d.elev)||100)*1.5))+' m',(Math.round((parseFloat(d.elev)||100)*0.8))+' m']),ansIdx:0,explain:`${d.elev||100} × 1.2 = ${Math.round((parseFloat(d.elev)||100)*1.2)} m`}},
+    },
+    // Hard
+    {diff:'hard',
+      gen:(d)=>{const spd=(d.dist/(d.time/60)).toFixed(2);const newTime=Math.round(d.dist/((d.dist/(d.time/60))*1.1)*60);return{q:`Your average speed was ${(d.dist/(d.time/60)).toFixed(1)} km/h over ${d.dist} km. If you increase your speed by 10%, how long (in minutes) would the same ride take? Round to nearest minute.`,opts:shuffle([newTime+' min',(newTime+5)+' min',(newTime-5)+' min',(newTime+10)+' min']),ansIdx:0,explain:`New speed = ${(d.dist/(d.time/60)).toFixed(1)} × 1.1 = ${((d.dist/(d.time/60))*1.1).toFixed(1)} km/h. Time = ${d.dist} ÷ ${((d.dist/(d.time/60))*1.1).toFixed(1)} × 60 = ${newTime} min`}},
+    },
+    {diff:'hard',
+      gen:(d)=>{const cal=parseFloat(d.cal)||300;const rate=(cal/d.dist).toFixed(1);const newDist=(d.dist*1.4).toFixed(1);const newCal=Math.round(rate*newDist);return{q:`You burned ${cal} calories over ${d.dist} km (${rate} cal/km). At the same rate, how many calories would you burn over ${newDist} km?`,opts:shuffle([newCal+' cal',(newCal-30)+' cal',(newCal+50)+' cal',(newCal-60)+' cal']),ansIdx:0,explain:`${rate} cal/km × ${newDist} km = ${newCal} cal`}},
+    },
+    // Extreme
+    {diff:'extreme',
+      gen:(d)=>{const spd=(d.dist/(d.time/60)).toFixed(1);const paceMin=Math.floor(d.time/d.dist);const paceSec=Math.round(((d.time/d.dist)-paceMin)*60);return{q:`You rode ${d.dist} km in ${d.time} minutes. What is your pace in minutes and seconds per km? (Round seconds to nearest whole number)`,opts:shuffle([`${paceMin}:${paceSec.toString().padStart(2,'0')} min/km`,`${paceMin+1}:${paceSec.toString().padStart(2,'0')} min/km`,`${paceMin}:${((paceSec+15)%60).toString().padStart(2,'0')} min/km`,`${paceMin-1}:${paceSec.toString().padStart(2,'0')} min/km`]),ansIdx:0,explain:`Pace = ${d.time} ÷ ${d.dist} = ${(d.time/d.dist).toFixed(3)} min/km = ${paceMin}:${paceSec.toString().padStart(2,'0')} min/km`}},
+    },
+    {diff:'extreme',
+      gen:(d)=>{const wkg=(parseFloat(d.cal)||300)/(d.time/60);const rounded=Math.round(wkg);return{q:`You burned ${d.cal||300} calories in ${d.time} minutes. If 1 calorie = 4.184 joules, and you convert this to watts (joules per second), what is your approximate power output? (Round to nearest watt)`,opts:shuffle([rounded+' W',(rounded+15)+' W',(rounded-20)+' W',(rounded+40)+' W']),ansIdx:0,explain:`${d.cal||300} cal × 4.184 = ${Math.round((parseFloat(d.cal)||300)*4.184)} J. Duration = ${d.time*60} sec. Power = ${Math.round((parseFloat(d.cal)||300)*4.184/(d.time*60))} W`}},
+    },
+  ];
+
+  // Pick template matching difficulty or closest
+  const matching=templates.filter(t=>t.diff===diff);
+  const pool=matching.length>0?matching:templates;
+  const template=pool[Math.floor(Math.random()*pool.length)];
+  const generated=template.gen(ride);
+
+  // Find correct answer index
+  const correctAns=generated.opts[0];
+  const shuffled=[...generated.opts];
+  const correctIdx=shuffled.indexOf(correctAns);
+
+  return{
+    id:Date.now()+'_'+Math.random().toString(36).slice(2),
+    rideId:ride.id,
+    rideName:ride.route||'Ride',
+    rideDist:ride.dist,
+    diff,
+    q:generated.q,
+    opts:shuffled,
+    ans:correctIdx,
+    status:'pending',
+    xp:XP_PER_CORRECT[diff]||10,
+    explain:generated.explain,
+    result:null
+  };
+}
+
+function shuffle(arr){
+  const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;
+}
+
+// ── LOG RIDE ──
+function openLogRide(){
+  const today=new Date().toISOString().split('T')[0];
+  document.getElementById('f-date').value=today;
+  document.getElementById('f-dist').value='';
+  document.getElementById('f-time').value='';
+  document.getElementById('f-avgspeed').value='Auto-calculate';
+  document.getElementById('f-maxspeed').value='';
+  document.getElementById('f-elev').value='';
+  document.getElementById('f-cal').value='';
+  selectDiff('easy');
+  document.getElementById('log-modal').classList.add('open');
+}
+function closeLogRide(){document.getElementById('log-modal').classList.remove('open')}
+
+function selectDiff(d){
+  selectedDiff=d;
+  document.querySelectorAll('.diff-opt').forEach(b=>{b.className='diff-opt';});
+  document.querySelector(`.diff-opt[data-diff="${d}"]`).className=`diff-opt active-${d}`;
+  const dist=parseFloat(document.getElementById('f-dist').value)||0;
+  const time=parseFloat(document.getElementById('f-time').value)||0;
+  if(dist>0&&time>0)document.getElementById('f-avgspeed').value=(dist/(time/60)).toFixed(1)+' km/h';
+}
+
+document.getElementById('f-dist').addEventListener('input',()=>{calcSpeed()});
+document.getElementById('f-time').addEventListener('input',()=>{calcSpeed()});
+function calcSpeed(){
+  const dist=parseFloat(document.getElementById('f-dist').value)||0;
+  const time=parseFloat(document.getElementById('f-time').value)||0;
+  document.getElementById('f-avgspeed').value=dist>0&&time>0?(dist/(time/60)).toFixed(1)+' km/h':'Auto-calculate';
+}
+
+function logRide(){
+  const dist=parseFloat(document.getElementById('f-dist').value);
+  const time=parseFloat(document.getElementById('f-time').value);
+  if(!dist||!time){alert('Please enter distance and duration!');return;}
+  const ride={
+    id:Date.now().toString(),
+    date:document.getElementById('f-date').value,
+    route:document.getElementById('f-route').value||'Unnamed Route',
+    dist,time,
+    avgspeed:(dist/(time/60)).toFixed(1),
+    maxspeed:parseFloat(document.getElementById('f-maxspeed').value)||0,
+    elev:parseFloat(document.getElementById('f-elev').value)||0,
+    cal:parseFloat(document.getElementById('f-cal').value)||0,
+    diff:selectedDiff
+  };
+  rides.unshift(ride);
+  sv('rides',rides);
+  const mission=generateMission(ride);
+  missions.unshift(mission);
+  sv('missions',missions);
+  closeLogRide();
+  refreshAll();
+}
+
+// ── SOLVE MISSION ──
+function openSolve(id){
+  const m=missions.find(x=>x.id===id);
+  if(!m)return;
+  solvingId=id;
+  document.getElementById('solve-title').textContent=`🎯 ${m.diff.charAt(0).toUpperCase()+m.diff.slice(1)} Mission`;
+  document.getElementById('solve-q').textContent=m.q;
+  const opts=document.getElementById('solve-opts');
+  opts.innerHTML='';
+  m.opts.forEach((o,i)=>{
+    const btn=document.createElement('div');
+    btn.className='solve-opt'+(m.status!=='pending'?' disabled':'');
+    btn.innerHTML=`<span class="opt-l">${String.fromCharCode(65+i)}.</span>${o}`;
+    if(m.status!=='pending'){
+      if(i===m.ans)btn.classList.add('correct');
+      else if(i===m.result)btn.classList.add('wrong');
+    } else {
+      btn.onclick=()=>answerMission(i,m);
+    }
+    opts.appendChild(btn);
+  });
+  const fb=document.getElementById('solve-fb');
+  if(m.status!=='pending'){
+    fb.style.display='block';
+    fb.className='solve-feedback'+(m.status==='correct'?'':' wrong');
+    fb.innerHTML=(m.status==='correct'?'✓ Correct! ':'✗ Incorrect. ')+m.explain+`<div class="xp-badge">+${m.status==='correct'?m.xp:0} XP</div>`;
+    document.getElementById('solve-close-btn').style.display='block';
+  } else {
+    fb.style.display='none';
+    document.getElementById('solve-close-btn').style.display='none';
+  }
+  document.getElementById('solve-modal').classList.add('open');
+}
+function closeSolve(){document.getElementById('solve-modal').classList.remove('open');solvingId=null;}
+
+function answerMission(i,m){
+  const correct=i===m.ans;
+  m.status=correct?'correct':'wrong';
+  m.result=i;
+  sv('missions',missions);
+  document.querySelectorAll('.solve-opt').forEach((o,idx)=>{
+    o.classList.add('disabled');o.onclick=null;
+    if(idx===m.ans)o.classList.add('correct');
+    else if(idx===i&&!correct)o.classList.add('wrong');
+  });
+  const fb=document.getElementById('solve-fb');
+  fb.style.display='block';
+  fb.className='solve-feedback'+(correct?'':' wrong');
+  fb.innerHTML=(correct?'✓ Correct! ':'✗ Incorrect. ')+m.explain+`<div class="xp-badge">+${correct?m.xp:0} XP</div>`;
+  document.getElementById('solve-close-btn').style.display='block';
+  refreshAll();
+}
+
+// ── FILTERS ──
+function filterMissions(type,val,btn){
+  if(type==='status'){
+    statusFilter=val;
+    document.querySelectorAll('.filter-btn[data-status]').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+  } else {
+    diffFilter=val;
+    document.querySelectorAll('.filter-btn[data-diff]').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+  renderMissions();
+}
+
+// ── RENDER ──
+function refreshAll(){
+  renderOverview();
+  renderMissions();
+  renderPerformance();
+}
+
+function renderOverview(){
+  const now=new Date();
+  const weekStart=new Date(now);
+  weekStart.setDate(now.getDate()-now.getDay());
+  weekStart.setHours(0,0,0,0);
+  const weekRides=rides.filter(r=>new Date(r.date)>=weekStart);
+  const weekDist=weekRides.reduce((s,r)=>s+parseFloat(r.dist),0);
+  const weekTime=weekRides.reduce((s,r)=>s+parseFloat(r.time),0);
+  const done=missions.filter(m=>m.status==='correct').length;
+  const pending=missions.filter(m=>m.status==='pending').length;
+  const totalXP=missions.filter(m=>m.status==='correct').reduce((s,m)=>s+m.xp,0);
+  const weekScore=missions.filter(m=>new Date(rides.find(r=>r.id===m.rideId)?.date||0)>=weekStart&&m.status==='correct').reduce((s,m)=>s+m.xp,0);
+
+  document.getElementById('ov-rides').textContent=weekRides.length;
+  document.getElementById('ov-missions-done').textContent=done;
+  document.getElementById('ov-pending').textContent=pending;
+  document.getElementById('ov-score').textContent=weekScore;
+  document.getElementById('ov-dist').textContent=weekDist.toFixed(1)+' km';
+  document.getElementById('ov-time').textContent=Math.round(weekTime)+' min';
+  document.getElementById('ov-rank').textContent=getRank(totalXP);
+  document.getElementById('ov-xp').textContent=totalXP+' XP';
+
+  const recentList=document.getElementById('recent-rides-list');
+  if(rides.length===0){
+    recentList.innerHTML='<div class="empty-state"><span class="empty-icon">🚴</span><div class="empty-title">No rides yet</div><div class="empty-sub">Click "+ Log Ride" to add your first ride!</div></div>';
+    return;
+  }
+  recentList.innerHTML=rides.slice(0,5).map(r=>`
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)">
+      <div>
+        <div style="font-weight:700;margin-bottom:3px">${r.route}</div>
+        <div style="font-size:0.75rem;color:rgba(255,255,255,0.6)">${r.date} · <span class="dot-${r.diff}">● ${r.diff}</span></div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-weight:700;color:var(--orange)">${r.dist} km</div>
+        <div style="font-size:0.75rem;color:rgba(255,255,255,0.6)">${r.time} min · ${r.avgspeed} km/h</div>
+      </div>
+    </div>`).join('');
+}
+
+function renderMissions(){
+  const list=document.getElementById('missions-list');
+  let filtered=missions;
+  if(statusFilter!=='all')filtered=filtered.filter(m=>m.status===statusFilter||(statusFilter==='completed'&&(m.status==='correct'||m.status==='wrong')));
+  if(diffFilter!=='all')filtered=filtered.filter(m=>m.diff===diffFilter);
+
+  const done=missions.filter(m=>m.status==='correct').length;
+  const pending=missions.filter(m=>m.status==='pending').length;
+  const totalXP=missions.filter(m=>m.status==='correct').reduce((s,m)=>s+m.xp,0);
+  const scores=missions.filter(m=>m.status==='correct'||m.status==='wrong');
+  const avg=scores.length?Math.round((done/scores.length)*100):0;
+
+  document.getElementById('ms-xp').textContent=totalXP;
+  document.getElementById('ms-avg').textContent=avg+'/100';
+  document.getElementById('ms-done').textContent=done;
+  document.getElementById('ms-pending').textContent=pending;
+
+  if(filtered.length===0){
+    list.innerHTML='<div class="empty-state"><span class="empty-icon">🎯</span><div class="empty-title">No missions found</div><div class="empty-sub">Log a ride to generate your first mission!</div></div>';
+    return;
+  }
+  list.innerHTML=filtered.map(m=>`
+    <div class="mission-card" onclick="openSolve('${m.id}')">
+      <div class="mc-header">
+        <div class="mc-title">Maths Mission · ${m.rideName}</div>
+        <span class="mc-diff ${m.diff}">${m.diff.charAt(0).toUpperCase()+m.diff.slice(1)}</span>
+      </div>
+      <div class="mc-ride">📍 ${m.rideDist} km ride</div>
+      <div class="mc-question">${m.q}</div>
+      <div class="mc-status">
+        ${m.status==='pending'?'<span class="status-pending">⏳ Pending</span>':m.status==='correct'?`<span class="status-correct">✓ Correct · +${m.xp} XP</span>`:`<span class="status-wrong">✗ Incorrect</span>`}
+        ${m.status==='pending'?'<button class="solve-btn">Solve →</button>':''}
+      </div>
+    </div>`).join('');
+}
+
+function renderPerformance(){
+  const now=new Date();
+  const weekStart=new Date(now);weekStart.setDate(now.getDate()-now.getDay());weekStart.setHours(0,0,0,0);
+  const lastWeekStart=new Date(weekStart);lastWeekStart.setDate(weekStart.getDate()-7);
+
+  const thisWeek=rides.filter(r=>new Date(r.date)>=weekStart);
+  const lastWeek=rides.filter(r=>new Date(r.date)>=lastWeekStart&&new Date(r.date)<weekStart);
+  const thisDist=thisWeek.reduce((s,r)=>s+parseFloat(r.dist),0);
+  const lastDist=lastWeek.reduce((s,r)=>s+parseFloat(r.dist),0);
+  const change=lastDist>0?Math.round(((thisDist-lastDist)/lastDist)*100):0;
+
+  document.getElementById('pf-this').textContent=thisDist.toFixed(1)+' km';
+  document.getElementById('pf-last').textContent=lastDist.toFixed(1)+' km';
+  document.getElementById('pf-this-rides').textContent=thisWeek.length+' ride'+(thisWeek.length!==1?'s':'');
+  document.getElementById('pf-last-rides').textContent=lastWeek.length+' ride'+(lastWeek.length!==1?'s':'');
+  document.getElementById('pf-change').textContent=(change>=0?'+':'')+change+'%';
+
+  // Performance by difficulty
+  const diffs=['easy','medium','hard','extreme'];
+  const body=document.getElementById('perf-table-body');
+  body.innerHTML=diffs.map(d=>{
+    const dr=rides.filter(r=>r.diff===d);
+    if(dr.length===0)return`<tr><td><span class="diff-dot dot-${d}">● ${d.charAt(0).toUpperCase()+d.slice(1)}</span></td><td class="no-data">—</td><td class="no-data">—</td><td class="no-data">—</td><td class="no-data">—</td><td class="no-data">—</td><td class="no-data">—</td><td class="no-data">No data</td></tr>`;
+    const avgDist=(dr.reduce((s,r)=>s+parseFloat(r.dist),0)/dr.length).toFixed(1);
+    const avgSpd=(dr.reduce((s,r)=>s+parseFloat(r.avgspeed),0)/dr.length).toFixed(1);
+    const topSpd=Math.max(...dr.map(r=>parseFloat(r.maxspeed)||0)).toFixed(1);
+    const avgElev=Math.round(dr.reduce((s,r)=>s+(parseFloat(r.elev)||0),0)/dr.length);
+    const avgTime=Math.round(dr.reduce((s,r)=>s+parseFloat(r.time),0)/dr.length);
+    const dm=missions.filter(m=>dr.find(r=>r.id===m.rideId)&&m.status!=='pending');
+    const mathScore=dm.length?Math.round((dm.filter(m=>m.status==='correct').length/dm.length)*100)+'%':'No data';
+    return`<tr><td><span class="diff-dot dot-${d}">● ${d.charAt(0).toUpperCase()+d.slice(1)}</span></td><td>${dr.length}</td><td>${avgDist} km</td><td>${avgSpd} km/h</td><td>${topSpd} km/h</td><td>${avgElev} m</td><td>${avgTime} min</td><td>${mathScore}</td></tr>`;
+  }).join('');
+
+  // All rides
+  const allBody=document.getElementById('all-rides-body');
+  if(rides.length===0){
+    allBody.innerHTML='<tr><td colspan="9" style="text-align:center;padding:32px;color:rgba(255,255,255,0.6)">No rides logged yet. Click "Log Ride" to get started!</td></tr>';
+    return;
+  }
+  allBody.innerHTML=rides.map(r=>`
+    <tr>
+      <td>${r.date}</td>
+      <td style="font-weight:600">${r.route}</td>
+      <td><span class="dot-${r.diff}">● ${r.diff}</span></td>
+      <td>${r.dist} km</td>
+      <td>${r.time} min</td>
+      <td>${r.avgspeed} km/h</td>
+      <td>${r.maxspeed||'—'} km/h</td>
+      <td>${r.elev||'—'} m</td>
+      <td>${r.cal||'—'}</td>
+    </tr>`).join('');
+}
+
+refreshAll();
+</script>
+</body>
+</html>
