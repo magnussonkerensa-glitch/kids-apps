@@ -12,6 +12,7 @@
   --cub:#8a5cf6;--cub-bg:#f1eaff;--cub-bd:#dccdff;
   --bay:#e6a800;--bay-bg:#fff6d6;--bay-bd:#ffe69a;
   --mum:#0d8fd6;--mum-bg:#e3f4ff;--mum-bd:#bce3fb;
+  --together:#1a9be8;--together-bg:#ddf0ff;--together-bd:#99d6ff;
   --t:#3a2c55;--t2:#8a7ba8;
 }
 *{box-sizing:border-box;margin:0;padding:0}
@@ -24,25 +25,19 @@ body{font-family:'Nunito',sans-serif;background:
   var(--bg);
   color:var(--t);max-width:430px;margin:0 auto;
   padding:env(safe-area-inset-top) 0 40px}
-
-/* floating emoji background */
 .floaties{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
 .floatie{position:absolute;font-size:var(--fs);opacity:0.13;animation:floatUp var(--ft) var(--fd) ease-in-out infinite alternate}
 @keyframes floatUp{from{transform:translateY(0) rotate(-6deg)}to{transform:translateY(-18px) rotate(6deg)}}
-
 .wrap{position:relative;z-index:1;padding:46px 24px 20px}
-
-/* HEADER */
-.header{text-align:center;margin-bottom:36px}
+.header{text-align:center;margin-bottom:28px}
 .header-emoji{font-size:3.2rem;display:block;margin-bottom:10px;animation:bob 3s ease-in-out infinite}
 @keyframes bob{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-9px) rotate(3deg)}}
 .header-title{font-family:'Baloo 2',cursive;font-size:2rem;font-weight:800;
   background:linear-gradient(90deg,#00b860,#0d8fd6,#8a5cf6,#e6a800);
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:2px}
-.header-sub{font-size:0.78rem;color:var(--t2);font-weight:800;letter-spacing:2px;text-transform:uppercase}
-
-/* CARDS */
-.card{border-radius:24px;padding:18px 20px;margin-bottom:14px;display:flex;align-items:center;gap:16px;
+.header-date{font-size:0.82rem;color:var(--t2);font-weight:800;letter-spacing:1px;text-transform:uppercase;margin-top:4px}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+.card{border-radius:24px;padding:18px 20px;margin-bottom:14px;
   cursor:pointer;text-decoration:none;color:var(--t);transition:all .2s cubic-bezier(.34,1.5,.64,1);
   position:relative;border:2px solid;box-shadow:0 4px 0 rgba(0,0,0,0.06),0 8px 20px rgba(80,50,140,0.08)}
 .card:hover,.card:active{transform:translateY(-4px) scale(1.015);box-shadow:0 8px 0 rgba(0,0,0,0.05),0 16px 30px rgba(80,50,140,0.12)}
@@ -50,174 +45,252 @@ body{font-family:'Nunito',sans-serif;background:
 .card.cub{background:var(--cub-bg);border-color:var(--cub-bd)}
 .card.bay{background:var(--bay-bg);border-color:var(--bay-bd)}
 .card.mum{background:var(--mum-bg);border-color:var(--mum-bd)}
-
+.card-top{display:flex;align-items:center;gap:16px}
 .card-avatar{width:56px;height:56px;border-radius:18px;display:flex;align-items:center;
   justify-content:center;flex-shrink:0;overflow:hidden;background:#fff;box-shadow:0 3px 8px rgba(0,0,0,0.08)}
-
 .card-info{flex:1}
 .card-name{font-family:'Baloo 2',cursive;font-size:1.25rem;font-weight:800;line-height:1.1}
 .card.owl .card-name{color:var(--owl)}
 .card.cub .card-name{color:var(--cub)}
 .card.bay .card-name{color:var(--bay)}
 .card.mum .card-name{color:var(--mum)}
-.card-school{font-size:0.72rem;color:var(--t2);font-weight:800;margin-top:2px}
-.card-sub{font-size:0.75rem;color:var(--t2);font-weight:700;margin-top:1px}
+.card-sub{font-size:0.75rem;color:var(--t2);font-weight:700;margin-top:2px}
 .card-owed{font-size:0.74rem;font-weight:900;margin-top:4px}
 .card.owl .card-owed{color:var(--owl)}
 .card.cub .card-owed{color:var(--cub)}
 .card.bay .card-owed{color:var(--bay)}
-
 .card-arrow{font-size:1.5rem;flex-shrink:0;transition:transform .2s;color:var(--t2)}
 .card:hover .card-arrow{transform:translateX(4px)}
-
+.card-events{margin-top:12px;padding-top:10px;border-top:1.5px solid rgba(0,0,0,0.07)}
+.event-item{display:flex;align-items:flex-start;gap:8px;padding:5px 0;font-size:0.78rem;font-weight:700}
+.event-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;margin-top:3px}
+.owl-dot{background:var(--owl)}
+.cub-dot{background:var(--cub)}
+.bay-dot{background:var(--bay)}
+.together-dot{background:var(--together)}
+.event-time{color:var(--t2);font-size:0.72rem;white-space:nowrap;flex-shrink:0;margin-top:1px}
+.event-title{color:var(--t);line-height:1.3}
+.no-events{font-size:0.76rem;color:var(--t2);font-weight:700;font-style:italic;padding:4px 0}
+.events-loading{font-size:0.75rem;color:var(--t2);font-weight:700;animation:pulse 1.5s infinite;padding:4px 0}
+.together-badge{display:inline-flex;align-items:center;gap:4px;background:var(--together-bg);
+  border:1.5px solid var(--together-bd);border-radius:8px;padding:2px 7px;font-size:0.68rem;
+  font-weight:900;color:var(--together);margin-top:4px}
 footer{text-align:center;margin-top:26px;color:var(--t2);font-size:0.74rem;
   font-weight:800;letter-spacing:.5px;position:relative;z-index:1}
+.refresh-btn{background:none;border:none;cursor:pointer;font-size:0.74rem;color:var(--mum);
+  font-weight:900;font-family:inherit;margin-top:8px;display:block;margin-left:auto;margin-right:auto;
+  padding:6px 14px;border-radius:20px;border:2px solid var(--mum-bd);background:var(--mum-bg)}
 </style>
 </head>
 <body>
 <div class="floaties" id="floaties"></div>
-
 <div class="wrap">
   <div class="header">
     <span class="header-emoji">🏡</span>
     <div class="header-title">Family Dashboard</div>
-    <div class="header-sub">✨ who's playing today? ✨</div>
+    <div class="header-date" id="today-date"></div>
   </div>
-
   <a class="card owl" href="dashboard-owl.html">
-    <div class="card-avatar">
-      <svg width="40" height="40" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
-        <rect width="36" height="36" rx="10" fill="#e3f9ee"/>
-        <ellipse cx="18" cy="26" rx="9" ry="8" fill="#1a5c3a"/>
-        <ellipse cx="18" cy="28" rx="5" ry="5" fill="#2a7a50" opacity="0.6"/>
-        <polygon points="18,24 16,25.5 16.5,27.5 18,27 19.5,27.5 20,25.5" fill="#ffd700" opacity="0.9"/>
-        <ellipse cx="18" cy="16" rx="9" ry="8" fill="#1a5c3a"/>
-        <polygon points="11,11 9,6 13,10" fill="#1a5c3a"/>
-        <polygon points="25,11 27,6 23,10" fill="#1a5c3a"/>
-        <rect x="10" y="8" width="16" height="3" rx="1.5" fill="#1a1a2e"/>
-        <rect x="8" y="10" width="20" height="2" rx="1" fill="#111133"/>
-        <polygon points="18,9 17,10 17.5,11 18,10.5 18.5,11 19,10" fill="#ffd700"/>
-        <rect x="10" y="14" width="6" height="4" rx="2" fill="#111" opacity="0.95"/>
-        <rect x="20" y="14" width="6" height="4" rx="2" fill="#111" opacity="0.95"/>
-        <line x1="16" y1="16" x2="20" y2="16" stroke="#555" stroke-width="1"/>
-        <rect x="10" y="14" width="6" height="4" rx="2" fill="none" stroke="#00e676" stroke-width="0.8" opacity="0.6"/>
-        <rect x="20" y="14" width="6" height="4" rx="2" fill="none" stroke="#00e676" stroke-width="0.8" opacity="0.6"/>
-        <path d="M15 21 Q18 23.5 21 21" stroke="#00b860" stroke-width="1.2" fill="none" stroke-linecap="round"/>
-        <polygon points="18,19 16.5,21 19.5,21" fill="#f59e0b" opacity="0.9"/>
-        <ellipse cx="10" cy="27" rx="4" ry="3" fill="#124a2e" transform="rotate(-20 10 27)"/>
-        <ellipse cx="26" cy="27" rx="4" ry="3" fill="#124a2e" transform="rotate(20 26 27)"/>
-      </svg>
+    <div class="card-top">
+      <div class="card-avatar">
+        <svg width="40" height="40" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
+          <rect width="36" height="36" rx="10" fill="#e3f9ee"/>
+          <ellipse cx="18" cy="26" rx="9" ry="8" fill="#1a5c3a"/>
+          <ellipse cx="18" cy="28" rx="5" ry="5" fill="#2a7a50" opacity="0.6"/>
+          <polygon points="18,24 16,25.5 16.5,27.5 18,27 19.5,27.5 20,25.5" fill="#ffd700" opacity="0.9"/>
+          <ellipse cx="18" cy="16" rx="9" ry="8" fill="#1a5c3a"/>
+          <polygon points="11,11 9,6 13,10" fill="#1a5c3a"/>
+          <polygon points="25,11 27,6 23,10" fill="#1a5c3a"/>
+          <rect x="10" y="8" width="16" height="3" rx="1.5" fill="#1a1a2e"/>
+          <rect x="8" y="10" width="20" height="2" rx="1" fill="#111133"/>
+          <polygon points="18,9 17,10 17.5,11 18,10.5 18.5,11 19,10" fill="#ffd700"/>
+          <rect x="10" y="14" width="6" height="4" rx="2" fill="#111" opacity="0.95"/>
+          <rect x="20" y="14" width="6" height="4" rx="2" fill="#111" opacity="0.95"/>
+          <line x1="16" y1="16" x2="20" y2="16" stroke="#555" stroke-width="1"/>
+          <rect x="10" y="14" width="6" height="4" rx="2" fill="none" stroke="#00e676" stroke-width="0.8" opacity="0.6"/>
+          <rect x="20" y="14" width="6" height="4" rx="2" fill="none" stroke="#00e676" stroke-width="0.8" opacity="0.6"/>
+          <path d="M15 21 Q18 23.5 21 21" stroke="#00b860" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+          <polygon points="18,19 16.5,21 19.5,21" fill="#f59e0b" opacity="0.9"/>
+          <ellipse cx="10" cy="27" rx="4" ry="3" fill="#124a2e" transform="rotate(-20 10 27)"/>
+          <ellipse cx="26" cy="27" rx="4" ry="3" fill="#124a2e" transform="rotate(20 26 27)"/>
+        </svg>
+      </div>
+      <div class="card-info">
+        <div class="card-name">Owl 🦉</div>
+        <div class="card-sub">Open my dashboard</div>
+        <div class="card-owed" id="owed-owl"></div>
+      </div>
+      <div class="card-arrow">›</div>
     </div>
-    <div class="card-info">
-      <div class="card-name">Owl 🦉</div>
-      <div class="card-school">🏫 <span id="school-owl"></span></div>
-      <div class="card-sub">Open my dashboard</div>
-      <div class="card-owed" id="owed-owl"></div>
+    <div class="card-events" id="events-owl">
+      <div class="events-loading">Loading today's schedule…</div>
     </div>
-    <div class="card-arrow">›</div>
   </a>
-
   <a class="card cub" href="dashboard-cub.html">
-    <div class="card-avatar">
-      <svg width="40" height="40" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
-        <rect width="36" height="36" rx="10" fill="#f1eaff"/>
-        <ellipse cx="18" cy="27" rx="9" ry="7" fill="#cc6600"/>
-        <ellipse cx="18" cy="29" rx="5" ry="4" fill="#ffcc88" opacity="0.6"/>
-        <ellipse cx="18" cy="16" rx="10" ry="9" fill="#ff8c00"/>
-        <polygon points="10,10 7,5 13,9" fill="#ff8c00"/>
-        <polygon points="26,10 29,5 23,9" fill="#ff8c00"/>
-        <polygon points="10,10 8,7 13,9" fill="#ffb3b3"/>
-        <polygon points="26,10 28,7 23,9" fill="#ffb3b3"/>
-        <rect x="9" y="14" width="7" height="5" rx="2.5" fill="#1a0030" opacity="0.95"/>
-        <rect x="20" y="14" width="7" height="5" rx="2.5" fill="#1a0030" opacity="0.95"/>
-        <line x1="16" y1="16.5" x2="20" y2="16.5" stroke="#666" stroke-width="1"/>
-        <rect x="9" y="14" width="7" height="5" rx="2.5" fill="none" stroke="#b388ff" stroke-width="0.8" opacity="0.7"/>
-        <rect x="20" y="14" width="7" height="5" rx="2.5" fill="none" stroke="#b388ff" stroke-width="0.8" opacity="0.7"/>
-        <ellipse cx="18" cy="21" rx="2.5" ry="1.8" fill="#cc3366"/>
-        <path d="M15 23 Q18 26 21 23" stroke="#cc3366" stroke-width="1.2" fill="none" stroke-linecap="round"/>
-        <line x1="7" y1="20" x2="13" y2="21" stroke="rgba(0,0,0,0.2)" stroke-width="0.8" stroke-linecap="round"/>
-        <line x1="23" y1="21" x2="29" y2="20" stroke="rgba(0,0,0,0.2)" stroke-width="0.8" stroke-linecap="round"/>
-      </svg>
+    <div class="card-top">
+      <div class="card-avatar">
+        <svg width="40" height="40" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
+          <rect width="36" height="36" rx="10" fill="#f1eaff"/>
+          <ellipse cx="18" cy="27" rx="9" ry="7" fill="#cc6600"/>
+          <ellipse cx="18" cy="29" rx="5" ry="4" fill="#ffcc88" opacity="0.6"/>
+          <ellipse cx="18" cy="16" rx="10" ry="9" fill="#ff8c00"/>
+          <polygon points="10,10 7,5 13,9" fill="#ff8c00"/>
+          <polygon points="26,10 29,5 23,9" fill="#ff8c00"/>
+          <polygon points="10,10 8,7 13,9" fill="#ffb3b3"/>
+          <polygon points="26,10 28,7 23,9" fill="#ffb3b3"/>
+          <rect x="9" y="14" width="7" height="5" rx="2.5" fill="#1a0030" opacity="0.95"/>
+          <rect x="20" y="14" width="7" height="5" rx="2.5" fill="#1a0030" opacity="0.95"/>
+          <line x1="16" y1="16.5" x2="20" y2="16.5" stroke="#666" stroke-width="1"/>
+          <rect x="9" y="14" width="7" height="5" rx="2.5" fill="none" stroke="#b388ff" stroke-width="0.8" opacity="0.7"/>
+          <rect x="20" y="14" width="7" height="5" rx="2.5" fill="none" stroke="#b388ff" stroke-width="0.8" opacity="0.7"/>
+          <ellipse cx="18" cy="21" rx="2.5" ry="1.8" fill="#cc3366"/>
+          <path d="M15 23 Q18 26 21 23" stroke="#cc3366" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="card-info">
+        <div class="card-name">Cub 🐯</div>
+        <div class="card-sub">Open my dashboard</div>
+        <div class="card-owed" id="owed-cub"></div>
+      </div>
+      <div class="card-arrow">›</div>
     </div>
-    <div class="card-info">
-      <div class="card-name">Cub 🐯</div>
-      <div class="card-school">🏫 <span id="school-cub"></span></div>
-      <div class="card-sub">Open my dashboard</div>
-      <div class="card-owed" id="owed-cub"></div>
+    <div class="card-events" id="events-cub">
+      <div class="events-loading">Loading today's schedule…</div>
     </div>
-    <div class="card-arrow">›</div>
   </a>
-
   <a class="card bay" href="dashboard-bay.html">
-    <div class="card-avatar">
-      <svg width="40" height="40" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
-        <rect width="36" height="36" rx="10" fill="#fff6d6"/>
-        <path d="M18 4 C8 4 4 12 4 20 C4 28 10 33 18 33 C26 33 32 28 32 20 C32 12 28 4 18 4 Z" fill="#4cce52"/>
-        <path d="M18 4 C11 4 7 10 6 16" stroke="rgba(255,255,255,0.25)" stroke-width="3" fill="none" stroke-linecap="round"/>
-        <line x1="18" y1="6" x2="18" y2="30" stroke="#3ab840" stroke-width="1.5" opacity="0.4"/>
-        <circle cx="13" cy="19" r="4.5" fill="#1a0000" opacity="0.92"/>
-        <circle cx="23" cy="19" r="4.5" fill="#1a0000" opacity="0.92"/>
-        <line x1="17.5" y1="19" x2="18.5" y2="19" stroke="#555" stroke-width="1"/>
-        <circle cx="13" cy="19" r="4.5" fill="none" stroke="#ffd600" stroke-width="0.9" opacity="0.7"/>
-        <circle cx="23" cy="19" r="4.5" fill="none" stroke="#ffd600" stroke-width="0.9" opacity="0.7"/>
-        <circle cx="18" cy="24" r="1.5" fill="#2a8a30"/>
-        <path d="M14 27 Q18 30 22 27" stroke="#1a5500" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-      </svg>
+    <div class="card-top">
+      <div class="card-avatar">
+        <svg width="40" height="40" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg">
+          <rect width="36" height="36" rx="10" fill="#fff6d6"/>
+          <path d="M18 4 C8 4 4 12 4 20 C4 28 10 33 18 33 C26 33 32 28 32 20 C32 12 28 4 18 4 Z" fill="#4cce52"/>
+          <circle cx="13" cy="19" r="4.5" fill="#1a0000" opacity="0.92"/>
+          <circle cx="23" cy="19" r="4.5" fill="#1a0000" opacity="0.92"/>
+          <circle cx="13" cy="19" r="4.5" fill="none" stroke="#ffd600" stroke-width="0.9" opacity="0.7"/>
+          <circle cx="23" cy="19" r="4.5" fill="none" stroke="#ffd600" stroke-width="0.9" opacity="0.7"/>
+          <circle cx="18" cy="24" r="1.5" fill="#2a8a30"/>
+          <path d="M14 27 Q18 30 22 27" stroke="#1a5500" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="card-info">
+        <div class="card-name">Bay 🌿</div>
+        <div class="card-sub">Open my dashboard</div>
+        <div class="card-owed" id="owed-bay"></div>
+      </div>
+      <div class="card-arrow">›</div>
     </div>
-    <div class="card-info">
-      <div class="card-name">Bay 🌿</div>
-      <div class="card-school">🏫 <span id="school-bay"></span></div>
-      <div class="card-sub">Open my dashboard</div>
-      <div class="card-owed" id="owed-bay"></div>
+    <div class="card-events" id="events-bay">
+      <div class="events-loading">Loading today's schedule…</div>
     </div>
-    <div class="card-arrow">›</div>
   </a>
-
   <a class="card mum" href="dashboard-mum.html">
-    <div class="card-avatar" style="font-size:1.8rem">👩</div>
-    <div class="card-info">
-      <div class="card-name">Mum 💙</div>
-      <div class="card-sub">View all kids &amp; approve chores</div>
+    <div class="card-top">
+      <div class="card-avatar" style="font-size:1.8rem">👩</div>
+      <div class="card-info">
+        <div class="card-name">Mum 💙</div>
+        <div class="card-sub">View all kids &amp; approve chores</div>
+      </div>
+      <div class="card-arrow">›</div>
     </div>
-    <div class="card-arrow">›</div>
   </a>
-
-  <footer>🌈 Family Dashboard · Updated live 💛</footer>
+  <button class="refresh-btn" onclick="loadCalendar()">🔄 Refresh schedule</button>
+  <footer>🌈 Family Dashboard · <span id="last-updated">Loading…</span></footer>
 </div>
-
 <script>
-/* ✏️ EDIT SCHOOL INFO HERE — change the text to each kid's school + year */
-const SCHOOLS = {
-  owl: 'KS3 · Year 8',
-  cub: 'KS2 · Turma 4',
-  bay: 'KS1 · Year 2'
+const API_KEY     = 'AIzaSyAr0LDvm8-DnkyzuENyP6vU2RcwkHtdkNg';
+const CALENDAR_ID = 'magnusson.kerensa@gmail.com';
+const COLOR_MAP = {
+  '10': 'owl','2': 'owl',
+  '3': 'cub','1': 'cub',
+  '5': 'bay','6': 'bay',
+  '7': 'together','9': 'together',
 };
-Object.keys(SCHOOLS).forEach(kid=>{
-  const el=document.getElementById('school-'+kid);
-  if(el) el.textContent=SCHOOLS[kid];
-});
-
-/* money earned badges */
-['owl','cub','bay'].forEach(kid=>{
-  try{
-    const m=JSON.parse(localStorage.getItem(kid+'_money')||'{}');
-    const t=m.t||0;
-    if(t>0){
-      const el=document.getElementById('owed-'+kid);
-      if(el)el.textContent='💰 €'+t.toFixed(2)+' earned';
+const HEX_MAP = {
+  '#0F9D58': 'owl','#33b679': 'owl','#0b8043': 'owl','#7ae28c': 'owl',
+  '#7986cb': 'cub','#9c27b0': 'cub','#7b1fa2': 'cub','#b39ddb': 'cub','#8a5cf6': 'cub',
+  '#f6bf26': 'bay','#f09300': 'bay','#e4c441': 'bay','#ffd600': 'bay',
+  '#039be5': 'together','#4986e7': 'together','#1a73e8': 'together','#0288d1': 'together','#00bcd4': 'together',
+};
+function classifyEvent(event) {
+  if (event.colorId && COLOR_MAP[event.colorId]) return COLOR_MAP[event.colorId];
+  if (event.backgroundColor) {
+    const hex = event.backgroundColor.toLowerCase();
+    for (const [k, v] of Object.entries(HEX_MAP)) {
+      if (hex === k.toLowerCase()) return v;
     }
-  }catch(e){}
+  }
+  return null;
+}
+function formatTime(dateTimeStr) {
+  if (!dateTimeStr) return '';
+  const d = new Date(dateTimeStr);
+  return d.toLocaleTimeString('en-GB', {hour:'2-digit', minute:'2-digit'});
+}
+function todayBounds() {
+  const now = new Date();
+  const start = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
+  const end   = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59);
+  return { start: start.toISOString(), end: end.toISOString() };
+}
+async function loadCalendar() {
+  ['owl','cub','bay'].forEach(kid => {
+    document.getElementById('events-'+kid).innerHTML = '<div class="events-loading">Loading today\'s schedule…</div>';
+  });
+  const { start, end } = todayBounds();
+  const url = `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(CALENDAR_ID)}/events?`
+    + `key=${API_KEY}&timeMin=${encodeURIComponent(start)}&timeMax=${encodeURIComponent(end)}`
+    + `&singleEvents=true&orderBy=startTime&maxResults=50`;
+  try {
+    const res = await fetch(url);
+    if (!res.ok) { const err = await res.json(); throw new Error(err.error?.message || 'Failed'); }
+    const data = await res.json();
+    const events = data.items || [];
+    const buckets = { owl: [], cub: [], bay: [], together: [] };
+    events.forEach(ev => { const who = classifyEvent(ev); if (who && buckets[who]) buckets[who].push(ev); });
+    buckets.cub = [...buckets.cub, ...buckets.together.map(e => ({...e, _together: true}))];
+    buckets.bay = [...buckets.bay, ...buckets.together.map(e => ({...e, _together: true}))];
+    ['owl','cub','bay'].forEach(kid => {
+      buckets[kid].sort((a,b) => new Date(a.start?.dateTime||a.start?.date) - new Date(b.start?.dateTime||b.start?.date));
+    });
+    const dotClass = { owl: 'owl-dot', cub: 'cub-dot', bay: 'bay-dot' };
+    ['owl','cub','bay'].forEach(kid => {
+      const container = document.getElementById('events-'+kid);
+      const evs = buckets[kid];
+      if (evs.length === 0) { container.innerHTML = '<div class="no-events">Nothing scheduled today 🌟</div>'; return; }
+      container.innerHTML = evs.map(ev => {
+        const time = !ev.start?.dateTime ? 'All day' : formatTime(ev.start.dateTime);
+        const dc = ev._together ? 'together-dot' : dotClass[kid];
+        const badge = ev._together ? '<span class="together-badge">🔵 Cub &amp; Bay</span>' : '';
+        return `<div class="event-item"><div class="event-dot ${dc}"></div><div><div style="display:flex;align-items:center;gap:6px"><span class="event-time">${time}</span><span class="event-title">${ev.summary||'Event'}</span></div>${badge}</div></div>`;
+      }).join('');
+    });
+    document.getElementById('last-updated').textContent = 'Updated ' + new Date().toLocaleTimeString('en-GB', {hour:'2-digit', minute:'2-digit'});
+  } catch (e) {
+    ['owl','cub','bay'].forEach(kid => {
+      document.getElementById('events-'+kid).innerHTML = `<div class="no-events" style="color:#e05">⚠️ Couldn't load calendar.</div>`;
+    });
+    document.getElementById('last-updated').textContent = 'Update failed';
+    console.error('Calendar error:', e);
+  }
+}
+const now = new Date();
+document.getElementById('today-date').textContent = now.toLocaleDateString('en-GB', {weekday:'long', day:'numeric', month:'long'});
+['owl','cub','bay'].forEach(kid => {
+  try {
+    const m = JSON.parse(localStorage.getItem(kid+'_money') || '{}');
+    const t = m.t || 0;
+    if (t > 0) { const el = document.getElementById('owed-'+kid); if (el) el.textContent = '💰 €'+t.toFixed(2)+' earned'; }
+  } catch(e) {}
 });
-
-/* floating emoji */
-const emojis=['⭐','🌈','🎈','🦋','🌸','✏️','📚','🎨','⚽','🎵','🌟','🧁'];
-const f=document.getElementById('floaties');
-emojis.forEach(em=>{
-  const el=document.createElement('div');
-  el.className='floatie';el.textContent=em;
-  el.style.cssText=`left:${5+Math.random()*88}%;top:${6+Math.random()*86}%;--fs:${1+Math.random()*1.4}rem;--ft:${2.5+Math.random()*3}s;--fd:${Math.random()*3}s`;
+const emojis = ['⭐','🌈','🎈','🦋','🌸','✏️','📚','🎨','⚽','🎵','🌟','🧁'];
+const f = document.getElementById('floaties');
+emojis.forEach(em => {
+  const el = document.createElement('div');
+  el.className = 'floatie'; el.textContent = em;
+  el.style.cssText = `left:${5+Math.random()*88}%;top:${6+Math.random()*86}%;--fs:${1+Math.random()*1.4}rem;--ft:${2.5+Math.random()*3}s;--fd:${Math.random()*3}s`;
   f.appendChild(el);
 });
+loadCalendar();
 </script>
 </body>
 </html>
