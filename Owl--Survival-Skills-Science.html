@@ -4,286 +4,192 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Owl – Survival Skills: Science</title>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#1e2a1a;--s1:#252f20;--s2:#2d3826;--s3:#354030;
-  --g:#4caf50;--g2:#388e3c;--gd:rgba(76,175,80,0.15);--gg:rgba(76,175,80,0.3);
-  --gold:#f0a500;--t:#fff;--t2:rgba(255,255,255,0.6);--t3:rgba(255,255,255,0.35);
-  --border:rgba(76,175,80,0.2);--border2:rgba(255,255,255,0.08);--r:16px;
+  --g:#4caf50;--g2:#388e3c;
+  --gold:#f0a500;--t:#fff;--t2:rgba(255,255,255,0.75);--t3:rgba(255,255,255,0.45);
+  --border:rgba(76,175,80,0.25);--border2:rgba(255,255,255,0.1);--r:16px;
+  --easy:#4caf50;--med:#e07020;--hard:#e74c3c;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;font-size:16px}
-body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--t);
-  max-width:700px;margin:0 auto;min-height:100vh}
+html,body{min-height:100vh}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--t);max-width:700px;margin:0 auto;min-height:100vh}
+.screen{display:none}.screen.active{display:block}
 
-/* ── SCREENS ── */
-.screen{display:none}
-.screen.active{display:block}
-
-/* ── HOME SCREEN ── */
-#home{padding:0 0 40px}
-.home-header{background:var(--s1);border-bottom:1px solid var(--border2);
-  padding:16px 20px;display:flex;align-items:center;justify-content:space-between}
+#home{padding:0 0 48px}
+.home-header{background:var(--s1);border-bottom:1px solid var(--border2);padding:16px 20px;display:flex;align-items:center;justify-content:space-between}
 .home-title-wrap{display:flex;align-items:center;gap:12px}
 .home-icon{font-size:1.8rem}
-.home-title{font-size:1rem;font-weight:800;color:var(--t)}
+.home-title{font-size:1rem;font-weight:800}
 .home-sub{font-size:0.72rem;color:var(--g);font-weight:600}
 .rank-badge{text-align:right}
 .rank-label{font-size:0.6rem;color:var(--t3);letter-spacing:1px;text-transform:uppercase}
 .rank-name{font-size:0.85rem;font-weight:700;color:var(--g)}
-
-/* score card */
-.score-card{margin:20px;background:var(--s1);border:1px solid var(--border2);border-radius:20px;padding:22px}
-.sc-label{font-size:0.65rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--t3);margin-bottom:8px}
-.sc-score{font-size:2.8rem;font-weight:800;color:var(--g);line-height:1;margin-bottom:4px}
-.sc-correct{font-size:0.85rem;color:var(--t3);margin-bottom:16px;font-weight:500}
-.sc-reward{font-size:0.9rem;font-weight:700;margin-bottom:4px}
-.sc-reward span{color:var(--gold)}
-.sc-next{font-size:0.8rem;color:var(--t2);margin-bottom:20px;line-height:1.5}
-.sc-next strong{color:var(--t)}
-
-/* reward bar */
-.reward-bar-wrap{position:relative;padding-top:28px;margin-bottom:8px}
-.reward-markers{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;padding:0 0 0 60%}
-.reward-marker{text-align:center;font-size:0.65rem;font-weight:700;color:var(--gold)}
-.reward-bar-bg{height:8px;background:var(--s3);border-radius:4px;position:relative;overflow:visible}
-.reward-bar-fill{height:100%;background:linear-gradient(90deg,var(--g2),var(--g));border-radius:4px;transition:width 1s ease;max-width:100%}
-.reward-ticks{position:absolute;top:0;left:0;right:0;bottom:0;display:flex}
-.tick{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--gold);opacity:0.7;border-radius:2px}
-.bar-labels{display:flex;justify-content:space-between;font-size:0.62rem;color:var(--t3);margin-top:6px}
-
-/* missions */
-.missions-label{font-size:0.65rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--t3);margin:24px 20px 12px}
-.mission-card{margin:0 20px 12px;background:var(--s1);border:1px solid var(--border2);border-radius:20px;padding:20px;cursor:pointer;transition:all .2s}
+.prize-banner{margin:20px;border-radius:20px;padding:20px 22px;background:linear-gradient(135deg,rgba(240,165,0,0.12),rgba(240,165,0,0.04));border:1.5px solid rgba(240,165,0,0.35);display:flex;align-items:center;gap:16px}
+.prize-icon{font-size:2.4rem;flex-shrink:0}
+.prize-info{flex:1}
+.prize-title{font-size:1rem;font-weight:800;color:var(--gold);margin-bottom:4px}
+.prize-desc{font-size:0.78rem;color:var(--t2);line-height:1.5}
+.prize-pct{font-size:2rem;font-weight:800;color:var(--gold);flex-shrink:0;text-align:right}
+.prize-pct span{display:block;font-size:0.6rem;color:var(--t3);font-weight:600;letter-spacing:1px;text-transform:uppercase}
+.level-tabs{display:flex;gap:0;margin:20px 20px 0;border-radius:14px;overflow:hidden;border:1px solid var(--border2)}
+.level-tab{flex:1;padding:10px 8px;text-align:center;font-size:0.78rem;font-weight:800;cursor:pointer;transition:all .2s;letter-spacing:.5px;text-transform:uppercase;border:none;font-family:inherit;background:var(--s1);color:var(--t3)}
+.level-tab.active-easy{background:rgba(76,175,80,0.18);color:var(--easy)}
+.level-tab.active-med{background:rgba(224,112,32,0.18);color:var(--med)}
+.level-tab.active-hard{background:rgba(231,76,60,0.18);color:var(--hard)}
+.level-tab.locked{cursor:default;opacity:0.45}
+.level-tab .lock-icon{display:block;font-size:0.9rem;margin-bottom:2px}
+.level-status{margin:12px 20px 0;padding:10px 16px;border-radius:12px;font-size:0.8rem;font-weight:700;display:flex;align-items:center;gap:8px}
+.level-status.easy{background:rgba(76,175,80,0.1);color:var(--easy);border:1px solid rgba(76,175,80,0.2)}
+.level-status.med{background:rgba(224,112,32,0.1);color:var(--med);border:1px solid rgba(224,112,32,0.2)}
+.level-status.hard{background:rgba(231,76,60,0.1);color:var(--hard);border:1px solid rgba(231,76,60,0.2)}
+.missions-label{font-size:0.65rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--t3);margin:20px 20px 10px}
+.mission-card{margin:0 20px 10px;background:var(--s1);border:1.5px solid var(--border2);border-radius:18px;padding:18px 20px;transition:all .2s}
 .mission-card:hover{background:var(--s2);border-color:var(--border)}
 .mc-top{display:flex;align-items:center;gap:14px;margin-bottom:10px}
-.mc-icon{font-size:2rem;flex-shrink:0}
+.mc-icon{font-size:1.8rem;flex-shrink:0}
 .mc-info{flex:1}
-.mc-title{font-size:1.05rem;font-weight:800;margin-bottom:2px}
-.mc-sub{font-size:0.78rem;color:var(--t3);font-weight:500}
-.mc-progress{font-size:0.75rem;color:var(--t3);margin-bottom:14px;font-weight:500}
-.mc-progress span{color:var(--g);font-weight:700}
-.start-btn{width:100%;background:var(--g2);border:none;border-radius:12px;padding:14px;
-  color:var(--t);font-size:0.95rem;font-weight:700;cursor:pointer;font-family:inherit;
-  transition:all .2s;letter-spacing:.3px}
-.start-btn:hover{background:var(--g)}
-.start-btn.done{background:var(--s3);color:var(--t2)}
-
-/* ── MISSION SCREEN ── */
+.mc-title{font-size:0.95rem;font-weight:800;margin-bottom:2px}
+.mc-sub{font-size:0.74rem;color:var(--t3)}
+.mc-score{font-size:0.74rem;margin-bottom:12px}
+.mc-score .correct{color:var(--g);font-weight:700}
+.start-btn{width:100%;border:none;border-radius:10px;padding:12px;color:var(--t);font-size:0.9rem;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s}
+.start-btn.easy-btn{background:var(--g2)}.start-btn.easy-btn:hover{background:var(--g)}
+.start-btn.med-btn{background:#a05010}.start-btn.med-btn:hover{background:var(--med)}
+.start-btn.hard-btn{background:#922b21}.start-btn.hard-btn:hover{background:var(--hard)}
+.start-btn.done-btn{background:var(--s3);color:var(--t2)}
 #mission{min-height:100vh;display:flex;flex-direction:column}
-.mission-header{background:var(--s1);border-bottom:1px solid var(--border2);
-  padding:14px 20px;display:flex;align-items:center;gap:12px;flex-shrink:0}
-.back-btn{width:32px;height:32px;border-radius:9px;background:var(--s2);border:1px solid var(--border2);
-  display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--t2);
-  font-size:1.1rem;flex-shrink:0;transition:all .2s}
-.back-btn:hover{color:var(--g)}
+.mission-header{background:var(--s1);border-bottom:1px solid var(--border2);padding:14px 20px;display:flex;align-items:center;gap:12px;flex-shrink:0}
+.back-btn{width:32px;height:32px;border-radius:9px;background:var(--s2);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--t2);font-size:1.1rem;flex-shrink:0}
 .mh-icon{font-size:1.4rem;flex-shrink:0}
 .mh-info{flex:1}
 .mh-title{font-size:0.95rem;font-weight:800}
-.mh-sub{font-size:0.7rem;color:var(--t3);font-weight:500}
+.mh-sub{font-size:0.7rem;color:var(--t3)}
 .step-counter{font-size:0.85rem;font-weight:700;color:var(--g);white-space:nowrap}
-
-/* progress dots */
-.progress-dots{display:flex;justify-content:center;gap:8px;padding:16px 20px 8px}
-.dot{width:28px;height:10px;border-radius:5px;background:var(--s3);transition:all .3s}
-.dot.active{background:var(--g);width:32px}
-.dot.done{background:var(--g2)}
-
-/* question area */
-.question-area{flex:1;overflow-y:auto;padding:16px 20px 24px}
-.diff-badge{display:inline-block;font-size:0.7rem;font-weight:700;letter-spacing:1px;
-  text-transform:uppercase;color:var(--g);margin-bottom:14px}
-
-/* visual card */
-.visual-card{background:var(--s1);border:1px solid var(--border2);border-radius:var(--r);
-  padding:20px;margin-bottom:16px;text-align:center}
-.visual-title{font-size:0.75rem;font-weight:700;color:#7ab4ff;margin-bottom:14px;letter-spacing:.5px}
-
-/* diagrams */
-.diagram{display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:10px}
-.diag-node{display:flex;flex-direction:column;align-items:center;gap:4px}
+.diff-strip{padding:8px 20px;font-size:0.7rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase}
+.diff-strip.easy{background:rgba(76,175,80,0.1);color:var(--easy)}
+.diff-strip.med{background:rgba(224,112,32,0.1);color:var(--med)}
+.diff-strip.hard{background:rgba(231,76,60,0.1);color:var(--hard)}
+.progress-dots{display:flex;justify-content:center;gap:7px;padding:12px 20px 6px}
+.dot{width:26px;height:9px;border-radius:5px;background:var(--s3);transition:all .3s}
+.dot.active{width:30px}
+.dot.active.easy{background:var(--easy)}.dot.active.med{background:var(--med)}.dot.active.hard{background:var(--hard)}
+.dot.done-correct{background:var(--g2)}.dot.done-wrong{background:#922b21}
+.question-area{flex:1;overflow-y:auto;padding:14px 20px 24px}
+.visual-card{background:var(--s1);border:1px solid var(--border2);border-radius:var(--r);padding:18px;margin-bottom:14px;text-align:center}
+.visual-title{font-size:0.75rem;font-weight:700;color:#7ab4ff;margin-bottom:12px;letter-spacing:.5px}
+.diagram{display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:8px}
+.diag-node{display:flex;flex-direction:column;align-items:center;gap:3px}
 .diag-dot{width:12px;height:12px;border-radius:50%;background:var(--g);border:2px solid rgba(255,255,255,0.3)}
-.diag-label{font-size:0.68rem;color:var(--t2);font-weight:500}
-.diag-connector{color:var(--t3);font-size:0.8rem;align-self:center;padding-top:0px}
-
-/* bubble diagram */
-.bubble-row{display:flex;justify-content:center;gap:16px;flex-wrap:wrap}
-.bubble{border-radius:50%;width:80px;height:80px;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;padding:8px;text-align:center;border:2px solid}
+.diag-label{font-size:0.66rem;color:var(--t2);font-weight:500}
+.diag-connector{color:var(--t3);font-size:0.8rem;align-self:center}
+.bubble-row{display:flex;justify-content:center;gap:14px;flex-wrap:wrap}
+.bubble{border-radius:50%;width:78px;height:78px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px;text-align:center;border:2px solid}
 .bubble.red{background:rgba(255,100,100,0.15);border-color:rgba(255,100,100,0.6);color:#ff8080}
 .bubble.orange{background:rgba(255,165,0,0.15);border-color:rgba(255,165,0,0.6);color:#ffb347}
 .bubble.purple{background:rgba(150,100,255,0.15);border-color:rgba(150,100,255,0.6);color:#bf9fff}
-.bubble-name{font-size:0.72rem;font-weight:800}
-.bubble-ex{font-size:0.58rem;opacity:.7;margin-top:2px}
-
-/* circle diagram */
-.circle-row{display:flex;justify-content:center;gap:14px;flex-wrap:wrap}
-.circle{width:72px;height:72px;border-radius:50%;border:2px solid rgba(255,165,0,0.5);
-  background:rgba(255,165,0,0.1);display:flex;flex-direction:column;
-  align-items:center;justify-content:center;text-align:center;padding:6px}
-.circle-emoji{font-size:1.3rem}
-.circle-label{font-size:0.6rem;color:var(--gold);font-weight:700;margin-top:2px}
-
-/* periodic table mini */
-.pt-grid{display:flex;flex-direction:column;gap:4px;align-items:center}
-.pt-row{display:flex;gap:4px}
-.pt-cell{width:38px;height:38px;border-radius:6px;border:1px solid rgba(255,255,255,0.15);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  font-size:0.55rem;font-weight:700}
-.pt-cell:nth-child(1){background:rgba(100,180,255,0.15);color:#64b4ff}
-.pt-cell:nth-child(2){background:rgba(255,100,100,0.15);color:#ff8080}
-.pt-cell:nth-child(3){background:rgba(100,255,150,0.15);color:#64ff96}
-.pt-cell:nth-child(4){background:rgba(255,220,100,0.15);color:#ffdc64}
-.pt-cell:nth-child(5){background:rgba(200,100,255,0.15);color:#c864ff}
-.pt-cell:nth-child(6){background:rgba(100,220,255,0.15);color:#64dcff}
-.pt-z{font-size:0.48rem;opacity:.6;margin-bottom:1px}
-.pt-n{font-size:0.72rem;font-weight:900}
-.pt-note{font-size:0.6rem;color:var(--t3);margin-top:8px}
-
-/* force diagram */
-.force-diagram{display:flex;flex-direction:column;align-items:center;gap:8px}
-.force-object{width:50px;height:50px;border-radius:50%;background:rgba(76,175,80,0.2);
-  border:2px solid var(--g);display:flex;align-items:center;justify-content:center;font-size:1.5rem}
-.force-arrows{display:flex;gap:40px;align-items:center}
-.force-arrow{display:flex;flex-direction:column;align-items:center;gap:4px}
-.arrow-line{font-size:1.5rem}
-.arrow-label{font-size:0.62rem;color:var(--t2);font-weight:600}
-
-/* space diagram */
-.space-diagram{display:flex;align-items:center;gap:20px;justify-content:center}
-.space-sun{font-size:2.5rem}
-.orbit-wrap{position:relative;width:100px;height:80px}
-.orbit-path{position:absolute;top:10px;left:10px;right:10px;bottom:10px;
-  border:1px dashed rgba(255,255,255,0.2);border-radius:50%}
-.orbit-planet{position:absolute;top:2px;left:50%;transform:translateX(-50%);font-size:1.2rem}
-.space-label{font-size:0.65rem;color:var(--t3);text-align:center;margin-top:4px}
-
-/* reproduction diagram */
-.repro-diagram{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap}
-.repro-box{background:var(--s2);border:1px solid var(--border2);border-radius:10px;
-  padding:8px 12px;text-align:center;font-size:0.72rem;font-weight:600}
+.bubble-name{font-size:0.7rem;font-weight:800}
+.bubble-ex{font-size:0.57rem;opacity:.7;margin-top:2px}
+.circle-row{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+.circle{width:70px;height:70px;border-radius:50%;border:2px solid rgba(255,165,0,0.5);background:rgba(255,165,0,0.1);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6px}
+.circle-emoji{font-size:1.2rem}
+.circle-label{font-size:0.58rem;color:var(--gold);font-weight:700;margin-top:2px}
+.repro-diagram{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap}
+.repro-box{background:var(--s2);border:1px solid var(--border2);border-radius:8px;padding:7px 11px;text-align:center;font-size:0.72rem;font-weight:600}
 .repro-arrow{color:var(--g);font-size:1rem;font-weight:900}
-
-/* question */
-.question-card{background:var(--s2);border:1px solid var(--border2);border-radius:var(--r);
-  padding:18px;margin-bottom:12px}
-.question-text{font-size:1rem;font-weight:700;line-height:1.5}
-
-/* options */
-.options{display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
-.option{background:var(--s1);border:1px solid var(--border2);border-radius:var(--r);
-  padding:16px 18px;display:flex;align-items:center;gap:14px;cursor:pointer;
-  transition:all .2s;font-size:0.92rem;font-weight:600}
-.option:hover:not(.disabled){background:var(--s2);border-color:rgba(255,255,255,0.15)}
-.option.correct{background:rgba(76,175,80,0.2);border-color:var(--g);color:var(--g)}
-.option.wrong{background:rgba(244,67,54,0.1);border-color:rgba(244,67,54,0.4);color:rgba(244,67,54,0.8)}
+.question-card{background:var(--s2);border:1px solid var(--border2);border-radius:var(--r);padding:16px;margin-bottom:12px}
+.question-text{font-size:1rem;font-weight:700;line-height:1.55}
+.options{display:flex;flex-direction:column;gap:9px;margin-bottom:14px}
+.option{background:var(--s1);border:1px solid var(--border2);border-radius:var(--r);padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all .2s;font-size:0.9rem;font-weight:600}
+.option:hover:not(.disabled){background:var(--s2);border-color:rgba(255,255,255,0.18)}
+.option.correct{background:rgba(76,175,80,0.18);border-color:var(--g);color:var(--g)}
+.option.wrong{background:rgba(192,57,43,0.1);border-color:rgba(192,57,43,0.4);color:rgba(220,100,90,0.9)}
 .option.disabled{cursor:default}
-.opt-letter{font-size:0.72rem;font-weight:800;color:var(--t3);width:16px;flex-shrink:0}
-.option.correct .opt-letter{color:var(--g)}
-.option.wrong .opt-letter{color:rgba(244,67,54,0.8)}
-
-/* feedback */
-.feedback{background:rgba(76,175,80,0.15);border:1px solid var(--border);border-radius:var(--r);
-  padding:14px 18px;margin-bottom:14px;font-size:0.9rem;font-weight:600;color:var(--g);display:none}
-.feedback.wrong-fb{background:rgba(244,67,54,0.1);border-color:rgba(244,67,54,0.3);color:rgba(255,120,110,0.9)}
-
-.next-btn{width:100%;background:var(--g2);border:none;border-radius:var(--r);padding:16px;
-  color:var(--t);font-size:1rem;font-weight:700;cursor:pointer;font-family:inherit;
-  transition:all .2s;display:none}
+.opt-letter{font-size:0.7rem;font-weight:800;color:var(--t3);width:14px;flex-shrink:0}
+.option.correct .opt-letter{color:var(--g)}.option.wrong .opt-letter{color:rgba(220,100,90,0.9)}
+.feedback{border-radius:var(--r);padding:12px 16px;margin-bottom:12px;font-size:0.88rem;font-weight:600;display:none;line-height:1.5}
+.feedback.correct-fb{background:rgba(76,175,80,0.12);border:1px solid var(--border);color:var(--g)}
+.feedback.wrong-fb{background:rgba(192,57,43,0.08);border:1px solid rgba(192,57,43,0.3);color:rgba(220,120,110,0.9)}
+.next-btn{width:100%;background:var(--g2);border:none;border-radius:var(--r);padding:14px;color:var(--t);font-size:0.95rem;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;display:none}
 .next-btn:hover{background:var(--g)}
-
-/* ── COMPLETE SCREEN ── */
-#complete{padding:40px 24px;text-align:center;min-height:100vh;
-  display:flex;flex-direction:column;align-items:center;justify-content:center}
+#complete{padding:40px 24px;text-align:center;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center}
 .complete-icon{font-size:4rem;margin-bottom:16px;animation:bounce 1s ease-in-out infinite alternate}
 @keyframes bounce{from{transform:translateY(0)}to{transform:translateY(-10px)}}
-.complete-title{font-size:1.8rem;font-weight:800;color:var(--g);margin-bottom:8px}
-.complete-sub{font-size:1rem;color:var(--t2);margin-bottom:30px;line-height:1.6}
-.complete-score{font-size:3rem;font-weight:800;color:var(--gold);margin-bottom:6px}
-.complete-reward{font-size:1rem;color:var(--t2);margin-bottom:30px}
-.home-btn{background:var(--g2);border:none;border-radius:16px;padding:16px 32px;
-  color:var(--t);font-size:1rem;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s}
+.complete-title{font-size:1.7rem;font-weight:800;margin-bottom:8px}
+.complete-title.perfect{color:var(--gold)}.complete-title.good{color:var(--g)}.complete-title.retry{color:var(--hard)}
+.complete-score{font-size:3rem;font-weight:800;color:var(--gold);margin:10px 0 6px}
+.complete-sub{font-size:0.95rem;color:var(--t2);margin-bottom:24px;line-height:1.6;max-width:340px}
+.complete-next{background:var(--s1);border:1px solid var(--border2);border-radius:14px;padding:14px 18px;margin-bottom:24px;font-size:0.85rem;color:var(--t2);line-height:1.5;max-width:340px}
+.complete-next strong{color:var(--t)}
+.home-btn{background:var(--g2);border:none;border-radius:14px;padding:14px 32px;color:var(--t);font-size:0.95rem;font-weight:700;cursor:pointer;font-family:inherit}
 .home-btn:hover{background:var(--g)}
+.home-footer{text-align:center;margin:28px 20px 0;color:var(--t3);font-size:0.75rem;font-style:italic}
 </style>
 </head>
 <body>
 
-<!-- ── HOME ── -->
 <div id="home" class="screen active">
   <div class="home-header">
     <div class="home-title-wrap">
       <span class="home-icon">🔬</span>
       <div>
         <div class="home-title">Owl – Survival Skills: Science</div>
-        <div class="home-sub">Survival Training Camp</div>
+        <div class="home-sub">Survival Training Camp · KS3</div>
       </div>
     </div>
     <div class="rank-badge">
       <div class="rank-label">Rank</div>
-      <div class="rank-name">Recruit Owl</div>
+      <div class="rank-name" id="rank-name">Recruit</div>
     </div>
   </div>
-
-  <div class="score-card">
-    <div class="sc-label">Science Survival Score</div>
-    <div class="sc-score" id="score-pct">0%</div>
-    <div class="sc-correct" id="score-correct">0/36 correct</div>
-    <div class="sc-reward">Current reward: <span id="current-reward">0 €</span></div>
-    <div class="sc-next" id="next-reward-text">Next reward: <strong>25 €</strong> at 60% score. Complete more missions to get there.</div>
-    <div class="reward-bar-wrap">
-      <div class="reward-markers">
-        <span class="reward-marker">25 €</span>
-        <span class="reward-marker">50 €</span>
-        <span class="reward-marker">75 €</span>
-        <span class="reward-marker">100 €</span>
-      </div>
-      <div class="reward-bar-bg">
-        <div class="reward-bar-fill" id="reward-bar" style="width:0%"></div>
-        <div class="tick" style="left:60%"></div>
-        <div class="tick" style="left:75%"></div>
-        <div class="tick" style="left:85%"></div>
-        <div class="tick" style="left:100%"></div>
-      </div>
-      <div class="bar-labels"><span>0%</span><span>60%</span><span>75%</span><span>85%</span><span>100%</span></div>
+  <div class="prize-banner">
+    <div class="prize-icon">🏆</div>
+    <div class="prize-info">
+      <div class="prize-title">€100 Prize</div>
+      <div class="prize-desc">Complete ALL missions at ALL levels with 100% — Easy, Medium AND Hard — to claim your reward.</div>
     </div>
+    <div class="prize-pct"><div id="overall-pct">0%</div><span>overall</span></div>
   </div>
-
-  <div class="missions-label">MISSIONS</div>
+  <div class="level-tabs">
+    <button class="level-tab active-easy" id="tab-easy" onclick="switchLevel('easy')">🟢 Easy</button>
+    <button class="level-tab locked" id="tab-med" onclick="switchLevel('med')"><span class="lock-icon" id="lock-med">🔒</span>Medium</button>
+    <button class="level-tab locked" id="tab-hard" onclick="switchLevel('hard')"><span class="lock-icon" id="lock-hard">🔒</span>Hard</button>
+  </div>
+  <div class="level-status easy" id="level-status"></div>
+  <div class="missions-label" id="missions-label">EASY MISSIONS</div>
   <div id="missions-list"></div>
+  <div class="home-footer">Complete every question at 100% to earn the prize. Progress saves automatically.</div>
 </div>
 
-<!-- ── MISSION ── -->
 <div id="mission" class="screen">
   <div class="mission-header">
     <button class="back-btn" onclick="goHome()">←</button>
-    <span class="mh-icon" id="mh-icon">❤️</span>
+    <span class="mh-icon" id="mh-icon">🔬</span>
     <div class="mh-info">
-      <div class="mh-title" id="mh-title">Mission 1</div>
+      <div class="mh-title" id="mh-title">Mission</div>
       <div class="mh-sub" id="mh-sub">Subtitle</div>
     </div>
-    <div class="step-counter" id="step-counter">Step 1/8</div>
+    <div class="step-counter" id="step-counter">1/3</div>
   </div>
+  <div class="diff-strip easy" id="diff-strip">🟢 EASY LEVEL</div>
   <div class="progress-dots" id="progress-dots"></div>
   <div class="question-area">
-    <div class="diff-badge" id="diff-badge">Easy</div>
     <div class="visual-card" id="visual-card"></div>
-    <div class="question-card">
-      <div class="question-text" id="question-text"></div>
-    </div>
+    <div class="question-card"><div class="question-text" id="question-text"></div></div>
     <div class="options" id="options"></div>
     <div class="feedback" id="feedback"></div>
-    <button class="next-btn" id="next-btn" onclick="nextStep()">Next Step →</button>
+    <button class="next-btn" id="next-btn" onclick="nextStep()">Next →</button>
   </div>
 </div>
 
-<!-- ── COMPLETE ── -->
 <div id="complete" class="screen">
-  <div class="complete-icon">🎖️</div>
-  <div class="complete-title">Mission Complete!</div>
-  <div class="complete-sub" id="complete-sub">You've completed the mission, Recruit.</div>
+  <div class="complete-icon" id="complete-icon">🎖️</div>
+  <div class="complete-title" id="complete-title">Mission Complete!</div>
   <div class="complete-score" id="complete-score">0%</div>
-  <div class="complete-reward" id="complete-reward">Keep going to earn your reward!</div>
+  <div class="complete-sub" id="complete-sub"></div>
+  <div class="complete-next" id="complete-next"></div>
   <button class="home-btn" onclick="goHome()">Back to Base Camp</button>
 </div>
 
@@ -291,471 +197,515 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 const MISSIONS = [
   {
     id:0, emoji:'❤️', title:'Mission 1: Body Systems', sub:'Keep your recruit alive',
-    steps:[
-      {diff:'Easy',
-        visual:{type:'flow',title:'Digestive System',nodes:['Oesophagus','Stomach','Small intestine','Large intestine','Rectum/Anus'],note:'Tube digestivo + órgãos anexos'},
-        q:'What is the main job of the digestive system?',
-        opts:['Pump blood around the body','Break food into simple molecules the body can absorb','Take oxygen into the lungs','Filter waste from the blood'],
-        ans:1},
-      {diff:'Easy',
-        visual:{type:'bubbles3',title:'Body Systems',items:[{name:'Circulatory',ex:'Heart & blood',color:'red'},{name:'Respiratory',ex:'Lungs & airways',color:'orange'},{name:'Digestive',ex:'Stomach & gut',color:'purple'}]},
-        q:'Which system pumps blood around the body?',
-        opts:['Digestive system','Respiratory system','Circulatory system','Nervous system'],
-        ans:2},
-      {diff:'Medium',
-        visual:{type:'flow',title:'Respiratory System',nodes:['Nose/Mouth','Trachea','Bronchi','Bronchioles','Alveoli'],note:'Gas exchange happens in the alveoli'},
-        q:'Where does gas exchange happen in the lungs?',
-        opts:['Trachea','Bronchi','Alveoli','Diaphragm'],
-        ans:2},
-      {diff:'Medium',
-        visual:{type:'bubbles3',title:'Heart Chambers',items:[{name:'Right Atrium',ex:'Receives blood',color:'red'},{name:'Right Ventricle',ex:'Pumps to lungs',color:'orange'},{name:'Left Ventricle',ex:'Pumps to body',color:'purple'}]},
-        q:'How many chambers does the human heart have?',
-        opts:['2','3','4','6'],
-        ans:2},
-      {diff:'Medium',
-        visual:{type:'circles',title:'What blood carries',items:[{emoji:'💨',label:'Oxygen'},{emoji:'🍬',label:'Glucose'},{emoji:'🗑️',label:'Waste'}]},
-        q:'What does blood carry to body cells?',
-        opts:['Only water','Oxygen and nutrients','Carbon dioxide only','Enzymes only'],
-        ans:1},
-      {diff:'Hard',
-        visual:{type:'flow',title:'Nervous System',nodes:['Stimulus','Receptor','Sensory nerve','Brain/Spinal cord','Motor nerve','Effector'],note:'Reflex arc pathway'},
-        q:'What is the role of the nervous system?',
-        opts:['Digest food','Filter blood','Coordinate body responses to stimuli','Produce hormones'],
-        ans:2},
-      {diff:'Hard',
-        visual:{type:'bubbles3',title:'Types of Muscle',items:[{name:'Cardiac',ex:'Heart only',color:'red'},{name:'Smooth',ex:'Organs',color:'orange'},{name:'Skeletal',ex:'Voluntary',color:'purple'}]},
-        q:'Which type of muscle is found only in the heart?',
-        opts:['Skeletal muscle','Smooth muscle','Cardiac muscle','Striated muscle'],
-        ans:2},
-      {diff:'Hard',
-        visual:{type:'circles',title:'Skeleton functions',items:[{emoji:'🛡️',label:'Protection'},{emoji:'🏗️',label:'Support'},{emoji:'🩸',label:'Blood cells'}]},
-        q:'Which is NOT a function of the skeleton?',
-        opts:['Support the body','Produce red blood cells','Digest food','Protect organs'],
-        ans:2}
+    easy:[
+      {visual:{type:'flow',title:'Digestive System',nodes:['Mouth','Oesophagus','Stomach','Small intestine','Large intestine']},
+       q:'What is the main job of the digestive system?',
+       opts:['Pump blood around the body','Break food into molecules the body can absorb','Take oxygen into the lungs','Filter waste from the blood'],
+       ans:1},
+      {visual:{type:'bubbles3',title:'Body Systems',items:[{name:'Circulatory',ex:'Heart & blood',color:'red'},{name:'Respiratory',ex:'Lungs & airways',color:'orange'},{name:'Digestive',ex:'Stomach & gut',color:'purple'}]},
+       q:'Which system pumps blood around the body?',
+       opts:['Digestive system','Respiratory system','Circulatory system','Nervous system'],
+       ans:2},
+      {visual:{type:'circles',title:'What blood carries',items:[{emoji:'💨',label:'Oxygen'},{emoji:'🍬',label:'Glucose'},{emoji:'🗑️',label:'Waste'}]},
+       q:'What does blood carry TO body cells?',
+       opts:['Only water','Oxygen and nutrients','Carbon dioxide only','Enzymes only'],
+       ans:1},
+    ],
+    med:[
+      {visual:{type:'flow',title:'Respiratory System',nodes:['Nose/Mouth','Trachea','Bronchi','Bronchioles','Alveoli'],note:'Gas exchange happens in the alveoli'},
+       q:'Where does gas exchange happen in the lungs?',
+       opts:['Trachea','Bronchi','Alveoli','Diaphragm'],
+       ans:2},
+      {visual:{type:'bubbles3',title:'Heart Chambers',items:[{name:'Right Atrium',ex:'Receives blood',color:'red'},{name:'Right Ventricle',ex:'Pumps to lungs',color:'orange'},{name:'Left Ventricle',ex:'Pumps to body',color:'purple'}]},
+       q:'How many chambers does the human heart have?',
+       opts:['2','3','4','6'],
+       ans:2},
+      {visual:{type:'flow',title:'Nervous System',nodes:['Stimulus','Receptor','Sensory nerve','Brain/Spinal cord','Motor nerve','Effector'],note:'Reflex arc pathway'},
+       q:'What is the role of the nervous system?',
+       opts:['Digest food','Filter blood','Coordinate body responses to stimuli','Produce hormones'],
+       ans:2},
+    ],
+    hard:[
+      {visual:{type:'bubbles3',title:'Types of Muscle',items:[{name:'Cardiac',ex:'Heart only',color:'red'},{name:'Smooth',ex:'Organs',color:'orange'},{name:'Skeletal',ex:'Voluntary',color:'purple'}]},
+       q:'Which type of muscle is found ONLY in the heart?',
+       opts:['Skeletal muscle','Smooth muscle','Cardiac muscle','Striated muscle'],
+       ans:2},
+      {visual:{type:'circles',title:'Skeleton functions',items:[{emoji:'🛡️',label:'Protection'},{emoji:'🏗️',label:'Support'},{emoji:'🩸',label:'Blood cells'}]},
+       q:'Which is NOT a function of the skeleton?',
+       opts:['Support the body','Produce red blood cells','Digest food','Protect organs'],
+       ans:2},
+      {visual:{type:'bubbles3',title:'Hormones vs Nerves',items:[{name:'Nerves',ex:'Fast, electrical',color:'red'},{name:'Hormones',ex:'Slow, chemical',color:'orange'},{name:'Both',ex:'Control body',color:'purple'}]},
+       q:'How do hormones travel around the body?',
+       opts:['Along nerve fibres','Through the air','In the bloodstream','Via the lymph nodes'],
+       ans:2},
     ]
   },
   {
     id:1, emoji:'🦠', title:'Mission 2: Microorganisms', sub:'Identify the enemy',
-    steps:[
-      {diff:'Easy',
-        visual:{type:'bubbles3',title:'Types of Microorganism',items:[{name:'Virus',ex:'Flu, HIV',color:'red'},{name:'Bacteria',ex:'Pneumonia',color:'orange'},{name:'Fungus',ex:"Athlete's foot",color:'purple'}]},
-        q:'Which of these is caused by a virus?',
-        opts:["Athlete's foot",'Flu (influenza)','Sleeping sickness','Pneumonia'],
-        ans:1},
-      {diff:'Easy',
-        visual:{type:'circles',title:'What microbes need to grow',items:[{emoji:'🌡️',label:'Warmth'},{emoji:'💧',label:'Moisture'},{emoji:'⬛',label:'Darkness'},{emoji:'🍞',label:'Food'}]},
-        q:'Which conditions help microorganisms grow and multiply?',
-        opts:['Cold, dry, bright light','Warmth, moisture, darkness','Freezing temperatures','No food, dry conditions'],
-        ans:1},
-      {diff:'Medium',
-        visual:{type:'bubbles3',title:'How infections spread',items:[{name:'Airborne',ex:'Coughing/sneezing',color:'red'},{name:'Contact',ex:'Touch/skin',color:'orange'},{name:'Food/water',ex:'Contamination',color:'purple'}]},
-        q:'How is the flu virus mainly spread?',
-        opts:['Through contaminated water','By airborne droplets from coughing or sneezing','Through insect bites','By direct skin contact only'],
-        ans:1},
-      {diff:'Medium',
-        visual:{type:'circles',title:'Body defences',items:[{emoji:'🧱',label:'Skin'},{emoji:'😤',label:'Mucus'},{emoji:'🩸',label:'White cells'}]},
-        q:'Which is the body\'s first line of defence against pathogens?',
-        opts:['White blood cells','Antibiotics','Skin','Stomach acid'],
-        ans:2},
-      {diff:'Hard',
-        visual:{type:'bubbles3',title:'Treatments',items:[{name:'Antibiotics',ex:'Kill bacteria',color:'red'},{name:'Antivirals',ex:'Slow viruses',color:'orange'},{name:'Antifungals',ex:'Kill fungi',color:'purple'}]},
-        q:'Why can\'t antibiotics treat viral infections?',
-        opts:['They are too expensive','Antibiotics only target bacterial cells, not viruses','Viruses are too large','Antibiotics make viruses stronger'],
-        ans:1},
-      {diff:'Hard',
-        visual:{type:'circles',title:'Vaccination works by',items:[{emoji:'💉',label:'Antigen'},{emoji:'🏗️',label:'Memory cells'},{emoji:'🛡️',label:'Protection'}]},
-        q:'How does vaccination protect against disease?',
-        opts:['It kills all bacteria in the body','It introduces a weakened pathogen to trigger an immune response','It directly produces antibodies','It stops pathogens entering the body'],
-        ans:1}
+    easy:[
+      {visual:{type:'bubbles3',title:'Types of Microorganism',items:[{name:'Virus',ex:'Flu, HIV',color:'red'},{name:'Bacteria',ex:'Pneumonia',color:'orange'},{name:'Fungus',ex:"Athlete's foot",color:'purple'}]},
+       q:'Which of these is caused by a VIRUS?',
+       opts:["Athlete's foot",'Flu (influenza)','Sleeping sickness','Salmonella poisoning'],
+       ans:1},
+      {visual:{type:'circles',title:'What microbes need to grow',items:[{emoji:'🌡️',label:'Warmth'},{emoji:'💧',label:'Moisture'},{emoji:'🍞',label:'Food'}]},
+       q:'Which conditions help microorganisms grow and multiply?',
+       opts:['Cold, dry, bright light','Warmth, moisture and food','Freezing temperatures','No food, dry conditions'],
+       ans:1},
+      {visual:{type:'circles',title:'Body defences',items:[{emoji:'🧱',label:'Skin'},{emoji:'😤',label:'Mucus'},{emoji:'🩸',label:'White cells'}]},
+       q:"Which is the body's FIRST line of defence against pathogens?",
+       opts:['White blood cells','Antibiotics','Skin','Stomach acid'],
+       ans:2},
+    ],
+    med:[
+      {visual:{type:'bubbles3',title:'How infections spread',items:[{name:'Airborne',ex:'Coughing/sneezing',color:'red'},{name:'Contact',ex:'Touch/skin',color:'orange'},{name:'Food/water',ex:'Contamination',color:'purple'}]},
+       q:'How is the flu virus mainly spread?',
+       opts:['Through contaminated water','By airborne droplets from coughing or sneezing','Through insect bites','By direct skin contact only'],
+       ans:1},
+      {visual:{type:'bubbles3',title:'Treatments',items:[{name:'Antibiotics',ex:'Kill bacteria',color:'red'},{name:'Antivirals',ex:'Slow viruses',color:'orange'},{name:'Antifungals',ex:'Kill fungi',color:'purple'}]},
+       q:"Why can't antibiotics treat viral infections?",
+       opts:['They are too expensive','Antibiotics only target bacterial cells, not viruses','Viruses are too large','Antibiotics make viruses stronger'],
+       ans:1},
+      {visual:{type:'circles',title:'Vaccination works by',items:[{emoji:'💉',label:'Antigen'},{emoji:'🏗️',label:'Memory cells'},{emoji:'🛡️',label:'Protection'}]},
+       q:'How does vaccination protect against disease?',
+       opts:['It kills all bacteria in the body','It introduces a weakened pathogen to trigger an immune response','It directly produces antibodies','It stops pathogens entering the body'],
+       ans:1},
+    ],
+    hard:[
+      {visual:{type:'bubbles3',title:'White Blood Cells',items:[{name:'Phagocytes',ex:'Engulf pathogens',color:'red'},{name:'Lymphocytes',ex:'Make antibodies',color:'orange'},{name:'Memory cells',ex:'Long-term immunity',color:'purple'}]},
+       q:'What do lymphocytes produce to fight specific pathogens?',
+       opts:['Enzymes','Antibodies','White cells','Platelets'],
+       ans:1},
+      {visual:{type:'circles',title:'Herd immunity',items:[{emoji:'💉',label:'Vaccinated'},{emoji:'🛡️',label:'Protected'},{emoji:'🌍',label:'Community'}]},
+       q:'What is herd immunity?',
+       opts:['When animals become immune to diseases','When enough people are immune to stop a disease spreading through the population','When all bacteria are killed','When viruses mutate to become harmless'],
+       ans:1},
+      {visual:{type:'flow',title:'Pathogen enters body',nodes:['Pathogen detected','Phagocytes respond','Lymphocytes make antibodies','Memory cells formed','Future immunity']},
+       q:'What is the role of memory cells after an infection?',
+       opts:['They destroy all white blood cells','They allow a faster immune response if the same pathogen is encountered again','They produce antibiotics','They repair damaged tissue'],
+       ans:1},
     ]
   },
   {
-    id:2, emoji:'🧬', title:'Mission 3: Reproduction', sub:'Next generation recruit',
-    steps:[
-      {diff:'Easy',
-        visual:{type:'repro',title:'Types of Reproduction',items:['Asexual','→','One parent','→','Identical offspring']},
-        q:'How many parents are needed for asexual reproduction?',
-        opts:['One','Two','Three','Four'],
-        ans:0},
-      {diff:'Easy',
-        visual:{type:'repro',title:'Sexual Reproduction',items:['Male gamete','+','Female gamete','→','Fertilised egg']},
-        q:'What is fertilisation?',
-        opts:['When a cell divides in two','When a male and female gamete fuse','When an organism grows','When DNA is copied'],
-        ans:1},
-      {diff:'Medium',
-        visual:{type:'circles',title:'Plant reproduction',items:[{emoji:'🌼',label:'Flower'},{emoji:'🐝',label:'Pollination'},{emoji:'🌱',label:'Seed'}]},
-        q:'What is the main role of a flower in plant reproduction?',
-        opts:['Make food by photosynthesis','Absorb water from soil','Attract pollinators and produce seeds','Support the plant\'s weight'],
-        ans:2},
-      {diff:'Medium',
-        visual:{type:'repro',title:'Cell Division (Mitosis)',items:['1 cell','→','DNA copies','→','2 identical cells']},
-        q:'What is the purpose of mitosis?',
-        opts:['To produce sex cells','To create genetic variation','To grow and repair body tissues','To reduce the chromosome number'],
-        ans:2},
-      {diff:'Hard',
-        visual:{type:'bubbles3',title:'Inheritance',items:[{name:'DNA',ex:'Instructions',color:'red'},{name:'Genes',ex:'Sections of DNA',color:'orange'},{name:'Chromosomes',ex:'Carry genes',color:'purple'}]},
-        q:'Where is genetic information stored in a cell?',
-        opts:['In the cell membrane','In the mitochondria','In the nucleus on chromosomes','In the cytoplasm'],
-        ans:2}
+    id:2, emoji:'🧬', title:'Mission 3: Reproduction & Genetics', sub:'Next generation recruit',
+    easy:[
+      {visual:{type:'repro',title:'Asexual vs Sexual',items:['Asexual','→','1 parent','→','Identical offspring']},
+       q:'How many parents are needed for ASEXUAL reproduction?',
+       opts:['One','Two','Three','Four'],
+       ans:0},
+      {visual:{type:'repro',title:'Sexual Reproduction',items:['Male gamete','+','Female gamete','→','Fertilised egg']},
+       q:'What is fertilisation?',
+       opts:['When a cell divides in two','When a male and female gamete fuse','When an organism grows','When DNA is copied'],
+       ans:1},
+      {visual:{type:'circles',title:'Plant reproduction',items:[{emoji:'🌼',label:'Flower'},{emoji:'🐝',label:'Pollination'},{emoji:'🌱',label:'Seed'}]},
+       q:'What is the main role of a flower in plant reproduction?',
+       opts:['Make food by photosynthesis','Absorb water from soil','Attract pollinators and produce seeds','Support the plant weight'],
+       ans:2},
+    ],
+    med:[
+      {visual:{type:'repro',title:'Cell Division (Mitosis)',items:['1 cell','→','DNA copies','→','2 identical cells']},
+       q:'What is the purpose of MITOSIS?',
+       opts:['To produce sex cells','To create genetic variation','To grow and repair body tissues','To reduce the chromosome number'],
+       ans:2},
+      {visual:{type:'bubbles3',title:'Inheritance',items:[{name:'DNA',ex:'Instructions',color:'red'},{name:'Genes',ex:'Sections of DNA',color:'orange'},{name:'Chromosomes',ex:'Carry genes',color:'purple'}]},
+       q:'Where is genetic information stored in a cell?',
+       opts:['In the cell membrane','In the mitochondria','In the nucleus on chromosomes','In the cytoplasm'],
+       ans:2},
+      {visual:{type:'circles',title:'Types of variation',items:[{emoji:'🧬',label:'Genetic'},{emoji:'🌍',label:'Environmental'},{emoji:'🔀',label:'Both'}]},
+       q:'Which type of variation is caused by genes only?',
+       opts:['Scars from injuries','Blood group','Spoken language','Body weight'],
+       ans:1},
+    ],
+    hard:[
+      {visual:{type:'bubbles3',title:'Dominant vs Recessive',items:[{name:'Dominant',ex:'Masks recessive',color:'red'},{name:'Recessive',ex:'Only shows if two copies',color:'orange'},{name:'Alleles',ex:'Versions of genes',color:'purple'}]},
+       q:'If brown eye colour (B) is dominant over blue (b), what eyes will a Bb individual have?',
+       opts:['Blue eyes','Brown eyes','Green eyes','Mixed eyes'],
+       ans:1},
+      {visual:{type:'repro',title:'Meiosis produces',items:['1 cell (2n)','→','Meiosis','→','4 gametes (n)']},
+       q:'How is meiosis DIFFERENT from mitosis?',
+       opts:['Meiosis produces 2 identical cells','Meiosis halves the chromosome number to make sex cells','Meiosis only happens in plants','Meiosis produces more DNA'],
+       ans:1},
+      {visual:{type:'circles',title:'Evolution',items:[{emoji:'🌍',label:'Environment'},{emoji:'🧬',label:'Mutation'},{emoji:'✅',label:'Selection'}]},
+       q:'What does natural selection mean?',
+       opts:['Organisms choose their own traits','Individuals with advantageous traits are more likely to survive and reproduce','All organisms evolve at the same rate','Humans select which animals survive'],
+       ans:1},
     ]
   },
   {
-    id:3, emoji:'🪐', title:'Mission 4: Forces & Gravity', sub:'Field physics',
-    steps:[
-      {diff:'Easy',
-        visual:{type:'force',title:'Gravity pulls objects down',emoji:'🏀'},
-        q:'What is gravity?',
-        opts:['A push force between objects','An attractive force that pulls objects with mass together','A force that only exists in space','A type of friction'],
-        ans:1},
-      {diff:'Easy',
-        visual:{type:'circles',title:'Types of Force',items:[{emoji:'🧲',label:'Magnetic'},{emoji:'🌍',label:'Gravity'},{emoji:'🤲',label:'Friction'}]},
-        q:'Which of these is a contact force?',
-        opts:['Gravity','Magnetism','Friction','Electrostatic'],
-        ans:2},
-      {diff:'Medium',
-        visual:{type:'repro',title:'Newton\'s Laws',items:['Force','=','Mass','×','Acceleration']},
-        q:'If a force of 20N acts on a 4kg object, what is its acceleration?',
-        opts:['2 m/s²','5 m/s²','80 m/s²','16 m/s²'],
-        ans:1},
-      {diff:'Medium',
-        visual:{type:'circles',title:'Balanced forces mean',items:[{emoji:'⚖️',label:'Equilibrium'},{emoji:'➡️',label:'Constant speed'},{emoji:'🛑',label:'Or stationary'}]},
-        q:'What happens when forces on an object are balanced?',
-        opts:['The object accelerates','The object decelerates','The object stays still or moves at constant speed','The object changes direction'],
-        ans:2},
-      {diff:'Hard',
-        visual:{type:'bubbles3',title:'Types of friction',items:[{name:'Static',ex:'Before moving',color:'red'},{name:'Sliding',ex:'While moving',color:'orange'},{name:'Air resistance',ex:'Through air',color:'purple'}]},
-        q:'Why do heavier objects fall at the same rate as lighter ones in a vacuum?',
-        opts:['Heavier objects have more air resistance','Gravity acts equally on all masses relative to their weight','Lighter objects have more friction','All objects fall at different rates'],
-        ans:1}
+    id:3, emoji:'🪐', title:'Mission 4: Forces & Motion', sub:'Field physics',
+    easy:[
+      {visual:{type:'circles',title:'Types of Force',items:[{emoji:'🧲',label:'Magnetic'},{emoji:'🌍',label:'Gravity'},{emoji:'🤲',label:'Friction'}]},
+       q:'Which of these is a CONTACT force?',
+       opts:['Gravity','Magnetism','Friction','Electrostatic'],
+       ans:2},
+      {visual:{type:'repro',title:"Newton's Second Law",items:['Force','=','Mass','×','Acceleration']},
+       q:'What is gravity?',
+       opts:['A push force between objects','An attractive force that pulls objects with mass together','A force that only exists in space','A type of friction'],
+       ans:1},
+      {visual:{type:'circles',title:'Balanced forces mean',items:[{emoji:'⚖️',label:'Equilibrium'},{emoji:'➡️',label:'Constant speed'},{emoji:'🛑',label:'Or stationary'}]},
+       q:'What happens when forces on an object are balanced?',
+       opts:['The object accelerates','The object decelerates','The object stays still or moves at constant speed','The object changes direction'],
+       ans:2},
+    ],
+    med:[
+      {visual:{type:'repro',title:"Newton's Second Law: F = ma",items:['Force (N)','=','Mass (kg)','×','Acceleration (m/s²)']},
+       q:'A force of 20N acts on a 4kg object. What is its acceleration?',
+       opts:['2 m/s²','5 m/s²','80 m/s²','16 m/s²'],
+       ans:1},
+      {visual:{type:'bubbles3',title:'Types of friction',items:[{name:'Static',ex:'Before moving',color:'red'},{name:'Sliding',ex:'While moving',color:'orange'},{name:'Air resistance',ex:'Through air',color:'purple'}]},
+       q:'Why do heavier objects fall at the same rate as lighter ones in a VACUUM?',
+       opts:['Heavier objects have more air resistance','Gravity acts on all masses proportionally to their weight','Lighter objects have more friction','All objects fall at different rates'],
+       ans:1},
+      {visual:{type:'circles',title:'Speed, Distance, Time',items:[{emoji:'📏',label:'Distance'},{emoji:'⏱️',label:'Time'},{emoji:'💨',label:'Speed'}]},
+       q:'A car travels 120 km in 2 hours. What is its average speed?',
+       opts:['30 km/h','60 km/h','80 km/h','240 km/h'],
+       ans:1},
+    ],
+    hard:[
+      {visual:{type:'bubbles3',title:'Momentum',items:[{name:'Momentum',ex:'mass × velocity',color:'red'},{name:'Conservation',ex:'stays constant',color:'orange'},{name:'Impulse',ex:'force × time',color:'purple'}]},
+       q:'A 2 kg ball moves at 5 m/s. What is its momentum?',
+       opts:['2.5 kg m/s','7 kg m/s','10 kg m/s','25 kg m/s'],
+       ans:2},
+      {visual:{type:'repro',title:'Work done',items:['Work (J)','=','Force (N)','×','Distance (m)']},
+       q:'A force of 50N moves an object 3m. How much work is done?',
+       opts:['15 J','53 J','150 J','500 J'],
+       ans:2},
+      {visual:{type:'circles',title:'Stopping distance',items:[{emoji:'🚗',label:'Thinking distance'},{emoji:'🛑',label:'Braking distance'},{emoji:'📏',label:'Total stopping'}]},
+       q:'Which factor increases BOTH thinking distance and braking distance?',
+       opts:['Wet roads','Higher speed','Worn tyres','Poor brakes'],
+       ans:1},
     ]
   },
   {
     id:4, emoji:'🌍', title:'Mission 5: Space & Earth', sub:'Navigation & orbit',
-    steps:[
-      {diff:'Easy',
-        visual:{type:'space',sunLabel:'Sun 🌞',planets:['🌍','🔴','💛']},
-        q:'What keeps planets in orbit around the Sun?',
-        opts:['Magnetism','Solar wind','Gravity','Centrifugal force'],
-        ans:2},
-      {diff:'Easy',
-        visual:{type:'circles',title:'The Solar System',items:[{emoji:'☀️',label:'Sun'},{emoji:'🌍',label:'Planets'},{emoji:'🌙',label:'Moons'}]},
-        q:'How long does it take Earth to orbit the Sun once?',
-        opts:['24 hours','1 month','1 year','10 years'],
-        ans:2},
-      {diff:'Medium',
-        visual:{type:'repro',title:'Day & Night',items:['Earth rotates','→','One side faces Sun','→','Day & night cycle']},
-        q:'What causes day and night on Earth?',
-        opts:['Earth orbiting the Sun','The Moon blocking sunlight','Earth rotating on its axis','The Sun moving around Earth'],
-        ans:2},
-      {diff:'Medium',
-        visual:{type:'bubbles3',title:'Types of eclipse',items:[{name:'Solar',ex:'Moon blocks Sun',color:'red'},{name:'Lunar',ex:'Earth blocks Sun',color:'orange'},{name:'Partial',ex:'Partly blocked',color:'purple'}]},
-        q:'What is a lunar eclipse?',
-        opts:['When the Moon blocks the Sun from Earth','When Earth\'s shadow falls on the Moon','When the Sun goes behind a planet','When two planets align'],
-        ans:1},
-      {diff:'Hard',
-        visual:{type:'circles',title:'Star life cycle',items:[{emoji:'☁️',label:'Nebula'},{emoji:'⭐',label:'Star'},{emoji:'💥',label:'Supernova'}]},
-        q:'What is the correct order of a massive star\'s life cycle?',
-        opts:['Star → Nebula → Black hole','Nebula → Star → Red giant → Supernova → Neutron star','Supernova → Nebula → Star','Star → White dwarf → Nebula'],
-        ans:1},
-      {diff:'Hard',
-        visual:{type:'repro',title:'Light year',items:['Distance','light travels','in one year','≈ 9.46 × 10¹²','kilometres']},
-        q:'What is a light year a measure of?',
-        opts:['Time','Speed of light','Distance','Brightness of a star'],
-        ans:2}
+    easy:[
+      {visual:{type:'circles',title:'The Solar System',items:[{emoji:'☀️',label:'Sun'},{emoji:'🌍',label:'Planets'},{emoji:'🌙',label:'Moons'}]},
+       q:'How long does it take Earth to orbit the Sun once?',
+       opts:['24 hours','1 month','1 year','10 years'],
+       ans:2},
+      {visual:{type:'repro',title:'Day & Night',items:['Earth rotates','→','One side faces Sun','→','Day & night']},
+       q:'What causes day and night on Earth?',
+       opts:['Earth orbiting the Sun','The Moon blocking sunlight','Earth rotating on its axis','The Sun moving around Earth'],
+       ans:2},
+      {visual:{type:'circles',title:'What keeps planets in orbit',items:[{emoji:'🌍',label:'Mass'},{emoji:'☀️',label:'Sun gravity'},{emoji:'🔄',label:'Orbit'}]},
+       q:'What keeps planets in orbit around the Sun?',
+       opts:['Magnetism','Solar wind','Gravity','Centrifugal force'],
+       ans:2},
+    ],
+    med:[
+      {visual:{type:'bubbles3',title:'Types of eclipse',items:[{name:'Solar',ex:'Moon blocks Sun',color:'red'},{name:'Lunar',ex:"Earth's shadow on Moon",color:'orange'},{name:'Partial',ex:'Partly blocked',color:'purple'}]},
+       q:'What is a LUNAR eclipse?',
+       opts:['When the Moon blocks the Sun from Earth',"When Earth's shadow falls on the Moon",'When the Sun goes behind a planet','When two planets align'],
+       ans:1},
+      {visual:{type:'circles',title:'Star life cycle',items:[{emoji:'☁️',label:'Nebula'},{emoji:'⭐',label:'Star'},{emoji:'💥',label:'Supernova'}]},
+       q:'What is the correct order of a MASSIVE star\'s life cycle?',
+       opts:['Star → Nebula → Black hole','Nebula → Star → Red giant → Supernova → Neutron star','Supernova → Nebula → Star','Star → White dwarf → Nebula'],
+       ans:1},
+      {visual:{type:'repro',title:'Light year',items:['Distance','light travels','in one year','≈ 9.46 × 10¹²','kilometres']},
+       q:'What is a light year a measure of?',
+       opts:['Time','Speed of light','Distance','Brightness of a star'],
+       ans:2},
+    ],
+    hard:[
+      {visual:{type:'bubbles3',title:'The Moon',items:[{name:'Phases',ex:'New to full',color:'red'},{name:'Tides',ex:'Gravity effect',color:'orange'},{name:'Craters',ex:'Meteorite impacts',color:'purple'}]},
+       q:'What causes the tides on Earth?',
+       opts:["Earth's rotation","The Sun's heat","The Moon's gravitational pull",'Earthquakes under the sea'],
+       ans:2},
+      {visual:{type:'circles',title:'Red-shift',items:[{emoji:'🌌',label:'Galaxy moving'},{emoji:'🔴',label:'Light shifts red'},{emoji:'↗️',label:'Universe expanding'}]},
+       q:'What does red-shift of light from distant galaxies tell us?',
+       opts:['Galaxies are getting smaller','The universe is contracting','Galaxies are moving away — the universe is expanding','Stars are getting cooler'],
+       ans:2},
+      {visual:{type:'repro',title:'Gravitational field strength',items:['Weight (N)','=','Mass (kg)','×','g (N/kg)']},
+       q:'An astronaut has a mass of 80 kg. On the Moon (g = 1.6 N/kg), what is their weight?',
+       opts:['50 N','80 N','128 N','800 N'],
+       ans:2},
     ]
   },
   {
-    id:5, emoji:'⚗️', title:'Mission 6: Elements', sub:'Materials & the Periodic Table',
-    steps:[
-      {diff:'Easy',
-        visual:{type:'periodic',rows:[[{z:1,n:1},{z:2,n:2},{z:3,n:3},{z:4,n:4},{z:5,n:5},{z:6,n:6}],[{z:7,n:7},{z:8,n:8},{z:9,n:9},{z:10,n:10},{z:11,n:11},{z:12,n:12}]],note:'↑ atomic number increases left → right, top → bottom'},
-        q:'In the Periodic Table, elements are arranged in order of:',
-        opts:['Alphabetical name','Increasing atomic number','Random order','Colour of the element'],
-        ans:1},
-      {diff:'Easy',
-        visual:{type:'bubbles3',title:'States of Matter',items:[{name:'Solid',ex:'Fixed shape',color:'red'},{name:'Liquid',ex:'Fixed volume',color:'orange'},{name:'Gas',ex:'Fills container',color:'purple'}]},
-        q:'Which state of matter has particles that are free to move and spread out?',
-        opts:['Solid','Liquid','Gas','Plasma'],
-        ans:2},
-      {diff:'Medium',
-        visual:{type:'circles',title:'Properties of metals',items:[{emoji:'⚡',label:'Conduct electricity'},{emoji:'🔨',label:'Malleable'},{emoji:'✨',label:'Shiny'}]},
-        q:'Which of these is a property of most metals?',
-        opts:['They are brittle','They conduct electricity','They are transparent','They float on water'],
-        ans:1},
-      {diff:'Medium',
-        visual:{type:'repro',title:'Chemical vs Physical change',items:['Physical','= reversible','|','Chemical','= new substance']},
-        q:'Which of these is a chemical change?',
-        opts:['Ice melting','Salt dissolving in water','Iron rusting','Glass breaking'],
-        ans:2},
-      {diff:'Hard',
-        visual:{type:'bubbles3',title:'Types of bond',items:[{name:'Ionic',ex:'Metal + non-metal',color:'red'},{name:'Covalent',ex:'Non-metals',color:'orange'},{name:'Metallic',ex:'Metals only',color:'purple'}]},
-        q:'What type of bonding holds sodium chloride (table salt) together?',
-        opts:['Covalent bonding','Metallic bonding','Ionic bonding','Hydrogen bonding'],
-        ans:2},
-      {diff:'Hard',
-        visual:{type:'circles',title:'Acids & Alkalis',items:[{emoji:'🍋',label:'Acid pH<7'},{emoji:'💧',label:'Neutral pH7'},{emoji:'🧼',label:'Alkali pH>7'}]},
-        q:'What is the pH of a neutral substance?',
-        opts:['0','7','14','3'],
-        ans:1}
+    id:5, emoji:'⚗️', title:'Mission 6: Elements & Reactions', sub:'Materials & the Periodic Table',
+    easy:[
+      {visual:{type:'bubbles3',title:'States of Matter',items:[{name:'Solid',ex:'Fixed shape',color:'red'},{name:'Liquid',ex:'Fixed volume',color:'orange'},{name:'Gas',ex:'Fills container',color:'purple'}]},
+       q:'Which state of matter has particles that are FREE to move and spread out?',
+       opts:['Solid','Liquid','Gas','Plasma'],
+       ans:2},
+      {visual:{type:'circles',title:'Properties of metals',items:[{emoji:'⚡',label:'Conduct electricity'},{emoji:'🔨',label:'Malleable'},{emoji:'✨',label:'Shiny'}]},
+       q:'Which of these is a property of MOST metals?',
+       opts:['They are brittle','They conduct electricity','They are transparent','They float on water'],
+       ans:1},
+      {visual:{type:'circles',title:'Acids & Alkalis',items:[{emoji:'🍋',label:'Acid pH<7'},{emoji:'💧',label:'Neutral pH7'},{emoji:'🧼',label:'Alkali pH>7'}]},
+       q:'What is the pH of a NEUTRAL substance?',
+       opts:['0','7','14','3'],
+       ans:1},
+    ],
+    med:[
+      {visual:{type:'bubbles3',title:'Types of bond',items:[{name:'Ionic',ex:'Metal + non-metal',color:'red'},{name:'Covalent',ex:'Non-metals',color:'orange'},{name:'Metallic',ex:'Metals only',color:'purple'}]},
+       q:'In the Periodic Table, elements are arranged in order of:',
+       opts:['Alphabetical name','Increasing atomic number','Random order','Colour of the element'],
+       ans:1},
+      {visual:{type:'repro',title:'Chemical vs Physical change',items:['Physical','= reversible','|','Chemical','= new substance']},
+       q:'Which of these is a CHEMICAL change?',
+       opts:['Ice melting','Salt dissolving in water','Iron rusting','Glass breaking'],
+       ans:2},
+      {visual:{type:'bubbles3',title:'Types of bond',items:[{name:'Ionic',ex:'Metal + non-metal',color:'red'},{name:'Covalent',ex:'Non-metals',color:'orange'},{name:'Metallic',ex:'Metals only',color:'purple'}]},
+       q:'What type of bonding holds sodium chloride (table salt) together?',
+       opts:['Covalent bonding','Metallic bonding','Ionic bonding','Hydrogen bonding'],
+       ans:2},
+    ],
+    hard:[
+      {visual:{type:'circles',title:'Reactivity series',items:[{emoji:'⬆️',label:'Most reactive'},{emoji:'🔋',label:'Displacement'},{emoji:'⬇️',label:'Least reactive'}]},
+       q:'In the reactivity series, which metal is MOST reactive?',
+       opts:['Gold','Iron','Potassium','Copper'],
+       ans:2},
+      {visual:{type:'repro',title:'Conservation of mass',items:['Reactants mass','=','Products mass','(atoms rearrange)']},
+       q:'Why is mass conserved in a chemical reaction?',
+       opts:['Energy is released','Atoms are created during the reaction','No atoms are created or destroyed — they just rearrange','The reaction is reversible'],
+       ans:2},
+      {visual:{type:'bubbles3',title:'Exo vs Endothermic',items:[{name:'Exothermic',ex:'Releases heat',color:'red'},{name:'Endothermic',ex:'Takes in heat',color:'orange'},{name:'Activation energy',ex:'Needed to start',color:'purple'}]},
+       q:'Which of these is an EXOTHERMIC reaction?',
+       opts:['Photosynthesis','Cooking an egg','Combustion (burning)','Dissolving ammonium nitrate'],
+       ans:2},
     ]
   }
 ];
 
-// Storage
-const sv=(k,v)=>{try{localStorage.setItem('owl_sci_'+k,JSON.stringify(v))}catch(e){}};
-const ld=(k,d)=>{try{const v=localStorage.getItem('owl_sci_'+k);return v?JSON.parse(v):d}catch(e){return d}};
+// ── STORAGE ────────────────────────────────────────────────────────────────────
+const KEY = 'owl_sci_v2';
+const sv = v => { try { localStorage.setItem(KEY, JSON.stringify(v)); } catch(e){} };
+const ld = () => { try { const v = localStorage.getItem(KEY); return v ? JSON.parse(v) : null; } catch(e){ return null; } };
 
-let progress = ld('progress', MISSIONS.map(()=>[]));
+let progress = ld() || MISSIONS.map(() => ({ easy:[], med:[], hard:[] }));
+MISSIONS.forEach((m,i) => {
+  if(!progress[i]) progress[i] = { easy:[], med:[], hard:[] };
+  ['easy','med','hard'].forEach(l => { if(!progress[i][l]) progress[i][l] = []; });
+});
+
+let currentLevel = 'easy';
 let currentMission = 0;
 let currentStep = 0;
+let currentSteps = [];
 let answered = false;
 
-function getTotalCorrect(){
-  return progress.reduce((sum,m)=>sum+m.filter(Boolean).length,0);
+const RANKS = ['Recruit','Lance Corporal','Corporal','Sergeant','Staff Sergeant','Lieutenant','Captain','Major','Colonel','General'];
+
+function levelScore(level) {
+  let correct = 0, total = 0;
+  MISSIONS.forEach((m, i) => {
+    total += m[level].length;
+    correct += progress[i][level].filter(Boolean).length;
+  });
+  return { correct, total };
 }
-function getTotalQuestions(){
-  return MISSIONS.reduce((sum,m)=>sum+m.steps.length,0);
+function levelComplete(level) {
+  const { correct, total } = levelScore(level);
+  return total > 0 && correct === total;
+}
+function missionLevelPerfect(mIdx, level) {
+  const steps = MISSIONS[mIdx][level];
+  const p = progress[mIdx][level];
+  return steps.length > 0 && p.length === steps.length && p.every(Boolean);
+}
+function overallPct() {
+  let correct = 0, total = 0;
+  ['easy','med','hard'].forEach(l => { const s = levelScore(l); correct += s.correct; total += s.total; });
+  return total > 0 ? Math.round((correct / total) * 100) : 0;
+}
+function getRank(pct) {
+  if(pct>=100)return RANKS[9];if(pct>=88)return RANKS[8];if(pct>=75)return RANKS[7];
+  if(pct>=62)return RANKS[6];if(pct>=50)return RANKS[5];if(pct>=38)return RANKS[4];
+  if(pct>=28)return RANKS[3];if(pct>=18)return RANKS[2];if(pct>=8)return RANKS[1];
+  return RANKS[0];
 }
 
-function updateHomeScore(){
-  const correct = getTotalCorrect();
-  const total = getTotalQuestions();
-  const pct = total>0?Math.round((correct/total)*100):0;
-  document.getElementById('score-pct').textContent=pct+'%';
-  document.getElementById('score-correct').textContent=correct+'/'+total+' correct';
-  document.getElementById('reward-bar').style.width=pct+'%';
+function updateHome() {
+  const pct = overallPct();
+  document.getElementById('overall-pct').textContent = pct + '%';
+  document.getElementById('rank-name').textContent = getRank(pct);
+  const easyDone = levelComplete('easy');
+  const medDone  = levelComplete('med');
+  const tabMed = document.getElementById('tab-med');
+  const tabHard = document.getElementById('tab-hard');
+  const lockMed = document.getElementById('lock-med');
+  const lockHard = document.getElementById('lock-hard');
+  if(easyDone) { tabMed.classList.remove('locked'); tabMed.classList.add('active-med'); lockMed.textContent='🟠'; }
+  else { tabMed.classList.add('locked'); tabMed.classList.remove('active-med'); lockMed.textContent='🔒'; }
+  if(easyDone && medDone) { tabHard.classList.remove('locked'); tabHard.classList.add('active-hard'); lockHard.textContent='🔴'; }
+  else { tabHard.classList.add('locked'); tabHard.classList.remove('active-hard'); lockHard.textContent='🔒'; }
+  buildMissionList();
+}
 
-  let reward=0,nextReward=25,nextPct=60,neededCorrect=0;
-  if(pct>=100){reward=100;nextReward=null}
-  else if(pct>=85){reward=75;nextReward=100;nextPct=100}
-  else if(pct>=75){reward=50;nextReward=75;nextPct=85}
-  else if(pct>=60){reward=25;nextReward=50;nextPct=75}
-  if(nextReward){
-    const needed=Math.ceil((nextPct/100)*total)-correct;
-    document.getElementById('next-reward-text').innerHTML=`Next reward: <strong>${nextReward} €</strong> at ${nextPct}% score. You need <strong>${needed} more correct answers</strong> to get there.`;
+function switchLevel(level) {
+  const easyDone = levelComplete('easy');
+  const medDone  = levelComplete('med');
+  if(level === 'med' && !easyDone) return;
+  if(level === 'hard' && !(easyDone && medDone)) return;
+  currentLevel = level;
+  buildMissionList();
+}
+
+function buildMissionList() {
+  const easyDone = levelComplete('easy');
+  const medDone  = levelComplete('med');
+  const levelLabels = { easy:'EASY MISSIONS', med:'MEDIUM MISSIONS', hard:'HARD MISSIONS' };
+  document.getElementById('missions-label').textContent = levelLabels[currentLevel];
+  const statusEl = document.getElementById('level-status');
+  const { correct, total } = levelScore(currentLevel);
+  const pct = total > 0 ? Math.round((correct/total)*100) : 0;
+  if(currentLevel === 'easy') {
+    statusEl.className = 'level-status easy';
+    statusEl.innerHTML = easyDone ? '✅ Easy complete! Medium level is now unlocked.'
+      : `🟢 Easy level: ${correct}/${total} correct (${pct}%) — need 100% to unlock Medium`;
+  } else if(currentLevel === 'med') {
+    statusEl.className = 'level-status med';
+    statusEl.innerHTML = medDone ? '✅ Medium complete! Hard level is now unlocked.'
+      : `🟠 Medium level: ${correct}/${total} correct (${pct}%) — need 100% to unlock Hard`;
   } else {
-    document.getElementById('next-reward-text').textContent='Maximum reward achieved! Outstanding recruit! 🎖️';
+    statusEl.className = 'level-status hard';
+    statusEl.innerHTML = (easyDone && medDone && levelComplete('hard'))
+      ? '🏆 HARD COMPLETE! You have earned the €100 prize!'
+      : `🔴 Hard level: ${correct}/${total} correct (${pct}%) — 100% earns the €100 prize!`;
   }
-  document.getElementById('current-reward').textContent=reward+' €';
-}
-
-function buildMissionList(){
-  const list=document.getElementById('missions-list');
-  list.innerHTML='';
-  MISSIONS.forEach((m,i)=>{
-    const done=progress[i]?progress[i].filter(Boolean).length:0;
-    const total=m.steps.length;
-    const allDone=done===total;
-    const card=document.createElement('div');
-    card.className='mission-card';
-    card.innerHTML=`
-      <div class="mc-top">
-        <span class="mc-icon">${m.emoji}</span>
-        <div class="mc-info">
-          <div class="mc-title">${m.title}</div>
-          <div class="mc-sub">${m.sub}</div>
-        </div>
-      </div>
-      <div class="mc-progress"><span>${done}/${total}</span> steps completed</div>
-      <button class="start-btn${allDone?' done':''}" onclick="startMission(${i})">
-        ${allDone?'✓ Completed — Play Again':'Start Mission'}
-      </button>`;
+  const list = document.getElementById('missions-list');
+  list.innerHTML = '';
+  MISSIONS.forEach((m, i) => {
+    const steps = m[currentLevel];
+    const p = progress[i][currentLevel];
+    const done = p.filter(Boolean).length;
+    const perfect = missionLevelPerfect(i, currentLevel);
+    const attempted = p.length > 0;
+    const btnClass = perfect ? 'done-btn' : (currentLevel==='easy'?'easy-btn':currentLevel==='med'?'med-btn':'hard-btn');
+    const btnText  = perfect ? '✅ Perfect! Play again' : (attempted ? '🔄 Retry mission' : 'Start Mission →');
+    const scoreHtml = attempted ? `<span class="correct">${done} correct</span> / ${steps.length} questions` : `${steps.length} questions`;
+    const card = document.createElement('div');
+    card.className = 'mission-card';
+    card.innerHTML = `<div class="mc-top"><span class="mc-icon">${m.emoji}</span><div class="mc-info"><div class="mc-title">${m.title}</div><div class="mc-sub">${m.sub}</div></div></div><div class="mc-score">${scoreHtml}</div><button class="start-btn ${btnClass}" onclick="startMission(${i})">${btnText}</button>`;
     list.appendChild(card);
   });
 }
 
-function startMission(i){
-  currentMission=i;
-  currentStep=0;
-  answered=false;
-  showMission();
+function startMission(i) {
+  currentMission = i; currentStep = 0; currentSteps = MISSIONS[i][currentLevel]; answered = false;
+  showStep();
 }
 
-function showMission(){
-  const m=MISSIONS[currentMission];
-  const step=m.steps[currentStep];
-
-  document.getElementById('mh-icon').textContent=m.emoji;
-  document.getElementById('mh-title').textContent=m.title;
-  document.getElementById('mh-sub').textContent=m.sub;
-  document.getElementById('step-counter').textContent=`Step ${currentStep+1}/${m.steps.length}`;
-  document.getElementById('diff-badge').textContent=step.diff;
-
-  // Progress dots
-  const dots=document.getElementById('progress-dots');
-  dots.innerHTML='';
-  m.steps.forEach((_,i)=>{
-    const d=document.createElement('div');
-    d.className='dot'+(i===currentStep?' active':i<currentStep?' done':'');
+function showStep() {
+  const m = MISSIONS[currentMission];
+  const step = currentSteps[currentStep];
+  const levelNames = { easy:'🟢 EASY LEVEL', med:'🟠 MEDIUM LEVEL', hard:'🔴 HARD LEVEL' };
+  document.getElementById('mh-icon').textContent = m.emoji;
+  document.getElementById('mh-title').textContent = m.title;
+  document.getElementById('mh-sub').textContent = m.sub;
+  document.getElementById('step-counter').textContent = `${currentStep+1}/${currentSteps.length}`;
+  const strip = document.getElementById('diff-strip');
+  strip.textContent = levelNames[currentLevel]; strip.className = 'diff-strip ' + currentLevel;
+  const dots = document.getElementById('progress-dots');
+  dots.innerHTML = '';
+  currentSteps.forEach((_, i) => {
+    const d = document.createElement('div');
+    const p = progress[currentMission][currentLevel];
+    const wasDone = p[i] !== undefined;
+    d.className = 'dot' + (i === currentStep ? ' active ' + currentLevel : wasDone ? (p[i] ? ' done-correct' : ' done-wrong') : '');
     dots.appendChild(d);
   });
-
-  // Visual
   renderVisual(step.visual);
-
-  // Question
-  document.getElementById('question-text').textContent=step.q;
-
-  // Options
-  const opts=document.getElementById('options');
-  opts.innerHTML='';
-  step.opts.forEach((o,i)=>{
-    const btn=document.createElement('div');
-    btn.className='option';
-    btn.innerHTML=`<span class="opt-letter">${String.fromCharCode(65+i)}.</span>${o}`;
-    btn.onclick=()=>answer(i,btn);
+  document.getElementById('question-text').textContent = step.q;
+  const opts = document.getElementById('options');
+  opts.innerHTML = '';
+  step.opts.forEach((o, i) => {
+    const btn = document.createElement('div');
+    btn.className = 'option';
+    btn.innerHTML = `<span class="opt-letter">${String.fromCharCode(65+i)}.</span>${o}`;
+    btn.onclick = () => doAnswer(i, btn, step);
     opts.appendChild(btn);
   });
-
-  // Reset
-  document.getElementById('feedback').style.display='none';
-  document.getElementById('feedback').className='feedback';
-  document.getElementById('next-btn').style.display='none';
-  answered=false;
-
+  document.getElementById('feedback').style.display = 'none';
+  document.getElementById('next-btn').style.display = 'none';
+  answered = false;
   showScreen('mission');
 }
 
-function renderVisual(v){
-  const vc=document.getElementById('visual-card');
-  if(!v){vc.style.display='none';return;}
-  vc.style.display='block';
-
-  if(v.type==='flow'){
-    const nodes=v.nodes.map((n,i)=>`
-      <div class="diag-node"><div class="diag-dot"></div><div class="diag-label">${n}</div></div>
-      ${i<v.nodes.length-1?'<div class="diag-connector">→</div>':''}`).join('');
-    vc.innerHTML=`<div class="visual-title">${v.title}</div>
-      <div class="diagram" style="flex-wrap:wrap;gap:6px">${nodes}</div>
-      ${v.note?`<div style="font-size:0.65rem;color:var(--t3);margin-top:10px">${v.note}</div>`:''}`;
-  }
-  else if(v.type==='bubbles3'){
-    const colorMap={red:'red',orange:'orange',purple:'purple'};
-    const bubbles=v.items.map(item=>`
-      <div class="bubble ${colorMap[item.color]||'red'}">
-        <div class="bubble-name">${item.name}</div>
-        <div class="bubble-ex">${item.ex}</div>
-      </div>`).join('');
-    vc.innerHTML=`<div class="visual-title">${v.title}</div><div class="bubble-row">${bubbles}</div>`;
-  }
-  else if(v.type==='circles'){
-    const circles=v.items.map(item=>`
-      <div class="circle">
-        <div class="circle-emoji">${item.emoji}</div>
-        <div class="circle-label">${item.label}</div>
-      </div>`).join('');
-    vc.innerHTML=`<div class="visual-title">${v.title}</div><div class="circle-row">${circles}</div>`;
-  }
-  else if(v.type==='periodic'){
-    const rows=v.rows.map(row=>`<div class="pt-row">${row.map(c=>`
-      <div class="pt-cell">
-        <div class="pt-z">Z=${c.z}</div>
-        <div class="pt-n">${c.n}</div>
-      </div>`).join('')}</div>`).join('');
-    vc.innerHTML=`<div class="visual-title">Periodic Table — Elements by atomic number</div>
-      <div class="pt-grid">${rows}</div>
-      <div class="pt-note">${v.note}</div>`;
-  }
-  else if(v.type==='repro'){
-    const boxes=v.items.map(item=>item==='+'||item==='→'||item==='='||item==='×'||item==='|'?
-      `<div class="repro-arrow">${item}</div>`:
-      `<div class="repro-box">${item}</div>`).join('');
-    vc.innerHTML=`<div class="visual-title">${v.title}</div><div class="repro-diagram">${boxes}</div>`;
-  }
-  else if(v.type==='force'){
-    vc.innerHTML=`<div class="visual-title">${v.title}</div>
-      <div class="force-diagram">
-        <div class="force-object">${v.emoji}</div>
-        <div class="force-arrows">
-          <div class="force-arrow"><div class="arrow-label">Gravity</div><div class="arrow-line">↓</div></div>
-          <div class="force-arrow"><div class="arrow-line">↑</div><div class="arrow-label">Normal</div></div>
-        </div>
-      </div>`;
-  }
-  else if(v.type==='space'){
-    vc.innerHTML=`<div class="visual-title">Solar System Orbits</div>
-      <div class="space-diagram">
-        <div><div style="font-size:2.5rem">☀️</div><div class="space-label">Sun</div></div>
-        ${v.planets.map((p,i)=>`<div><div style="font-size:${1.4-i*0.15}rem">${p}</div><div class="space-label">Planet ${i+1}</div></div>`).join('<div style="color:var(--t3);font-size:.8rem">···</div>')}
-      </div>`;
-  }
-}
-
-function answer(i, btn){
-  if(answered)return;
-  answered=true;
-  const step=MISSIONS[currentMission].steps[currentStep];
-  const correct=i===step.ans;
-
-  // Update progress
-  if(!progress[currentMission])progress[currentMission]=[];
-  progress[currentMission][currentStep]=correct;
-  sv('progress',progress);
-
-  // Style options
-  document.querySelectorAll('.option').forEach((o,idx)=>{
+function doAnswer(i, btn, step) {
+  if(answered) return;
+  answered = true;
+  const correct = i === step.ans;
+  progress[currentMission][currentLevel][currentStep] = correct;
+  sv(progress);
+  document.querySelectorAll('.option').forEach((o, idx) => {
     o.classList.add('disabled');
-    if(idx===step.ans)o.classList.add('correct');
-    else if(idx===i&&!correct)o.classList.add('wrong');
+    if(idx === step.ans) o.classList.add('correct');
+    else if(idx === i && !correct) o.classList.add('wrong');
   });
+  const fb = document.getElementById('feedback');
+  if(correct) { fb.textContent = '✓ Correct! Well done, Recruit.'; fb.className = 'feedback correct-fb'; }
+  else { fb.textContent = `✗ Not quite. Correct answer: ${step.opts[step.ans]}`; fb.className = 'feedback wrong-fb'; }
+  fb.style.display = 'block';
+  document.getElementById('next-btn').style.display = 'block';
+}
 
-  // Feedback
-  const fb=document.getElementById('feedback');
-  if(correct){
-    fb.textContent='✓ Good work, Recruit.';
-    fb.className='feedback';
+function nextStep() {
+  if(currentStep < currentSteps.length - 1) { currentStep++; showStep(); }
+  else { showComplete(); }
+}
+
+function showComplete() {
+  const p = progress[currentMission][currentLevel];
+  const correct = p.filter(Boolean).length;
+  const total = currentSteps.length;
+  const perfect = correct === total;
+  const pct = Math.round((correct/total)*100);
+  const easyDone = levelComplete('easy');
+  const medDone  = levelComplete('med');
+  const allDone  = easyDone && medDone && levelComplete('hard');
+  let icon, titleClass, title, sub, next;
+  if(allDone) {
+    icon='🏆'; titleClass='perfect'; title='€100 PRIZE EARNED!';
+    sub='Outstanding, General! You completed ALL missions at ALL levels with 100%. You have earned your €100 reward!'; next='';
+  } else if(perfect) {
+    icon='🎖️'; titleClass='perfect'; title='Perfect Score!';
+    sub=`You got ${correct}/${total} on this mission at ${currentLevel==='easy'?'Easy':currentLevel==='med'?'Medium':'Hard'} level!`;
+    if(currentLevel==='easy' && easyDone) next='🟠 Easy level is 100% complete! <strong>Medium level is now unlocked.</strong>';
+    else if(currentLevel==='med' && medDone) next='🔴 Medium level is 100% complete! <strong>Hard level is now unlocked.</strong>';
+    else if(currentLevel==='hard') next='🔴 Keep going — complete all Hard missions for the €100 prize!';
+    else next=`Keep going — complete all ${currentLevel==='easy'?'Easy':'Medium'} missions at 100% to unlock the next level.`;
   } else {
-    fb.textContent=`✗ Not quite. The correct answer is: ${step.opts[step.ans]}`;
-    fb.className='feedback wrong-fb';
+    icon='💪'; titleClass='retry'; title='Keep Training!';
+    sub=`You got ${correct}/${total}. You need <strong>100%</strong> on all ${currentLevel} questions to unlock the next level.`;
+    next='Retry this mission to improve your score.';
   }
-  fb.style.display='block';
-  document.getElementById('next-btn').style.display='block';
+  document.getElementById('complete-icon').textContent = icon;
+  document.getElementById('complete-title').className = 'complete-title ' + titleClass;
+  document.getElementById('complete-title').textContent = title;
+  document.getElementById('complete-score').textContent = pct + '%';
+  document.getElementById('complete-sub').innerHTML = sub;
+  document.getElementById('complete-next').innerHTML = next;
+  updateHome(); showScreen('complete');
 }
 
-function nextStep(){
-  const m=MISSIONS[currentMission];
-  if(currentStep<m.steps.length-1){
-    currentStep++;
-    showMission();
-  } else {
-    showComplete();
+function renderVisual(v) {
+  const vc = document.getElementById('visual-card');
+  if(!v) { vc.style.display='none'; return; }
+  vc.style.display = 'block';
+  if(v.type==='flow') {
+    const nodes = v.nodes.map((n,i) => `<div class="diag-node"><div class="diag-dot"></div><div class="diag-label">${n}</div></div>${i<v.nodes.length-1?'<div class="diag-connector">→</div>':''}`).join('');
+    vc.innerHTML = `<div class="visual-title">${v.title}</div><div class="diagram">${nodes}</div>${v.note?`<div style="font-size:0.63rem;color:var(--t3);margin-top:8px">${v.note}</div>`:''}`;
+  } else if(v.type==='bubbles3') {
+    const bubbles = v.items.map(item=>`<div class="bubble ${item.color}"><div class="bubble-name">${item.name}</div><div class="bubble-ex">${item.ex}</div></div>`).join('');
+    vc.innerHTML = `<div class="visual-title">${v.title}</div><div class="bubble-row">${bubbles}</div>`;
+  } else if(v.type==='circles') {
+    const circles = v.items.map(item=>`<div class="circle"><div class="circle-emoji">${item.emoji}</div><div class="circle-label">${item.label}</div></div>`).join('');
+    vc.innerHTML = `<div class="visual-title">${v.title}</div><div class="circle-row">${circles}</div>`;
+  } else if(v.type==='repro') {
+    const boxes = v.items.map(item => ['→','+','=','×','|'].includes(item) ? `<div class="repro-arrow">${item}</div>` : `<div class="repro-box">${item}</div>`).join('');
+    vc.innerHTML = `<div class="visual-title">${v.title}</div><div class="repro-diagram">${boxes}</div>`;
   }
 }
 
-function showComplete(){
-  const correct=getTotalCorrect();
-  const total=getTotalQuestions();
-  const pct=Math.round((correct/total)*100);
-  let reward=0;
-  if(pct>=100)reward=100;
-  else if(pct>=85)reward=75;
-  else if(pct>=75)reward=50;
-  else if(pct>=60)reward=25;
-
-  const mCorrect=progress[currentMission]?progress[currentMission].filter(Boolean).length:0;
-  const mTotal=MISSIONS[currentMission].steps.length;
-  document.getElementById('complete-sub').textContent=`You answered ${mCorrect}/${mTotal} correctly in this mission. Keep training!`;
-  document.getElementById('complete-score').textContent=pct+'%';
-  document.getElementById('complete-reward').textContent=reward>0?`Current reward: ${reward} €`:'Keep going to earn your reward!';
-  updateHomeScore();
-  showScreen('complete');
-}
-
-function goHome(){
-  updateHomeScore();
-  buildMissionList();
-  showScreen('home');
-}
-
-function showScreen(id){
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+function goHome() { updateHome(); showScreen('home'); }
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   window.scrollTo(0,0);
 }
 
-// Init
-updateHomeScore();
-buildMissionList();
+updateHome();
 </script>
 </body>
 </html>
