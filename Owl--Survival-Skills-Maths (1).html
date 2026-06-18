@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Owl – Survival Skills: Maths</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#141f10;--s1:#1c2a18;--s2:#243020;--s3:#354030;
+  --g:#5dcc61;--g2:#388e3c;--gd:rgba(76,175,80,0.15);
+  --gold:#f0a500;--t:#fff;--t2:rgba(255,255,255,0.75);--t3:rgba(255,255,255,0.45);
+  --border:rgba(76,175,80,0.25);--border2:rgba(255,255,255,0.1);--r:16px;
+  --easy:#5dcc61;--med:#e07020;--hard:#e74c3c;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{min-height:100vh}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--t);max-width:700px;margin:0 auto;min-height:100vh}
+.screen{display:none}.screen.active{display:block}
+
+/* ── HOME ── */
+#home{padding:0 0 48px}
+.home-header{background:var(--s1);border-bottom:1px solid var(--border2);padding:16px 20px;display:flex;align-items:center;justify-content:space-between}
+.home-title-wrap{display:flex;align-items:center;gap:12px}
+.home-icon{font-size:1.8rem}
+.home-title{font-size:1rem;font-weight:800}
+.home-sub{font-size:0.72rem;color:var(--g);font-weight:600}
+.rank-badge{text-align:right}
+.rank-label{font-size:0.6rem;color:var(--t3);letter-spacing:1px;text-transform:uppercase}
+.rank-name{font-size:0.85rem;font-weight:700;color:var(--g)}
+
+/* prize banner */
+.prize-banner{margin:20px;border-radius:20px;padding:20px 22px;background:linear-gradient(135deg,rgba(240,165,0,0.12),rgba(240,165,0,0.04));border:1.5px solid rgba(240,165,0,0.35);display:flex;align-items:center;gap:16px}
+.prize-icon{font-size:2.4rem;flex-shrink:0}
+.prize-info{flex:1}
+.prize-title{font-size:1rem;font-weight:800;color:var(--gold);margin-bottom:4px}
+.prize-desc{font-size:0.78rem;color:var(--t2);line-height:1.5}
+.prize-pct{font-size:2rem;font-weight:800;color:var(--gold);flex-shrink:0;text-align:right}
+.prize-pct span{display:block;font-size:0.6rem;color:var(--t3);font-weight:600;letter-spacing:1px;text-transform:uppercase}
+
+/* level tabs */
+.level-tabs{display:flex;gap:0;margin:20px 20px 0;border-radius:14px;overflow:hidden;border:1px solid var(--border2)}
+.level-tab{flex:1;padding:10px 8px;text-align:center;font-size:0.78rem;font-weight:800;cursor:pointer;transition:all .2s;letter-spacing:.5px;text-transform:uppercase;border:none;font-family:inherit;background:var(--s1);color:var(--t3)}
+.level-tab.active-easy{background:rgba(93,204,97,0.18);color:var(--easy)}
+.level-tab.active-med{background:rgba(224,112,32,0.18);color:var(--med)}
+.level-tab.active-hard{background:rgba(231,76,60,0.18);color:var(--hard)}
+.level-tab.locked{cursor:default;opacity:0.45}
+.level-tab .lock-icon{display:block;font-size:0.9rem;margin-bottom:2px}
+
+/* level status */
+.level-status{margin:12px 20px 0;padding:10px 16px;border-radius:12px;font-size:0.8rem;font-weight:700;display:flex;align-items:center;gap:8px}
+.level-status.easy{background:rgba(93,204,97,0.1);color:var(--easy);border:1px solid rgba(93,204,97,0.2)}
+.level-status.med{background:rgba(224,112,32,0.1);color:var(--med);border:1px solid rgba(224,112,32,0.2)}
+.level-status.hard{background:rgba(231,76,60,0.1);color:var(--hard);border:1px solid rgba(231,76,60,0.2)}
+.level-status.locked-status{background:var(--s2);color:var(--t3);border:1px solid var(--border2)}
+
+/* mission cards */
+.missions-label{font-size:0.65rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--t3);margin:20px 20px 10px}
+.mission-card{margin:0 20px 10px;background:var(--s1);border:1.5px solid var(--border2);border-radius:18px;padding:18px 20px;transition:all .2s}
+.mission-card.unlocked:hover{background:var(--s2);border-color:var(--border)}
+.mission-card.locked-card{opacity:0.5}
+.mc-top{display:flex;align-items:center;gap:14px;margin-bottom:10px}
+.mc-icon{font-size:1.8rem;flex-shrink:0}
+.mc-info{flex:1}
+.mc-title{font-size:0.95rem;font-weight:800;margin-bottom:2px}
+.mc-sub{font-size:0.74rem;color:var(--t3)}
+.mc-score{font-size:0.74rem;margin-bottom:12px}
+.mc-score .correct{color:var(--g);font-weight:700}
+.mc-score .wrong{color:var(--hard);font-weight:700}
+.start-btn{width:100%;border:none;border-radius:10px;padding:12px;color:var(--t);font-size:0.9rem;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s}
+.start-btn.easy-btn{background:var(--g2)}
+.start-btn.easy-btn:hover{background:var(--g)}
+.start-btn.med-btn{background:#a05010}
+.start-btn.med-btn:hover{background:var(--med)}
+.start-btn.hard-btn{background:#922b21}
+.start-btn.hard-btn:hover{background:var(--hard)}
+.start-btn.done-btn{background:var(--s3);color:var(--t2)}
+.start-btn.locked-btn{background:var(--s3);color:var(--t3);cursor:not-allowed}
+
+/* ── MISSION SCREEN ── */
+#mission{min-height:100vh;display:flex;flex-direction:column}
+.mission-header{background:var(--s1);border-bottom:1px solid var(--border2);padding:14px 20px;display:flex;align-items:center;gap:12px;flex-shrink:0}
+.back-btn{width:32px;height:32px;border-radius:9px;background:var(--s2);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--t2);font-size:1.1rem;flex-shrink:0}
+.mh-icon{font-size:1.4rem;flex-shrink:0}
+.mh-info{flex:1}
+.mh-title{font-size:0.95rem;font-weight:800}
+.mh-sub{font-size:0.7rem;color:var(--t3)}
+.step-counter{font-size:0.85rem;font-weight:700;color:var(--g);white-space:nowrap}
+.diff-strip{padding:8px 20px;font-size:0.7rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase}
+.diff-strip.easy{background:rgba(93,204,97,0.1);color:var(--easy)}
+.diff-strip.med{background:rgba(224,112,32,0.1);color:var(--med)}
+.diff-strip.hard{background:rgba(231,76,60,0.1);color:var(--hard)}
+.progress-dots{display:flex;justify-content:center;gap:7px;padding:12px 20px 6px}
+.dot{width:26px;height:9px;border-radius:5px;background:var(--s3);transition:all .3s}
+.dot.active{width:30px}
+.dot.active.easy{background:var(--easy)}
+.dot.active.med{background:var(--med)}
+.dot.active.hard{background:var(--hard)}
+.dot.done-correct{background:var(--g2)}
+.dot.done-wrong{background:#922b21}
+.question-area{flex:1;overflow-y:auto;padding:14px 20px 24px}
+.visual-card{background:var(--s1);border:1px solid var(--border2);border-radius:var(--r);padding:18px;margin-bottom:14px;text-align:center}
+.box-row{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap}
+.supply-box{background:rgba(76,175,80,0.1);border:1.5px solid rgba(76,175,80,0.35);border-radius:10px;padding:12px 18px;text-align:center;min-width:70px}
+.sb-num{font-size:1.6rem;font-weight:900;color:var(--g);line-height:1}
+.sb-unit{font-size:0.65rem;color:var(--t3);margin-top:2px}
+.sb-label{font-size:0.6rem;color:rgba(76,175,80,0.6);margin-top:4px;font-weight:600}
+.op-symbol{font-size:1.4rem;color:var(--t3);font-weight:700}
+.info-box{background:var(--s2);border:1px solid var(--border2);border-radius:10px;padding:12px 16px;font-size:0.86rem;line-height:1.6;color:var(--t2);text-align:left}
+.formula-box{background:rgba(76,175,80,0.08);border:1px solid rgba(76,175,80,0.25);border-radius:10px;padding:10px 14px;font-size:0.95rem;font-weight:700;color:var(--g);font-family:monospace}
+.dl-row{display:flex;align-items:center;width:100%;max-width:340px;margin:0 auto}
+.dl-node{display:flex;flex-direction:column;align-items:center;gap:3px;flex-shrink:0}
+.dl-dot{width:14px;height:14px;border-radius:50%}
+.dl-dot.green{background:#4caf50}.dl-dot.gold{background:#f0a500}.dl-dot.red{background:#e74c3c}
+.dl-label{font-size:0.65rem;font-weight:700}
+.dl-label.green{color:#4caf50}.dl-label.gold{color:#f0a500}.dl-label.red{color:#e74c3c}
+.dl-seg{flex:1;display:flex;flex-direction:column;align-items:center}
+.dl-line{height:3px;width:100%;border-radius:3px}
+.dl-line.green{background:#4caf50}.dl-line.gold{background:#f0a500}
+.dl-dist{font-size:0.63rem;color:var(--t3);margin-bottom:3px}
+.dl-total{font-size:0.66rem;color:var(--t3);margin-top:8px;font-style:italic}
+.grid-wrap{display:flex;flex-direction:column;align-items:center;gap:3px}
+.grid-row-x{display:flex;gap:3px}
+.grid-cell{width:20px;height:20px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:0.6rem;font-weight:900}
+.grid-cell.eaten{background:rgba(192,57,43,0.15);border:1px solid rgba(192,57,43,0.4);color:#e74c3c}
+.grid-cell.left{background:rgba(76,175,80,0.1);border:1px solid rgba(76,175,80,0.2)}
+.grid-labels{display:flex;gap:16px;margin-top:5px;font-size:0.63rem}
+.gl-eaten{color:#e74c3c;font-weight:700}.gl-left{color:var(--g);font-weight:700}
+.question-card{background:var(--s2);border:1px solid var(--border2);border-radius:var(--r);padding:16px;margin-bottom:12px}
+.question-text{font-size:1rem;font-weight:700;line-height:1.55}
+.options{display:flex;flex-direction:column;gap:9px;margin-bottom:14px}
+.option{background:var(--s1);border:1px solid var(--border2);border-radius:var(--r);padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all .2s;font-size:0.9rem;font-weight:600}
+.option:hover:not(.disabled){background:var(--s2);border-color:rgba(255,255,255,0.18)}
+.option.correct{background:rgba(76,175,80,0.18);border-color:var(--g);color:var(--g)}
+.option.wrong{background:rgba(192,57,43,0.1);border-color:rgba(192,57,43,0.4);color:rgba(220,100,90,0.9)}
+.option.disabled{cursor:default}
+.opt-letter{font-size:0.7rem;font-weight:800;color:var(--t3);width:14px;flex-shrink:0}
+.option.correct .opt-letter{color:var(--g)}
+.option.wrong .opt-letter{color:rgba(220,100,90,0.9)}
+.feedback{border-radius:var(--r);padding:12px 16px;margin-bottom:12px;font-size:0.88rem;font-weight:600;display:none;line-height:1.5}
+.feedback.correct-fb{background:rgba(76,175,80,0.12);border:1px solid var(--border);color:var(--g)}
+.feedback.wrong-fb{background:rgba(192,57,43,0.08);border:1px solid rgba(192,57,43,0.3);color:rgba(220,120,110,0.9)}
+.next-btn{width:100%;background:var(--g2);border:none;border-radius:var(--r);padding:14px;color:var(--t);font-size:0.95rem;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;display:none}
+.next-btn:hover{background:var(--g)}
+
+/* ── COMPLETE ── */
+#complete{padding:40px 24px;text-align:center;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.complete-icon{font-size:4rem;margin-bottom:16px;animation:bounce 1s ease-in-out infinite alternate}
+@keyframes bounce{from{transform:translateY(0)}to{transform:translateY(-10px)}}
+.complete-title{font-size:1.7rem;font-weight:800;margin-bottom:8px}
+.complete-title.perfect{color:var(--gold)}
+.complete-title.good{color:var(--g)}
+.complete-title.retry{color:var(--hard)}
+.complete-score{font-size:3rem;font-weight:800;color:var(--gold);margin:10px 0 6px}
+.complete-sub{font-size:0.95rem;color:var(--t2);margin-bottom:24px;line-height:1.6;max-width:340px}
+.complete-next{background:var(--s1);border:1px solid var(--border2);border-radius:14px;padding:14px 18px;margin-bottom:24px;font-size:0.85rem;color:var(--t2);line-height:1.5;max-width:340px}
+.complete-next strong{color:var(--t)}
+.home-btn{background:var(--g2);border:none;border-radius:14px;padding:14px 32px;color:var(--t);font-size:0.95rem;font-weight:700;cursor:pointer;font-family:inherit}
+.home-btn:hover{background:var(--g)}
+
+.home-footer{text-align:center;margin:28px 20px 0;color:var(--t3);font-size:0.75rem;font-style:italic}
+</style>
+</head>
+<body>
+
+<!-- HOME -->
+<div id="home" class="screen active">
+  <div class="home-header">
+    <div class="home-title-wrap">
+      <span class="home-icon">⛺</span>
+      <div>
+        <div class="home-title">Owl – Survival Skills: Maths</div>
+        <div class="home-sub">Survival Training Camp · KS3</div>
+      </div>
+    </div>
+    <div class="rank-badge">
+      <div class="rank-label">Rank</div>
+      <div class="rank-name" id="rank-name">Recruit</div>
+    </div>
+  </div>
+
+  <div class="prize-banner">
+    <div class="prize-icon">🏆</div>
+    <div class="prize-info">
+      <div class="prize-title">€100 Prize</div>
+      <div class="prize-desc">Complete ALL missions at ALL levels with 100% — Easy, Medium AND Hard — to claim your reward.</div>
+    </div>
+    <div class="prize-pct"><div id="overall-pct">0%</div><span>overall</span></div>
+  </div>
+
+  <!-- Level tabs -->
+  <div class="level-tabs">
+    <button class="level-tab active-easy" id="tab-easy" onclick="switchLevel('easy')">🟢 Easy</button>
+    <button class="level-tab locked" id="tab-med" onclick="switchLevel('med')"><span class="lock-icon" id="lock-med">🔒</span>Medium</button>
+    <button class="level-tab locked" id="tab-hard" onclick="switchLevel('hard')"><span class="lock-icon" id="lock-hard">🔒</span>Hard</button>
+  </div>
+  <div class="level-status easy" id="level-status"></div>
+
+  <div class="missions-label" id="missions-label">EASY MISSIONS</div>
+  <div id="missions-list"></div>
+  <div class="home-footer">Complete every question at 100% to earn the prize. Progress saves automatically.</div>
+</div>
+
+<!-- MISSION -->
+<div id="mission" class="screen">
+  <div class="mission-header">
+    <button class="back-btn" onclick="goHome()">←</button>
+    <span class="mh-icon" id="mh-icon">⛺</span>
+    <div class="mh-info">
+      <div class="mh-title" id="mh-title">Mission</div>
+      <div class="mh-sub" id="mh-sub">Subtitle</div>
+    </div>
+    <div class="step-counter" id="step-counter">1/3</div>
+  </div>
+  <div class="diff-strip easy" id="diff-strip">🟢 EASY LEVEL</div>
+  <div class="progress-dots" id="progress-dots"></div>
+  <div class="question-area">
+    <div class="visual-card" id="visual-card"></div>
+    <div class="question-card"><div class="question-text" id="question-text"></div></div>
+    <div class="options" id="options"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="next-btn" id="next-btn" onclick="nextStep()">Next →</button>
+  </div>
+</div>
+
+<!-- COMPLETE -->
+<div id="complete" class="screen">
+  <div class="complete-icon" id="complete-icon">🎖️</div>
+  <div class="complete-title" id="complete-title">Mission Complete!</div>
+  <div class="complete-score" id="complete-score">0%</div>
+  <div class="complete-sub" id="complete-sub"></div>
+  <div class="complete-next" id="complete-next"></div>
+  <button class="home-btn" onclick="goHome()">Back to Base Camp</button>
+</div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────────────────
+// Each mission has steps split by difficulty
+const MISSIONS = [
+  {
+    id:0, emoji:'🎒', title:'Mission 1: Number & Calculation', sub:'Supplies, Rations & Distances',
+    easy:[
+      {visual:{type:'boxadd',items:[{num:248,unit:'rounds',label:'Depot A'},{op:'+'},{num:175,unit:'rounds',label:'Depot B'}]},
+       q:'Depot A has 248 ammunition rounds. Depot B has 175. How many rounds in total?',
+       opts:['413','423','433','443'],ans:1,explain:'248 + 175 = 423'},
+      {visual:{type:'info',lines:['Each soldier gets 3 ration packs per day','A squad of 8 soldiers goes on a 4-day mission']},
+       q:'How many ration packs are needed in total?',
+       opts:['72','80','96','112'],ans:2,explain:'3 × 8 × 4 = 96 packs'},
+      {visual:{type:'info',lines:['Convoy distance: 360 km','Fuel used per 100 km: 12 litres']},
+       q:'A truck travels 360 km and uses 12 litres per 100 km. How many litres does it use?',
+       opts:['36 L','43.2 L','48 L','54 L'],ans:1,explain:'360 ÷ 100 × 12 = 43.2 litres'},
+    ],
+    med:[
+      {visual:{type:'distline',nodes:[{label:'Base',color:'green'},{dist:'4.8 km',color:'green'},{label:'River',color:'gold'},{dist:'3.6 km',color:'gold'},{label:'Hill',color:'red'}],total:'Total route = ?'},
+       q:'You march 4.8 km to the river then 3.6 km to the hill. What is the total distance in km?',
+       opts:['7.8 km','8.4 km','8.8 km','9.2 km'],ans:1,explain:'4.8 + 3.6 = 8.4 km'},
+      {visual:{type:'grid',total:60,eaten:24},
+       q:'A squad of 60 soldiers: 24 are on patrol. What percentage is on patrol?',
+       opts:['30%','35%','40%','45%'],ans:2,explain:'24 ÷ 60 × 100 = 40%'},
+      {visual:{type:'info',lines:['Original stock: 840 rations','Used: 35% on Day 1']},
+       q:'840 rations. 35% used on Day 1. How many remain?',
+       opts:['504','525','546','560'],ans:2,explain:'840 × 0.65 = 546 remain'},
+    ],
+    hard:[
+      {visual:{type:'formula',formula:'Speed = Distance ÷ Time'},
+       q:'A vehicle travels 156 km in 2.4 hours. What is its average speed in km/h?',
+       opts:['60 km/h','62.5 km/h','65 km/h','67.5 km/h'],ans:2,explain:'156 ÷ 2.4 = 65 km/h'},
+      {visual:{type:'info',lines:['Original stock: 840 rations','Used: 35% on Day 1','Used: 25% of remainder on Day 2']},
+       q:'840 rations. 35% used Day 1, then 25% of remainder used Day 2. How many left?',
+       opts:['378','409','416','430'],ans:1,explain:'840 × 0.65 = 546. 546 × 0.75 = 409.5 ≈ 409'},
+      {visual:{type:'formula',formula:'Profit = Revenue − Cost'},
+       q:'A supply mission costs €2,450 and saves €3,185 in resources. What is the profit as a percentage of cost?',
+       opts:['28%','30%','32%','35%'],ans:1,explain:'(3185−2450) ÷ 2450 × 100 = 30%'},
+    ]
+  },
+  {
+    id:1, emoji:'🔢', title:'Mission 2: Algebra & Equations', sub:'Cracking the Code',
+    easy:[
+      {visual:{type:'info',lines:['Each soldier carries n ration packs','3 soldiers → 3n packs total']},
+       q:'Each soldier carries n ration packs. Write an expression for 5 soldiers.',
+       opts:['n + 5','5n','n ÷ 5','n − 5'],ans:1,explain:'5 × n = 5n'},
+      {visual:{type:'formula',formula:'2x + 6 = 18'},
+       q:'Solve: 2x + 6 = 18',
+       opts:['x = 4','x = 5','x = 6','x = 7'],ans:2,explain:'2x = 12, so x = 6'},
+      {visual:{type:'info',lines:['If y = 3x − 1','Find y when x = 4']},
+       q:'If y = 3x − 1, what is y when x = 4?',
+       opts:['10','11','12','13'],ans:1,explain:'y = 3(4) − 1 = 12 − 1 = 11'},
+    ],
+    med:[
+      {visual:{type:'formula',formula:'3(x − 4) = 15'},
+       q:'Solve: 3(x − 4) = 15',
+       opts:['x = 7','x = 8','x = 9','x = 10'],ans:2,explain:'x − 4 = 5, so x = 9'},
+      {visual:{type:'info',lines:['Patrol A: 2x + 3 soldiers','Patrol B: x + 7 soldiers','Total: 25 soldiers']},
+       q:'Patrol A has (2x + 3) and Patrol B has (x + 7). Total is 25. Find x.',
+       opts:['x = 4','x = 5','x = 6','x = 7'],ans:1,explain:'3x + 10 = 25 → 3x = 15 → x = 5'},
+      {visual:{type:'formula',formula:'5x − 3 = 2x + 9'},
+       q:'Solve: 5x − 3 = 2x + 9',
+       opts:['x = 3','x = 4','x = 5','x = 6'],ans:1,explain:'3x = 12, so x = 4'},
+    ],
+    hard:[
+      {visual:{type:'info',lines:['Two supply trucks','Truck 1: (3x + 5) tonnes','Truck 2: (x + 11) tonnes','They carry the same load']},
+       q:'Truck 1 carries (3x + 5) tonnes and Truck 2 carries (x + 11) tonnes equal loads. Find x.',
+       opts:['x = 2','x = 3','x = 4','x = 5'],ans:1,explain:'3x + 5 = x + 11 → 2x = 6 → x = 3'},
+      {visual:{type:'formula',formula:'y = mx + c'},
+       q:'A line has gradient 3 and passes through (0, −2). Which equation is correct?',
+       opts:['y = 3x + 2','y = −2x + 3','y = 3x − 2','y = 2x − 3'],ans:2,explain:'y = 3x + (−2) = 3x − 2'},
+      {visual:{type:'info',lines:['Expand and simplify:','(x + 3)(x − 5)']},
+       q:'Expand and simplify: (x + 3)(x − 5)',
+       opts:['x² − 2x − 15','x² + 2x − 15','x² − 2x + 15','x² − 8x − 15'],ans:0,explain:'x² − 5x + 3x − 15 = x² − 2x − 15'},
+    ]
+  },
+  {
+    id:2, emoji:'🏕️', title:'Mission 3: Geometry & Measurement', sub:'Build Your Base',
+    easy:[
+      {visual:{type:'info',lines:['Square camp — all sides equal','Each side = 12 m']},
+       q:'A square camp has sides of 12 m. What is the total perimeter?',
+       opts:['36 m','44 m','48 m','52 m'],ans:2,explain:'4 × 12 = 48 m'},
+      {visual:{type:'boxadd',items:[{num:8,unit:'m',label:'Length'},{op:'×'},{num:5,unit:'m',label:'Width'}]},
+       q:'A rectangular supply tent is 8 m long and 5 m wide. What is its area?',
+       opts:['36 m²','40 m²','45 m²','48 m²'],ans:1,explain:'8 × 5 = 40 m²'},
+      {visual:{type:'info',lines:['A rectangular trench','Length: 15 m, Width: 3 m, Depth: 2 m']},
+       q:'What is the volume of the trench?',
+       opts:['60 m³','80 m³','90 m³','100 m³'],ans:2,explain:'15 × 3 × 2 = 90 m³'},
+    ],
+    med:[
+      {visual:{type:'formula',formula:'Area of triangle = ½ × base × height'},
+       q:'A triangular defensive zone has base 14 m and height 9 m. What is its area?',
+       opts:['56 m²','63 m²','72 m²','126 m²'],ans:1,explain:'½ × 14 × 9 = 63 m²'},
+      {visual:{type:'formula',formula:'Volume = length × width × height'},
+       q:'A supply bunker is 6 m long, 4 m wide and 3 m high. What is its volume?',
+       opts:['52 m³','60 m³','68 m³','72 m³'],ans:3,explain:'6 × 4 × 3 = 72 m³'},
+      {visual:{type:'formula',formula:'Circle area = π × r²'},
+       q:'A circular landing zone has radius 7 m. What is its area? (Use π = 3.14)',
+       opts:['144 m²','148 m²','154 m²','160 m²'],ans:2,explain:'3.14 × 49 = 153.86 ≈ 154 m²'},
+    ],
+    hard:[
+      {visual:{type:'formula',formula:'Pythagoras: a² + b² = c²'},
+       q:'A scout runs 5 km north then 12 km east. How far is she from the start (straight line)?',
+       opts:['11 km','13 km','15 km','17 km'],ans:1,explain:'√(25 + 144) = √169 = 13 km'},
+      {visual:{type:'formula',formula:'Area of trapezium = ½(a + b) × h'},
+       q:'A trench has parallel sides 8 m and 14 m, height 6 m. What is the area?',
+       opts:['60 m²','66 m²','72 m²','78 m²'],ans:1,explain:'½ × (8 + 14) × 6 = 66 m²'},
+      {visual:{type:'info',lines:['A cylindrical water tank','Radius: 3 m, Height: 5 m','Volume = π × r² × h (use π = 3.14)']},
+       q:'What is the volume of the cylindrical water tank? (to nearest whole number)',
+       opts:['127 m³','135 m³','141 m³','148 m³'],ans:2,explain:'3.14 × 9 × 5 = 141.3 ≈ 141 m³'},
+    ]
+  },
+  {
+    id:3, emoji:'⚖️', title:'Mission 4: Ratio & Proportion', sub:'Dividing the Spoils',
+    easy:[
+      {visual:{type:'info',lines:['Rations split in ratio 2 : 3','Between Squad A and Squad B']},
+       q:'80 rations split in ratio 2:3. How many does Squad A get?',
+       opts:['28','30','32','35'],ans:2,explain:'Total parts = 5. Each part = 16. Squad A = 2 × 16 = 32'},
+      {visual:{type:'formula',formula:'% increase = (increase ÷ original) × 100'},
+       q:'A supply cache grows from 200 to 250 units. What is the percentage increase?',
+       opts:['20%','22%','25%','28%'],ans:2,explain:'50 ÷ 200 × 100 = 25%'},
+      {visual:{type:'info',lines:['Map scale: 1 : 25,000','Map distance: 2 cm']},
+       q:'Two bases are 2 cm apart on a 1:25,000 map. What is the real distance in metres?',
+       opts:['250 m','500 m','750 m','1000 m'],ans:1,explain:'2 × 25,000 = 50,000 cm = 500 m'},
+    ],
+    med:[
+      {visual:{type:'info',lines:['Map scale: 1 : 25,000','Map distance: 4.8 cm']},
+       q:'Two bases are 4.8 cm apart on a 1:25,000 map. What is the real distance in km?',
+       opts:['0.12 km','1.2 km','12 km','120 km'],ans:1,explain:'4.8 × 25,000 = 120,000 cm = 1.2 km'},
+      {visual:{type:'info',lines:['Original price: €840','Discount: 15%']},
+       q:'Military equipment costs €840. A 15% discount is applied. What is the sale price?',
+       opts:['€700','€710','€714','€720'],ans:2,explain:'€840 × 0.85 = €714'},
+      {visual:{type:'info',lines:['3 soldiers consume 2.4 kg of rations per day','How much for 5 soldiers per day?']},
+       q:'3 soldiers use 2.4 kg of rations per day. At the same rate, how much do 5 soldiers need per day?',
+       opts:['3.2 kg','3.6 kg','4.0 kg','4.8 kg'],ans:2,explain:'Per soldier = 2.4 ÷ 3 = 0.8 kg. 5 × 0.8 = 4.0 kg'},
+    ],
+    hard:[
+      {visual:{type:'info',lines:['3 soldiers consume 2.4 kg per day','Mission: 7 days','Scale up to 5 soldiers']},
+       q:'3 soldiers use 2.4 kg/day. At the same rate, how much do 5 soldiers need for 7 days?',
+       opts:['24 kg','28 kg','32 kg','36 kg'],ans:1,explain:'0.8 kg × 5 × 7 = 28 kg'},
+      {visual:{type:'formula',formula:'Reverse %: original = value ÷ (1 − %/100)'},
+       q:'After a 20% reduction, a unit has 64 soldiers. How many did it have originally?',
+       opts:['75','78','80','84'],ans:2,explain:'64 ÷ 0.8 = 80 soldiers'},
+      {visual:{type:'info',lines:['Gold: Silver ratio is 3 : 7','Total medals: 120']},
+       q:'Medals are split gold to silver in ratio 3:7. How many silver medals are there?',
+       opts:['36','72','84','90'],ans:2,explain:'Total parts = 10. Silver = 7/10 × 120 = 84'},
+    ]
+  },
+  {
+    id:4, emoji:'📊', title:'Mission 5: Data & Probability', sub:'Intelligence Briefing',
+    easy:[
+      {visual:{type:'info',lines:['Mission times (mins): 42, 38, 45, 41, 44','Find the mean']},
+       q:'Five missions took 42, 38, 45, 41, 44 minutes. What is the mean time?',
+       opts:['40 min','41 min','42 min','43 min'],ans:2,explain:'Total = 210 ÷ 5 = 42 minutes'},
+      {visual:{type:'info',lines:['Scores: 15, 18, 19, 22, 22, 25, 31','Find the median']},
+       q:'From the ordered list 15, 18, 19, 22, 22, 25, 31 — what is the median?',
+       opts:['19','22','23','25'],ans:1,explain:'Middle value (4th of 7) = 22'},
+      {visual:{type:'info',lines:['Bag: 3 red, 5 blue, 2 green tokens','One token drawn at random']},
+       q:'A bag has 3 red, 5 blue, 2 green tokens. What is the probability of drawing blue?',
+       opts:['3/10','2/5','1/2','3/5'],ans:2,explain:'5 blue out of 10 total = 5/10 = 1/2'},
+    ],
+    med:[
+      {visual:{type:'info',lines:['Data: 12, 12, 15, 15, 15, 18, 20','Find the mode']},
+       q:'From the set 12, 12, 15, 15, 15, 18, 20 — what is the mode?',
+       opts:['12','13','15','16'],ans:2,explain:'15 appears most often (3 times)'},
+      {visual:{type:'info',lines:['P(mission success) = 0.7','Two independent missions']},
+       q:'P(mission success) = 0.7. What is P(both missions succeed)?',
+       opts:['0.35','0.42','0.49','0.56'],ans:2,explain:'0.7 × 0.7 = 0.49'},
+      {visual:{type:'info',lines:['Range = 28','Lowest score = 34']},
+       q:'A set of scores has range 28 and the lowest score is 34. What is the highest score?',
+       opts:['58','60','62','66'],ans:2,explain:'Highest = 34 + 28 = 62'},
+    ],
+    hard:[
+      {visual:{type:'info',lines:['Mean of 5 scores = 18','A 6th score of 24 is added','Find the new mean']},
+       q:'Mean of 5 scores is 18. A 6th score of 24 is added. What is the new mean?',
+       opts:['18','19','20','21'],ans:1,explain:'Total = 5×18 + 24 = 114. New mean = 114 ÷ 6 = 19'},
+      {visual:{type:'info',lines:['P(rain) = 0.3','P(no equipment failure) = 0.8','Events are independent']},
+       q:'What is the probability of rain AND no equipment failure?',
+       opts:['0.11','0.24','0.27','0.56'],ans:1,explain:'0.3 × 0.8 = 0.24'},
+      {visual:{type:'info',lines:['Scores: 14, 17, 21, x, 28','Mean = 20','Find x']},
+       q:'Five scores: 14, 17, 21, x, 28 have a mean of 20. Find x.',
+       opts:['18','19','20','21'],ans:2,explain:'14+17+21+x+28 = 100 → 80+x = 100 → x = 20'},
+    ]
+  },
+  {
+    id:5, emoji:'🎯', title:'Mission 6: Advanced Operations', sub:'Final Command Test',
+    easy:[
+      {visual:{type:'info',lines:['Sequence: 3, 7, 11, 15, …','What is the next term?']},
+       q:'What is the next term in the sequence 3, 7, 11, 15, …?',
+       opts:['17','18','19','20'],ans:2,explain:'Common difference = 4. 15 + 4 = 19'},
+      {visual:{type:'formula',formula:'Simple interest = P × R × T ÷ 100'},
+       q:'€400 invested at 5% simple interest for 2 years. How much interest is earned?',
+       opts:['£20','£30','£40','£50'],ans:2,explain:'400 × 5 × 2 ÷ 100 = £40'},
+      {visual:{type:'info',lines:['y = 2x + 1','Find y when x = 5']},
+       q:'If y = 2x + 1, what is y when x = 5?',
+       opts:['9','10','11','12'],ans:2,explain:'y = 2(5) + 1 = 11'},
+    ],
+    med:[
+      {visual:{type:'info',lines:['Sequence: 5, 11, 17, 23, …','nth term = ?']},
+       q:'What is the nth term of the sequence 5, 11, 17, 23, …?',
+       opts:['6n − 1','6n + 1','5n + 1','n + 6'],ans:0,explain:'Common difference = 6. First term = 5 = 6(1) − 1'},
+      {visual:{type:'formula',formula:'Simultaneous equations: solve together'},
+       q:'Solve: 2x + y = 10 and x + y = 6. What is x?',
+       opts:['x = 2','x = 3','x = 4','x = 5'],ans:2,explain:'Subtract: x = 4'},
+      {visual:{type:'info',lines:['Compound interest','A = P(1 + r)ⁿ','P = 500, r = 0.04, n = 3']},
+       q:'€500 at 4% compound interest for 3 years. What is the total? (to nearest €)',
+       opts:['£560','£562','£564','£566'],ans:1,explain:'500 × (1.04)³ = 500 × 1.124864 ≈ £562'},
+    ],
+    hard:[
+      {visual:{type:'info',lines:['Quadratic: x² − 5x + 6 = 0','Factorise to solve']},
+       q:'Solve x² − 5x + 6 = 0. What are the solutions?',
+       opts:['x = 1 and x = 6','x = 2 and x = 3','x = −2 and x = −3','x = 3 and x = 6'],ans:1,explain:'(x−2)(x−3) = 0, so x = 2 or x = 3'},
+      {visual:{type:'formula',formula:'Gradient = (y₂ − y₁) ÷ (x₂ − x₁)'},
+       q:'What is the gradient of the line through (2, 5) and (6, 13)?',
+       opts:['1','1.5','2','2.5'],ans:2,explain:'(13−5) ÷ (6−2) = 8 ÷ 4 = 2'},
+      {visual:{type:'info',lines:['Geometric sequence: 2, 6, 18, 54, …','Find the 6th term']},
+       q:'What is the 6th term of the geometric sequence 2, 6, 18, 54, …?',
+       opts:['162','324','486','648'],ans:2,explain:'Ratio = 3. 6th term = 2 × 3⁵ = 2 × 243 = 486'},
+    ]
+  }
+];
+
+// ── STORAGE ────────────────────────────────────────────────────────────────────
+const KEY = 'owl_maths_v2';
+const sv = v => { try { localStorage.setItem(KEY, JSON.stringify(v)); } catch(e){} };
+const ld = () => { try { const v = localStorage.getItem(KEY); return v ? JSON.parse(v) : null; } catch(e){ return null; } };
+
+// progress[missionId][level]['easy'|'med'|'hard'] = array of true/false per question
+let progress = ld() || MISSIONS.map(() => ({ easy:[], med:[], hard:[] }));
+// ensure structure
+MISSIONS.forEach((m,i) => {
+  if(!progress[i]) progress[i] = { easy:[], med:[], hard:[] };
+  ['easy','med','hard'].forEach(l => { if(!progress[i][l]) progress[i][l] = []; });
+});
+
+let currentLevel = 'easy';
+let currentMission = 0;
+let currentStep = 0;
+let currentSteps = [];
+let answered = false;
+
+// ── HELPERS ────────────────────────────────────────────────────────────────────
+const RANKS = ['Recruit','Lance Corporal','Corporal','Sergeant','Staff Sergeant','Lieutenant','Captain','Major','Colonel','General'];
+
+function levelScore(level) {
+  // returns {correct, total} across all missions for a given level
+  let correct = 0, total = 0;
+  MISSIONS.forEach((m, i) => {
+    const steps = m[level];
+    total += steps.length;
+    const p = progress[i][level];
+    correct += p.filter(Boolean).length;
+  });
+  return { correct, total };
+}
+
+function levelComplete(level) {
+  const { correct, total } = levelScore(level);
+  return total > 0 && correct === total;
+}
+
+function missionLevelPerfect(mIdx, level) {
+  const steps = MISSIONS[mIdx][level];
+  const p = progress[mIdx][level];
+  return steps.length > 0 && p.length === steps.length && p.every(Boolean);
+}
+
+function overallPct() {
+  let correct = 0, total = 0;
+  ['easy','med','hard'].forEach(l => {
+    const s = levelScore(l);
+    correct += s.correct;
+    total += s.total;
+  });
+  return total > 0 ? Math.round((correct / total) * 100) : 0;
+}
+
+function getRank(pct) {
+  if(pct>=100)return RANKS[9];if(pct>=88)return RANKS[8];if(pct>=75)return RANKS[7];
+  if(pct>=62)return RANKS[6];if(pct>=50)return RANKS[5];if(pct>=38)return RANKS[4];
+  if(pct>=28)return RANKS[3];if(pct>=18)return RANKS[2];if(pct>=8)return RANKS[1];
+  return RANKS[0];
+}
+
+// ── HOME ───────────────────────────────────────────────────────────────────────
+function updateHome() {
+  const pct = overallPct();
+  document.getElementById('overall-pct').textContent = pct + '%';
+  document.getElementById('rank-name').textContent = getRank(pct);
+
+  const easyDone = levelComplete('easy');
+  const medDone  = levelComplete('med');
+
+  // Tab states
+  const tabMed  = document.getElementById('tab-med');
+  const tabHard = document.getElementById('tab-hard');
+  const lockMed  = document.getElementById('lock-med');
+  const lockHard = document.getElementById('lock-hard');
+
+  if(easyDone) {
+    tabMed.classList.remove('locked');
+    tabMed.classList.add('active-med');
+    lockMed.textContent = '🟠';
+  } else {
+    tabMed.classList.add('locked');
+    tabMed.classList.remove('active-med');
+    lockMed.textContent = '🔒';
+  }
+  if(easyDone && medDone) {
+    tabHard.classList.remove('locked');
+    tabHard.classList.add('active-hard');
+    lockHard.textContent = '🔴';
+  } else {
+    tabHard.classList.add('locked');
+    tabHard.classList.remove('active-hard');
+    lockHard.textContent = '🔒';
+  }
+
+  buildMissionList();
+}
+
+function switchLevel(level) {
+  const easyDone = levelComplete('easy');
+  const medDone  = levelComplete('med');
+  if(level === 'med' && !easyDone) return;
+  if(level === 'hard' && !(easyDone && medDone)) return;
+  currentLevel = level;
+  buildMissionList();
+}
+
+function buildMissionList() {
+  const easyDone = levelComplete('easy');
+  const medDone  = levelComplete('med');
+
+  // Update tab active state
+  ['easy','med','hard'].forEach(l => {
+    const tab = document.getElementById('tab-' + l);
+    tab.style.fontWeight = l === currentLevel ? '900' : '700';
+    tab.style.opacity = l === currentLevel ? '1' : (tab.classList.contains('locked') ? '0.45' : '0.7');
+  });
+
+  const levelLabels = { easy:'EASY MISSIONS', med:'MEDIUM MISSIONS', hard:'HARD MISSIONS' };
+  document.getElementById('missions-label').textContent = levelLabels[currentLevel];
+
+  const statusEl = document.getElementById('level-status');
+  const { correct, total } = levelScore(currentLevel);
+  const pct = total > 0 ? Math.round((correct/total)*100) : 0;
+
+  if(currentLevel === 'easy') {
+    statusEl.className = 'level-status easy';
+    statusEl.innerHTML = easyDone
+      ? '✅ Easy complete! Medium level is now unlocked.'
+      : `🟢 Easy level: ${correct}/${total} correct (${pct}%) — need 100% to unlock Medium`;
+  } else if(currentLevel === 'med') {
+    statusEl.className = 'level-status med';
+    statusEl.innerHTML = medDone
+      ? '✅ Medium complete! Hard level is now unlocked.'
+      : `🟠 Medium level: ${correct}/${total} correct (${pct}%) — need 100% to unlock Hard`;
+  } else {
+    statusEl.className = 'level-status hard';
+    statusEl.innerHTML = (easyDone && medDone && levelComplete('hard'))
+      ? '🏆 HARD COMPLETE! You have earned the €100 prize!'
+      : `🔴 Hard level: ${correct}/${total} correct (${pct}%) — 100% earns the €100 prize!`;
+  }
+
+  const list = document.getElementById('missions-list');
+  list.innerHTML = '';
+
+  MISSIONS.forEach((m, i) => {
+    const steps = m[currentLevel];
+    const p = progress[i][currentLevel];
+    const done = p.filter(Boolean).length;
+    const perfect = missionLevelPerfect(i, currentLevel);
+    const attempted = p.length > 0;
+
+    const btnClass = perfect ? 'done-btn' : (currentLevel==='easy'?'easy-btn':currentLevel==='med'?'med-btn':'hard-btn');
+    const btnText  = perfect ? '✅ Perfect! Play again' : (attempted ? '🔄 Retry mission' : 'Start Mission →');
+
+    const scoreHtml = attempted
+      ? `<span class="correct">${done} correct</span> / ${steps.length} questions`
+      : `${steps.length} questions`;
+
+    const card = document.createElement('div');
+    card.className = 'mission-card unlocked';
+    card.innerHTML = `
+      <div class="mc-top">
+        <span class="mc-icon">${m.emoji}</span>
+        <div class="mc-info">
+          <div class="mc-title">${m.title}</div>
+          <div class="mc-sub">${m.sub}</div>
+        </div>
+      </div>
+      <div class="mc-score">${scoreHtml}</div>
+      <button class="start-btn ${btnClass}" onclick="startMission(${i})">${btnText}</button>`;
+    list.appendChild(card);
+  });
+}
+
+// ── MISSION ────────────────────────────────────────────────────────────────────
+function startMission(i) {
+  currentMission = i;
+  currentStep = 0;
+  currentSteps = MISSIONS[i][currentLevel];
+  answered = false;
+  showStep();
+}
+
+function showStep() {
+  const m = MISSIONS[currentMission];
+  const step = currentSteps[currentStep];
+  const levelNames = { easy:'🟢 EASY LEVEL', med:'🟠 MEDIUM LEVEL', hard:'🔴 HARD LEVEL' };
+
+  document.getElementById('mh-icon').textContent = m.emoji;
+  document.getElementById('mh-title').textContent = m.title;
+  document.getElementById('mh-sub').textContent = m.sub;
+  document.getElementById('step-counter').textContent = `${currentStep+1}/${currentSteps.length}`;
+
+  const strip = document.getElementById('diff-strip');
+  strip.textContent = levelNames[currentLevel];
+  strip.className = 'diff-strip ' + currentLevel;
+
+  // Dots
+  const dots = document.getElementById('progress-dots');
+  dots.innerHTML = '';
+  currentSteps.forEach((_, i) => {
+    const d = document.createElement('div');
+    const p = progress[currentMission][currentLevel];
+    const wasDone = p[i] !== undefined;
+    d.className = 'dot' + (i === currentStep ? ' active ' + currentLevel : wasDone ? (p[i] ? ' done-correct' : ' done-wrong') : '');
+    dots.appendChild(d);
+  });
+
+  renderVisual(step.visual);
+  document.getElementById('question-text').textContent = step.q;
+
+  const opts = document.getElementById('options');
+  opts.innerHTML = '';
+  step.opts.forEach((o, i) => {
+    const btn = document.createElement('div');
+    btn.className = 'option';
+    btn.innerHTML = `<span class="opt-letter">${String.fromCharCode(65+i)}.</span>${o}`;
+    btn.onclick = () => doAnswer(i, btn, step);
+    opts.appendChild(btn);
+  });
+
+  document.getElementById('feedback').style.display = 'none';
+  document.getElementById('next-btn').style.display = 'none';
+  answered = false;
+  showScreen('mission');
+}
+
+function doAnswer(i, btn, step) {
+  if(answered) return;
+  answered = true;
+  const correct = i === step.ans;
+  progress[currentMission][currentLevel][currentStep] = correct;
+  sv(progress);
+
+  document.querySelectorAll('.option').forEach((o, idx) => {
+    o.classList.add('disabled');
+    if(idx === step.ans) o.classList.add('correct');
+    else if(idx === i && !correct) o.classList.add('wrong');
+  });
+
+  const fb = document.getElementById('feedback');
+  if(correct) {
+    fb.textContent = '✓ Correct! ' + (step.explain || '');
+    fb.className = 'feedback correct-fb';
+  } else {
+    fb.textContent = `✗ Not quite. Correct: ${step.opts[step.ans]}. ${step.explain || ''}`;
+    fb.className = 'feedback wrong-fb';
+  }
+  fb.style.display = 'block';
+  document.getElementById('next-btn').style.display = 'block';
+}
+
+function nextStep() {
+  if(currentStep < currentSteps.length - 1) {
+    currentStep++;
+    showStep();
+  } else {
+    showComplete();
+  }
+}
+
+function showComplete() {
+  const p = progress[currentMission][currentLevel];
+  const correct = p.filter(Boolean).length;
+  const total = currentSteps.length;
+  const perfect = correct === total;
+  const pct = Math.round((correct/total)*100);
+
+  const easyDone = levelComplete('easy');
+  const medDone  = levelComplete('med');
+  const allDone  = easyDone && medDone && levelComplete('hard');
+
+  let icon, titleClass, title, sub, next;
+
+  if(allDone) {
+    icon = '🏆'; titleClass = 'perfect'; title = '€100 PRIZE EARNED!';
+    sub = 'Outstanding, General! You completed ALL missions at ALL levels with 100%. You have earned your €100 reward!';
+    next = '';
+  } else if(perfect) {
+    icon = '🎖️'; titleClass = 'perfect'; title = 'Perfect Score!';
+    sub = `You got ${correct}/${total} on this mission at ${currentLevel === 'easy' ? 'Easy' : currentLevel === 'med' ? 'Medium' : 'Hard'} level!`;
+    if(currentLevel === 'easy' && easyDone) next = '🟠 Easy level is 100% complete! <strong>Medium level is now unlocked.</strong>';
+    else if(currentLevel === 'med' && medDone) next = '🔴 Medium level is 100% complete! <strong>Hard level is now unlocked.</strong>';
+    else if(currentLevel === 'hard') next = '🔴 Keep going — complete all Hard missions for the €100 prize!';
+    else next = `Keep going — complete all ${currentLevel === 'easy' ? 'Easy' : 'Medium'} missions at 100% to unlock the next level.`;
+  } else {
+    icon = '💪'; titleClass = 'retry'; title = 'Keep Training!';
+    sub = `You got ${correct}/${total} on this mission. You need <strong>100%</strong> on all ${currentLevel} questions to unlock the next level.`;
+    next = 'Retry this mission to improve your score.';
+  }
+
+  document.getElementById('complete-icon').textContent = icon;
+  document.getElementById('complete-title').className = 'complete-title ' + titleClass;
+  document.getElementById('complete-title').textContent = title;
+  document.getElementById('complete-score').textContent = pct + '%';
+  document.getElementById('complete-sub').innerHTML = sub;
+  document.getElementById('complete-next').innerHTML = next;
+
+  updateHome();
+  showScreen('complete');
+}
+
+// ── VISUAL RENDERER ────────────────────────────────────────────────────────────
+function renderVisual(v) {
+  const vc = document.getElementById('visual-card');
+  if(!v) { vc.style.display='none'; return; }
+  vc.style.display = 'block';
+
+  if(v.type === 'boxadd') {
+    const html = v.items.map(item => item.op
+      ? `<span class="op-symbol">${item.op}</span>`
+      : `<div class="supply-box"><div class="sb-num">${item.num}</div><div class="sb-unit">${item.unit||''}</div><div class="sb-label">${item.label||''}</div></div>`
+    ).join('');
+    vc.innerHTML = `<div class="box-row">${html}</div>`;
+  } else if(v.type === 'formula') {
+    vc.innerHTML = `<div class="formula-box">${v.formula}</div>`;
+  } else if(v.type === 'info') {
+    vc.innerHTML = `<div class="info-box">${v.lines.map(l=>`<div>${l}</div>`).join('')}</div>`;
+  } else if(v.type === 'distline') {
+    let html = '<div class="dl-row">';
+    v.nodes.forEach(n => {
+      if(n.dist !== undefined) html += `<div class="dl-seg"><div class="dl-dist">${n.dist}</div><div class="dl-line ${n.color}"></div></div>`;
+      else html += `<div class="dl-node"><div class="dl-dot ${n.color}"></div><div class="dl-label ${n.color}">${n.label}</div></div>`;
+    });
+    html += '</div>';
+    if(v.total) html += `<div class="dl-total">${v.total}</div>`;
+    vc.innerHTML = html;
+  } else if(v.type === 'grid') {
+    const rows = [];
+    let count = 0;
+    while(count < v.total) {
+      const row = [];
+      for(let i=0; i<10 && count<v.total; i++,count++) {
+        row.push(`<div class="grid-cell ${count<v.eaten?'eaten':'left'}">${count<v.eaten?'✕':''}</div>`);
+      }
+      rows.push(`<div class="grid-row-x">${row.join('')}</div>`);
+    }
+    vc.innerHTML = `<div class="grid-wrap">${rows.join('')}<div class="grid-labels"><span class="gl-eaten">Group A: ${v.eaten}</span><span class="gl-left">Group B: ${v.total-v.eaten}</span></div></div>`;
+  }
+}
+
+// ── NAV ────────────────────────────────────────────────────────────────────────
+function goHome() { updateHome(); showScreen('home'); }
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+// ── INIT ───────────────────────────────────────────────────────────────────────
+updateHome();
+</script>
+</body>
+</html>
