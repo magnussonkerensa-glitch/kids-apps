@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Morning Grind</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@400;500;600&display=swap');
+:root{--black:#0a0a0a;--dark:#111317;--card:#1a1d23;--border:#2a2d35;--neon:#c8ff00;--orange:#ff6b35;--blue:#4fc3f7;--white:#f0f0f0;--muted:#888;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;min-height:100vh;overflow-x:hidden;}
+.screen{display:none;min-height:100vh;}.screen.active{display:flex;flex-direction:column;}
+#home{align-items:center;justify-content:center;text-align:center;padding:2rem;position:relative;overflow:hidden;}
+#home::before{content:'';position:absolute;top:-200px;left:50%;transform:translateX(-50%);width:600px;height:600px;background:radial-gradient(circle,rgba(200,255,0,.08),transparent 70%);pointer-events:none;}
+.home-badge{font-family:'Barlow Condensed',sans-serif;font-size:.75rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--neon);border:1px solid var(--neon);padding:.3rem .8rem;border-radius:2px;display:inline-block;margin-bottom:1.5rem;}
+.home-title{font-family:'Barlow Condensed',sans-serif;font-size:clamp(4rem,15vw,8rem);font-weight:900;line-height:.9;text-transform:uppercase;margin-bottom:.5rem;}
+.home-title span{color:var(--neon);}
+.home-subtitle{font-size:1rem;color:var(--muted);margin-bottom:2.5rem;}
+.home-stats{display:flex;gap:2rem;justify-content:center;margin-bottom:3rem;}
+.stat{text-align:center;}
+.stat-num{font-family:'Barlow Condensed',sans-serif;font-size:2rem;font-weight:900;color:var(--neon);line-height:1;}
+.stat-label{font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;}
+.btn-primary{background:var(--neon);color:var(--black);border:none;padding:1rem 2.5rem;font-family:'Barlow Condensed',sans-serif;font-size:1.2rem;font-weight:900;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;border-radius:3px;transition:transform .15s,box-shadow .15s;}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(200,255,0,.3);}
+.btn-secondary{background:transparent;color:var(--white);border:1px solid var(--border);padding:.7rem 1.5rem;font-family:'Barlow Condensed',sans-serif;font-size:1rem;font-weight:700;text-transform:uppercase;cursor:pointer;border-radius:3px;}
+.btn-secondary:hover{border-color:var(--neon);color:var(--neon);}
+#dayselect{padding:2rem;}
+.page-header{display:flex;align-items:center;gap:1rem;margin-bottom:2rem;}
+.back-btn{background:none;border:1px solid var(--border);color:var(--muted);padding:.4rem .8rem;font-size:.9rem;cursor:pointer;border-radius:2px;}
+.back-btn:hover{color:var(--white);border-color:var(--white);}
+.page-title{font-family:'Barlow Condensed',sans-serif;font-size:1.8rem;font-weight:900;text-transform:uppercase;}
+.days-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem;}
+.day-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1.5rem;cursor:pointer;transition:border-color .2s,transform .15s;position:relative;overflow:hidden;}
+.day-card::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--neon);transform:scaleX(0);transform-origin:left;transition:transform .2s;}
+.day-card:hover{border-color:var(--neon);transform:translateY(-2px);}
+.day-card:hover::after{transform:scaleX(1);}
+.day-num{font-family:'Barlow Condensed',sans-serif;font-size:.75rem;font-weight:700;letter-spacing:.15em;color:var(--neon);text-transform:uppercase;margin-bottom:.3rem;}
+.day-name{font-family:'Barlow Condensed',sans-serif;font-size:1.4rem;font-weight:900;text-transform:uppercase;margin-bottom:.5rem;}
+.day-tags{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:.8rem;}
+.tag{font-size:.65rem;font-weight:600;text-transform:uppercase;padding:.2rem .5rem;border-radius:2px;background:rgba(200,255,0,.1);color:var(--neon);border:1px solid rgba(200,255,0,.2);}
+.tag.orange{background:rgba(255,107,53,.1);color:var(--orange);border-color:rgba(255,107,53,.2);}
+.tag.blue{background:rgba(79,195,247,.1);color:var(--blue);border-color:rgba(79,195,247,.2);}
+.day-meta{font-size:.8rem;color:var(--muted);display:flex;gap:1rem;}
+.completed-badge{position:absolute;top:1rem;right:1rem;width:28px;height:28px;background:var(--neon);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.8rem;color:var(--black);font-weight:900;}
+#workout{padding:0;}
+.workout-header{background:var(--dark);border-bottom:1px solid var(--border);padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;position:sticky;top:0;z-index:100;}
+.workout-progress{flex:1;max-width:200px;}
+.progress-label{font-size:.7rem;color:var(--muted);margin-bottom:.3rem;text-transform:uppercase;letter-spacing:.1em;}
+.progress-bar{height:4px;background:var(--border);border-radius:2px;}
+.progress-fill{height:100%;background:var(--neon);border-radius:2px;transition:width .4s;}
+.workout-timer{font-family:'Barlow Condensed',sans-serif;font-size:2rem;font-weight:900;color:var(--neon);min-width:60px;text-align:right;}
+.workout-body{padding:1.5rem;flex:1;}
+.exercise-card{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:1rem;}
+.exercise-visual{width:100%;height:265px;position:relative;background:#0d0f13;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.exercise-visual svg{width:100%;height:100%;}
+.yt-badge{position:absolute;bottom:.7rem;right:.7rem;background:rgba(0,0,0,.8);color:var(--neon);text-decoration:none;border:1px solid rgba(200,255,0,.4);padding:.35rem .8rem;border-radius:3px;font-family:'Barlow Condensed',sans-serif;font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;}
+.yt-badge:hover{background:rgba(200,255,0,.2);}
+.muscles-badge{position:absolute;top:.7rem;left:.7rem;background:rgba(0,0,0,.75);color:var(--orange);font-family:'Barlow Condensed',sans-serif;font-size:.65rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:.25rem .6rem;border-radius:2px;border:1px solid rgba(255,107,53,.35);}
+.exercise-info{padding:1.2rem 1.5rem;}
+.exercise-num{font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.15em;margin-bottom:.3rem;}
+.exercise-name{font-family:'Barlow Condensed',sans-serif;font-size:1.8rem;font-weight:900;text-transform:uppercase;margin-bottom:.2rem;}
+.muscles-worked{font-size:.75rem;color:var(--orange);font-weight:600;margin-bottom:.6rem;text-transform:uppercase;letter-spacing:.08em;}
+.exercise-desc{font-size:.85rem;color:var(--muted);line-height:1.5;margin-bottom:1rem;}
+.exercise-reps{display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:1rem;}
+.rep-block{background:rgba(200,255,0,.08);border:1px solid rgba(200,255,0,.15);border-radius:6px;padding:.6rem 1rem;text-align:center;}
+.rep-num{font-family:'Barlow Condensed',sans-serif;font-size:1.8rem;font-weight:900;color:var(--neon);line-height:1;}
+.rep-label{font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;}
+.tips-box{background:rgba(79,195,247,.06);border-left:3px solid var(--blue);padding:.7rem 1rem;border-radius:0 4px 4px 0;font-size:.8rem;color:var(--blue);line-height:1.4;}
+.workout-nav{position:sticky;bottom:0;background:var(--dark);border-top:1px solid var(--border);padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;}
+.ex-counter{font-family:'Barlow Condensed',sans-serif;font-size:1rem;color:var(--muted);text-align:center;flex:1;}
+.ex-counter strong{color:var(--white);font-size:1.2rem;}
+.btn-done{background:var(--neon);color:var(--black);border:none;padding:.8rem 1.5rem;font-family:'Barlow Condensed',sans-serif;font-size:1.1rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;border-radius:4px;flex:1;max-width:200px;transition:transform .1s;}
+.btn-done:active{transform:scale(.96);}
+.btn-done.flash{animation:doneFlash .5s ease forwards;}
+@keyframes doneFlash{0%{background:var(--neon);transform:scale(1);}20%{background:#fff;transform:scale(1.08);box-shadow:0 0 35px rgba(200,255,0,.9);}60%{background:var(--neon);transform:scale(1.03);}100%{background:var(--neon);transform:scale(1);}}
+.btn-prev{background:var(--card);color:var(--white);border:1px solid var(--border);padding:.8rem 1rem;font-family:'Barlow Condensed',sans-serif;font-size:1rem;font-weight:700;text-transform:uppercase;cursor:pointer;border-radius:4px;flex-shrink:0;}
+.btn-prev:disabled{opacity:.3;cursor:default;}
+#cheerOverlay{display:none;position:fixed;inset:0;pointer-events:none;z-index:300;align-items:center;justify-content:center;}
+#cheerOverlay.active{display:flex;}
+.cheer-msg{font-family:'Barlow Condensed',sans-serif;font-size:clamp(3rem,12vw,6rem);font-weight:900;text-transform:uppercase;color:var(--neon);text-shadow:0 0 40px rgba(200,255,0,.7);animation:cheerPop .7s cubic-bezier(.175,.885,.32,1.275) forwards;text-align:center;line-height:1;}
+@keyframes cheerPop{0%{opacity:0;transform:scale(.4) rotate(-5deg);}60%{opacity:1;transform:scale(1.1) rotate(2deg);}80%{transform:scale(.95);}100%{opacity:1;transform:scale(1);}}
+.cheer-fade-out{animation:cheerFade .4s ease forwards !important;}
+@keyframes cheerFade{to{opacity:0;transform:scale(1.1);}}
+#confettiCanvas{position:fixed;inset:0;pointer-events:none;z-index:299;}
+.rest-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:200;flex-direction:column;align-items:center;justify-content:center;text-align:center;}
+.rest-overlay.active{display:flex;}
+.rest-title{font-family:'Barlow Condensed',sans-serif;font-size:1rem;color:var(--muted);text-transform:uppercase;letter-spacing:.2em;margin-bottom:.5rem;}
+.rest-timer{font-family:'Barlow Condensed',sans-serif;font-size:7rem;font-weight:900;color:var(--neon);line-height:1;margin-bottom:.5rem;}
+.rest-next{font-size:.85rem;color:var(--muted);margin-bottom:2rem;}
+.rest-next strong{color:var(--white);}
+.music-player{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:.8rem 1rem;display:flex;align-items:center;gap:.8rem;margin-bottom:1.2rem;}
+.music-info{flex:1;}
+.music-track{font-size:.8rem;font-weight:600;}
+.music-label{font-size:.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;}
+.music-btn{background:none;border:1px solid var(--border);color:var(--white);width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:.8rem;display:flex;align-items:center;justify-content:center;}
+.music-btn:hover{border-color:var(--neon);color:var(--neon);}
+#finish{align-items:center;justify-content:center;text-align:center;padding:2rem;position:relative;overflow:hidden;}
+#finish::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:500px;height:500px;background:radial-gradient(circle,rgba(200,255,0,.12),transparent 70%);pointer-events:none;}
+.finish-title{font-family:'Barlow Condensed',sans-serif;font-size:clamp(3rem,12vw,5rem);font-weight:900;text-transform:uppercase;color:var(--neon);line-height:.9;margin-bottom:.5rem;margin-top:1rem;}
+.finish-sub{color:var(--muted);margin-bottom:2rem;}
+.finish-stats{display:flex;gap:2rem;justify-content:center;margin-bottom:2.5rem;flex-wrap:wrap;}
+@media(max-width:480px){.days-grid{grid-template-columns:1fr;}.exercise-visual{height:210px;}.home-stats{gap:1.2rem;}}
+</style>
+</head>
+<body>
+<canvas id="confettiCanvas"></canvas>
+<div id="cheerOverlay"><div class="cheer-msg" id="cheerMsg"></div></div>
+
+<div id="home" class="screen active">
+  <div class="home-badge">🔥 Morning Grind</div>
+  <div class="home-title">7-Day<br><span>Workout</span></div>
+  <p class="home-subtitle">~20 mins · Full body · Abs focus · Knee-friendly</p>
+  <div class="home-stats">
+    <div class="stat"><div class="stat-num">7</div><div class="stat-label">Workouts</div></div>
+    <div class="stat"><div class="stat-num">20</div><div class="stat-label">Minutes</div></div>
+    <div class="stat"><div class="stat-num">8kg</div><div class="stat-label">Kettlebell</div></div>
+  </div>
+  <button class="btn-primary" onclick="showDaySelect()">Start Training →</button>
+</div>
+
+<div id="dayselect" class="screen">
+  <div class="page-header">
+    <button class="back-btn" onclick="showScreen('home')">← Back</button>
+    <div class="page-title">Choose Your Day</div>
+  </div>
+  <div class="days-grid" id="daysGrid"></div>
+</div>
+
+<div id="workout" class="screen">
+  <div class="workout-header">
+    <button class="back-btn" onclick="showDaySelect()">← Days</button>
+    <div class="workout-progress">
+      <div class="progress-label" id="workoutDayLabel">Day 1</div>
+      <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    </div>
+    <div class="workout-timer" id="workoutTimer">0:00</div>
+  </div>
+  <div class="workout-body">
+    <div class="music-player">
+      <div style="font-size:1.2rem">🎵</div>
+      <div class="music-info"><div class="music-track" id="musicTrack">Workout Mix</div><div class="music-label">Tap to open on YouTube</div></div>
+      <button class="music-btn" onclick="openMusic()">▶</button>
+    </div>
+    <div id="exerciseDisplay"></div>
+  </div>
+  <div class="workout-nav">
+    <button class="btn-prev" id="prevBtn" onclick="prevExercise()" disabled>← Prev</button>
+    <div class="ex-counter" id="exCounter"><strong>1</strong> / 1</div>
+    <button class="btn-done" id="nextBtn" onclick="nextExercise()">Done ✓</button>
+  </div>
+</div>
+
+<div id="finish" class="screen">
+  <div style="font-size:4rem">🏆</div>
+  <div class="finish-title">Crushed It!</div>
+  <p class="finish-sub" id="finishMsg">Day complete.</p>
+  <div class="finish-stats" id="finishStats"></div>
+  <button class="btn-primary" onclick="showDaySelect()" style="margin-bottom:1rem">More Workouts →</button><br>
+  <button class="btn-secondary" onclick="showScreen('home')" style="margin-top:1rem">Home</button>
+</div>
+
+<div class="rest-overlay" id="restOverlay">
+  <div class="rest-title">Rest Time</div>
+  <div class="rest-timer" id="restTimer">30</div>
+  <div class="rest-next">Up next: <strong id="nextExName">–</strong></div>
+  <button class="btn-secondary" onclick="skipRest()">Skip Rest</button>
+</div>
+
+<script>
+// ── COLOUR PALETTE FOR SVGs ───────────────────────────────────────────────────
+const BG='#0d0f13',BODY='#1e2530',OUTLINE='#3a4858',PRIME='#c8ff00',SEC='#ff6b35',REST='#1a2230',SKIN='#c8a882',SKIN2='#b8966e',HAIR='#3a2a1a';
+
+function svgWrap(content){
+  return `<svg viewBox="0 0 300 260" xmlns="http://www.w3.org/2000/svg"><rect width="300" height="260" fill="${BG}"/>${content}</svg>`;
+}
+function legend(p,s){
+  return `<rect x="12" y="244" width="11" height="11" rx="2" fill="${PRIME}"/><text x="27" y="253" font-size="9.5" font-family="Arial,sans-serif" fill="#d0d0d0">${p}</text>`
+        +(s?`<rect x="160" y="244" width="11" height="11" rx="2" fill="${SEC}"/><text x="175" y="253" font-size="9.5" font-family="Arial,sans-serif" fill="#d0d0d0">${s}</text>`:'');
+}
+function label(x,y,t,c=BG,sz=9){
+  return `<text x="${x}" y="${y}" fill="${c}" font-size="${sz}" font-weight="bold" text-anchor="middle" font-family="Arial,sans-serif">${t}</text>`;
+}
+
+// ── SVG LIBRARY ───────────────────────────────────────────────────────────────
+const SVGS = {
+
+pushup: svgWrap(`
+  <line x1="20" y1="212" x2="280" y2="212" stroke="${OUTLINE}" stroke-width="2"/>
+  <!-- feet -->
+  <ellipse cx="58" cy="208" rx="13" ry="5" fill="${SKIN2}"/>
+  <ellipse cx="76" cy="208" rx="13" ry="5" fill="${SKIN2}"/>
+  <!-- lower legs -->
+  <rect x="52" y="178" width="16" height="32" rx="6" fill="${BODY}" stroke="${OUTLINE}" stroke-width="1.5"/>
+  <rect x="70" y="178" width="16" height="32" rx="6" fill="${BODY}" stroke="${OUTLINE}" stroke-width="1.5"/>
+  <!-- glutes -->
+  <ellipse cx="97" cy="174" rx="20" ry="12" fill="${BODY}" stroke="${OUTLINE}" stroke-width="1.5"/>
+  <!-- CORE highlighted -->
+  <rect x="96" y="150" width="78" height="28" rx="8" fill="${PRIME}" stroke="${OUTLINE}" stroke-width="1.5" opacity=".85"/>
+  <!-- CHEST highlighted -->
+  <rect x="169" y="142" width="52" height="38" rx="8" fill="${PRIME}" stroke="${OUTLINE}" stroke-width="1.5"/>
+  <!-- shoulder -->
+  <ellipse cx="228" cy="150" rx="17" ry="13" fill="${PRIME}" stroke="${OUTLINE}" stroke-width="1.5"/>
+  <!-- TRICEP highlighted -->
+  <rect x="224" y="158" width="13" height="38" rx="6" fill="${SEC}" stroke="${OUTLINE}" stroke-width="1.5"/>
+  <!-- forearm -->
+  <rect x="222" y="193" width="12" height="18" rx="5" fill="${SKIN}" stroke="${OUTLINE}" stroke-width="1.5"/>
+  <!-- hand -->
+  <ellipse cx="228" cy="212" rx="10" ry="5" fill="${SKIN2}"/>
+  <!-- head -->
+  <ellipse cx="260" cy="132" rx="17" ry="19" fill="${SKIN}" stroke="${OUTLINE}" stroke-width="1.5"/>
+  <ellipse cx="260" cy="118" rx="16" ry="8" fill="${HAIR}"/>
+  ${label(135,168,'CORE')}${label(193,164,'CHEST')}${label(230,180,'TRI',BG,8)}
+  ${legend('Chest · Core','Triceps')}
+`),
+
+plank: svgWrap(`
+  <line x1="20" y1="218" x2="280" y2="218" stroke="${OUTLINE}" stroke-width="2"/>
+  <ellipse cx="58" cy="214" rx="14" ry="5" fill="${SKIN2}"/>
+  <ellipse cx="76" cy="214" rx="14" ry="5" fill="${SKIN2}"/>
+  <rect x="52" y="185" width="16" height="30" rx="6" fill="${BODY}" stroke="${OUTLINE}" stroke-width="1.5"/>
+  <rect x="70" y="185" width="16" height="30" rx="6" fill="${BODY}" stroke="${OUTLINE}" stroke-width="1.5"/>
+  <!-- GLUTES -->
+  <ellipse cx="97" cy="178" rx="18" ry="12" fill="${SEC}" stroke="${OUTLINE}" stroke-width="1.5"/>
+  <!-- CORE highlighted full length -->
+  <rect x="90" y="162" width="95" height="22" rx="8" fill="${PRIME}" stroke="${OUTLINE}" stroke-width="1.5" opacity=".9"/>
+  <!-- upper body -->
+  <rect x="178" y="152" width="48" height="36" rx="8" fill="${SEC}" stroke="${OUTLINE}" stroke-width="1.5" opacity=".8"/>
+  <ellipse cx="232" cy="162" rx="15" ry="13" fill="${SEC}" stroke="${OUTLINE}" stroke-width="1.5"/>
+  <!-- forearm on floor -->
+  <rect x="225" y="173" width="13" height="42" rx="5" fill="${SKIN}" stroke="${OUTLINE}" stroke-width="1.5"/>
+  <ellipse cx="231" cy="218" rx="15" ry="5" fill="${SKIN2}"/>
+  <!-- head -->
+  <ellipse cx="262" cy="137" rx="17" ry="19" fill="${SKIN}" stroke="${OUTLINE}" stroke-width="1.5"/>
+  <ellipse cx="262" cy="123" rx="16" ry="8" fill="${HAIR}"/>
+  ${label(137,176,'CORE')}${label(97,182,'GLUTES',BG,7)}${label(202,174,'SHOULDERS',BG,7)}
+  ${legend('Core','Shoulders · Glutes')}
+`),
+
+crunch: svgWrap(`
+  <line x1="20" y1="232" x2="280" y2="232" stroke="${OUTLINE}" stroke-width="2"/>
+  <!-- lower legs flat -->
+  <rect x="38" y="198" width="68" height="17" rx="8" fill="${BODY}" stroke="${OUTLINE}" stroke-width="1.5"/>
+  <!-- knees bent -->
+  <path d="M106 198 Q130 172 142 192" stroke="${BODY}" stroke-width="15" fill="none" stroke-linecap="round"/>
+  <ellipse cx="145" cy="196" rx="10" ry="8" fill="${SKIN2}"/>
+  <!-- lower back -->
+  <rect x="100" y="208" width="56" height="17" rx="8" fill="${BODY}" stroke="${OUTLINE}" stroke-width="1.5"/>
+  <!-- ABS highlighted - curling up -->
+  <path d="M152 208 Q172 178 192 162" stroke="${PRIME}" stroke-width="26" fill="none" stroke-linecap="round" opacity=".9"/>
+  <!-- chest -->
+  <ellipse cx="202" cy="154" rx="23" ry="15" fill="${SEC}" stroke="${OUTLINE}" stroke-width="1.5" opacity=".8"/>
+  <!-- arms behind head -->
+  <path d="M192 158 Q207 138 222 152" stroke="${BODY}" stroke-width="13" fill="none" stroke-linecap="round"/>
+  <!-- head -->
+  <ellipse cx="232" cy="142" rx="17" ry="19" fill="${SKIN}" stroke="${OUTLINE}" stroke-width="1.5"/>
+  <ellipse cx="232" cy="128" rx="15" ry="8" fill="${HAIR}"/>
+  ${label(172,192,'ABS')}
+  ${legend('Rectus Abdominis','Hip Flexors')}
+`),
+
+mountainclimber: svgWrap(`
+  <line x1="20" y1="222" x2="280" y2="222" stroke="${OUTLINE}" stroke-width="2"/>
+  <!-- back foot -->
+  <ellipse cx="55" cy="218" rx="13" ry="5" fill="${SKIN2}"/>
+  <rect x="48" y="188" width="16" height="32" rx="6" fill="${BODY}" stroke="${OUTLINE}" stroke-width="1.5"/>
+  <!-- back thigh -->
+  <rect x="64" y="178" width="16" height="32" rx="6" fill="${SEC}" stroke="${OUTLINE}" stroke-width="1.5"/>
+  <!-- driven knee/hip flexor highlighted -->
+  <path d="M78 178 Q106 155 124 175" stroke="${PRIME}" stroke-width="18" fill="none" stroke-linecap="round"/>
+  <!-- CORE highlighted -->
+  <rect x="86" y="152" width="84" height="28" rx="8" fill="${PRIME}" stroke="${OUTLINE}" stroke-width="1.5" opacity=".9"/>
+  <!-- chest -->
+  <rect x="164" y="143" width="48" height="36" rx="8" fill="${SEC}" stroke="${OUTLINE}" stroke-width="1.5" opacity=".8"/>
+  <ellipse cx="218" cy="155" rx="14" ry="12" fill="${SEC}" stroke="${OUTLINE}" stroke-width="1.5"/>
+  <!-- arm to floor -->
+  <rect x="214" y="165" width="13" height="45" rx="5" fill="${BODY}" stroke="${OUTLINE}" stroke-width="1.5"/>
+  <ellipse cx="220" cy="214" rx="13" ry="5" fill="${SKIN2}"/>
+  <!-- head -->
+  <ellipse cx="250" cy="130" rx="16" ry="18" fill="${SKIN}" stroke="${OUTLINE}" stroke-width="1.5"/>
+  <ellipse cx="250" cy="117" rx="15" ry="7" fill="${HAIR}"/>
+  ${label(128,170,'CORE')}${label(78,170,'HIP',PRIME,8)}
+  ${legend('Core · Hip Flexors','Shoulders')}
+`),
+
+glutebridge: svgWrap(`
+  <line x1="20" y1="232" x2="280" y2="232" stroke="${OUTLINE}" stroke-width="2"/>
+  <!-- upper back/shoulders flat -->
+  <rect x="192" y="212" width="68" height="17" rx="8" fill="${BODY}" stroke="${OUTLINE}" stroke-width="1.5"/>
+  <!-- head -->
+  <ellipse cx="268" cy="206" rx="16" ry="17" fill="${SKIN}" stroke="${OUTLINE}" stroke-width="1.5"/>
+  <ellipse cx="268" cy="193" rx="14" ry="7" fill="${HAIR}"/>
+  <!-- torso rising -->
+  <path d="M198 218 Q173 194 158 178" stroke="${BODY}" stroke-width="26" fill="none" stroke-linecap="round"/>
+  <!-- GLUTES at top -->
+  <ellipse cx="147" cy="164" rx="30" ry="21" fill="${PRIME}" stroke="${OUTLINE}" stroke-width="2"/>
+  <!-- HAMSTRINGS -->
+  <path d="M128 176 Q104 186 88 212" stroke="${PRIME}" stroke-width="19" fill="none" stroke-linecap="round" opacity=".85"/>
+  <path d="M163 180 Q148 188 138 212" stroke="${PRIME}" stroke-width="19" fill="none" stroke-linecap="round" opacity=".85"/>
+  <!-- lower legs -->
+  <rect x="58" y="202" width="17" height="32" rx="7" fill="${BODY}" stroke="${OUTLINE}" stroke-width="1.5"/>
+  <rect x="116" y="202" width="17" height="32" rx="7" fill="${BODY}" stroke="${OUTLINE}" stroke-width="1.5"/>
+  <ellipse cx="67" cy="234" rx="14" ry="6" fill="${SKIN2}"/>
+  <ellipse cx="125" cy="234" rx="14" ry="6" fill="${SKIN2}"/>
+  ${label(147,169,'GLUTES')}${label(106,198,'HAMS',BG,8)}
+  ${legend('Glutes · Hamstrings','Lower Back')}
+`),
+
+kbswing: svgWrap(`
+  <line x1="20" y1="242" x2="280" y2="242" stroke="${OUTLINE}" stroke-width="2"/>
+  <!-- feet -->
+  <ellipse cx="78" cy="238" rx="15" ry="6" fill="${SKIN2}"/>
+  <ellipse cx="128" cy="238" rx="15" ry="6" fill="${SKIN2}"/>
+  <!-- lower legs -->
+  <rect x="70" y="196" width="17" height="44" rx="7" fill="${BODY}" stroke="${OUTLINE}" stroke-width="1.5"/>
+  <rect x="120" y="196" width="17" height="44" rx="7" fill="${BODY}" stroke="${OUTLINE}" stroke-width="1.5"/>
+  <!-- HAMSTRINGS highlighted -->
+  <path d="M74 196 Q90 168 103 150" stroke="${PRIME}" stroke-width="19" fill="none" stroke-linecap="round" opacity=".9"/>
+  <path d="M134 196 Q118 168 103 150" stroke="${PRIME}" stroke-width="19" fill="none" stroke-linecap="round" opacity=".9"/>
+  <!-- GLUTES -->
+  <ellipse cx="103" cy="144" rx="30" ry="19" fill="${PRIME}" stroke="${OUTLINE}" stroke-width="2"/>
+  <!-- LOWER BACK -->
+  <rect x="86" y="114" width="34" height="32" rx="8" fill="${PRIME}" stroke="${OUTLINE}" stroke-width="1.5" opacity=".85"/>
+  <!-- torso forward -->
+  <path d="M103 114 Q128 92 162 77" stroke="${SEC}" stroke-width="27" fill="none" stroke-linecap="round"/>
+  <!-- shoulder -->
+  <ellipse cx="168" cy="70" rx="17" ry="13" fill="${SEC}" stroke="${OUTLINE}" stroke-width="1.5"/>
+  <!-- arms -->
+  <path d="M162 79 Q152 106 133 126" stroke="${BODY}" stroke-width="13" fill="none" stroke-linecap="round"/>
+  <path d="M172 79 Q165 106 146 128" stroke="${BODY}" stroke-width="13" fill="none" stroke-linecap="round"/>
+  <!-- kettlebell -->
+  <rect x="127" y="122" width="28" height="23" rx="5" fill="#4a4a4a" stroke="#777" stroke-width="2"/>
+  <path d="M135 122 Q141 112 147 122" stroke="#777" stroke-width="4" fill="none"/>
+  <!-- head -->
+  <ellipse cx="185" cy="54" rx="16" ry="18" fill="${SKIN}" stroke="${OUTLINE}" stroke-width="1.5"/>
+  <ellipse cx="185" cy="41" rx="15" ry="7" fill="${HAIR}"/>
+  ${label(103,148,'GLUTES')}${label(103,130,'BACK',BG,8)}${label(88,188,'HAMS',PRIME,8)}
+  ${legend('Glutes · Hamstrings · Back','')}
+`),
+
+goblet: svgWrap(`
+  <line x1="20" y1="242" x2="280" y2="242" stroke="${OUTLINE}" stroke-width="2"/>
+  <ellipse cx="70" cy="237" rx="17" ry="6" fill="${SKIN2}"/>
+  <ellipse cx="196" cy="237" rx="17" ry="6" fill="${SKIN2}"/>
+  <rect x="62" y="196" width="17" height="43" rx="7" fill="${BODY}" stroke="${OUTLINE}" stroke-width="1.5"/>
+  <rect x="186" y="196" width="17" height="43" rx="7" fill="${BODY}" stroke="${OUTLINE}" stroke-width="1.5"/>
+  <!-- QUADS highlighted -->
+  <path d="M66 196 Q52 162 77 140" stroke="${PRIME}" stroke-width="23" fill="none" stroke-linecap="round" opacity=".9"/>
+  <path d="M199 196 Q214 162 188 140" stroke="${PRIME}" stroke-width="23" fill="none" stroke-linecap="round" opacity=".9"/>
+  <!-- GLUTES -->
+  <ellipse cx="132" cy="150" rx="50" ry="21" fill="${PRIME}" stroke="${OUTLINE}" stroke-width="2" opacity=".9"/>
+  <!-- CORE -->
+  <rect x="108" y="106" width="48" height="46" rx="10" fill="${SEC}" stroke="${OUTLINE}" stroke-width="1.5" opacity=".85"/>
+  <!-- chest -->
+  <rect x="106" y="90" width="52" height="20" rx="8" fill="${SEC}" stroke="${OUTLINE}" stroke-width="1.5" opacity=".75"/>
+  <!-- arms -->
+  <path d="M110 95 Q93 96 86 112" stroke="${BODY}" stroke-width="13" fill="none" stroke-linecap="round"/>
+  <path d="M156 95 Q174 96 180 112" stroke="${BODY}" stroke-width="13" fill="none" stroke-linecap="round"/>
+  <!-- kettlebell -->
+  <rect x="116" y="108" width="32" height="26" rx="6" fill="#4a4a4a" stroke="#777" stroke-width="2"/>
+  <path d="M124 108 Q132 97 140 108" stroke="#777" stroke-width="4" fill="none"/>
+  <!-- head -->
+  <ellipse cx="132" cy="70" rx="19" ry="21" fill="${SKIN}" stroke="${OUTLINE}" stroke-width="1.5"/>
+  <ellipse cx="132" cy="54" rx="17" ry="8" fill="${HAIR}"/>
+  ${label(70,170,'QUAD')}${label(196,170,'QUAD')}${label(132,154,'GLUTES')}
+  ${legend('Quads · Glutes','Core · Adductors')}
+`),
+
+deadbug: svgWrap(`
+  <line x1="20" y1="238" x2="280" y2="238" stroke="${OUTLINE}" stroke-width="2"/>
+  <!-- body torso highlighted -->
+  <rect x="80" y="165" width="128" height="27" rx="12" fill="${PRIME}" stroke="${OUTLINE}" stroke-width="1.5" opacity=".85"/>
+  <!-- head -->
+  <ellipse cx="222" cy="172" rx="18" ry="20" fill="${SKIN}" stroke="${OUTLINE}" stroke-width="1.5"/>
+  <ellipse cx="222" cy="157" rx="16" ry="8" fill="${HAIR}"/>
+  <!-- left arm up -->
+  <rect x="53" y="118" width="13" height="50" rx="6" fill="${SEC}" stroke="${OUTLINE}" stroke-width="1.5"/>
+  <rect x="54" y="88" width="11" height="32" rx="5" fill="${SKIN}" stroke="${OUTLINE}" stroke-width="1.5"/>
+  <!-- right arm up (closer to body) -->
+  <rect x="106" y="116" width="13" height="50" rx="6" fill="${BODY}" stroke="${OUTLINE}" stroke-width="1.5"/>
+  <rect x="107" y="86" width="11" height="32" rx="5" fill="${SKIN}" stroke="${OUTLINE}" stroke-width="1.5"/>
+  <!-- bent knee -->
+  <path d="M93 190 Q76 175 66 184" stroke="${BODY}" stroke-width="16" fill="none" stroke-linecap="round"/>
+  <rect x="40" y="182" width="15" height="30" rx="6" fill="${BODY}" stroke="${OUTLINE}" stroke-width="1.5"/>
+  <!-- extended leg highlighted -->
+  <rect x="88" y="192" width="15" height="47" rx="6" fill="${PRIME}" stroke="${OUTLINE}" stroke-width="1.5" opacity=".8"/>
+  <ellipse cx="96" cy="241" rx="12" ry="5" fill="${SKIN2}"/>
+  ${label(143,182,'DEEP CORE')}
+  ${legend('Deep Core · Transverse Abs','')}
+`),
+
+legrise: svgWrap(`
+  <line x1="20" y1="237" x2="280" y2="237" stroke="${OUTLINE}" stroke-width="2"/>
+  <!-- upper body flat -->
+  <rect x="148" y="207" width="108" height="21" rx="10" fill="${BODY}" stroke="${OUTLINE}" stroke-width="1.5"/>
+  <ellipse cx="265" cy="210" rx="17" ry="18" fill="${SKIN}" stroke="${OUTLINE}" stroke-width="1.5"/>
+  <ellipse cx="265" cy="196" rx="15" ry="7" fill="${HAIR}"/>
+  <!-- arms flat -->
+  <rect x="180" y="220" width="38" height="11" rx="5" fill="${BODY}" stroke="${OUTLINE}" stroke-width="1.5"/>
+  <!-- LOWER ABS core highlighted -->
+  <rect x="110" y="200" width="42" height="22" rx="8" fill="${PRIME}" stroke="${OUTLINE}" stroke-width="1.5" opacity=".9"/>
+  <!-- LEGS raised highlighted -->
+  <path d="M118 207 Q88 177 63 132" stroke="${PRIME}" stroke-width="21" fill="none" stroke-linecap="round" opacity=".9"/>
+  <path d="M146 207 Q116 177 91 132" stroke="${PRIME}" stroke-width="21" fill="none" stroke-linecap="round" opacity=".9"/>
+  <ellipse cx="56" cy="128" rx="12" ry="7" fill="${SKIN2}"/>
+  <ellipse cx="84" cy="128" rx="12" ry="7" fill="${SKIN2}"/>
+  ${label(131,215,'ABS',BG,8)}${label(74,168,'LOWER ABS',PRIME,8)}
+  ${legend('Lower Abs · Hip Flexors','')}
+`),
+
+bicycle: svgWrap(`
+  <line x1="20" y1="237" x2="280" y2="237" stroke="${OUTLINE}" stroke-width="2"/>
+  <!-- lower back -->
+  <rect x="108" y="207" width="88" height="17" rx="8" fill="${BODY}" stroke="${OUTLINE}" stroke-width="1.5"/>
+  <!-- extended leg -->
+  <path d="M118 212 Q88 217 48 222" stroke="${SEC}" stroke-width="17" fill="none" stroke-linecap="round"/>
+  <ellipse cx="40" cy="222" rx="12" ry="5" fill="${SKIN2}"/>
+  <!-- bent leg up -->
+  <path d="M162 210 Q167 187 182 167" stroke="${BODY}" stroke-width="17" fill="none" stroke-linecap="round"/>
+  <ellipse cx="185" cy="162" rx="10" ry="8" fill="${SKIN2}"/>
+  <!-- OBLIQUES highlighted -->
+  <path d="M138 207 Q153 182 172 164" stroke="${PRIME}" stroke-width="25" fill="none" stroke-linecap="round" opacity=".9"/>
+  <!-- elbow crossing -->
+  <path d="M128 202 Q148 182 168 164" stroke="${SEC}" stroke-width="13" fill="none" stroke-linecap="round"/>
+  <!-- head -->
+  <ellipse cx="228" cy="190" rx="17" ry="19" fill="${SKIN}" stroke="${OUTLINE}" stroke-width="1.5"/>
+  <ellipse cx="228" cy="176" rx="15" ry="7" fill="${HAIR}"/>
+  <path d="M216 192 Q198 178 183 187" stroke="${BODY}" stroke-width="12" fill="none" stroke-linecap="round"/>
+  ${label(153,190,'OBLIQUE')}
+  ${legend('Obliques · Abs','Hip Flexors')}
+`),
+
+sideplank: svgWrap(`
+  <line x1="20" y1="228" x2="280" y2="228" stroke="${OUTLINE}" stroke-width="2"/>
+  <ellipse cx="58" cy="223" rx="15" ry="6" fill="${SKIN2}"/>
+  <rect x="50" y="192" width="16" height="32" rx="7" fill="${BODY}" stroke="${OUTLINE}" stroke-width="1.5"/>
+  <!-- body diagonal -->
+  <path d="M60 197 Q112 172 172 154" stroke="${SEC}" stroke-width="27" fill="none" stroke-linecap="round"/>
+  <!-- OBLIQUES highlighted strip -->
+  <path d="M82 186 Q128 164 170 150" stroke="${PRIME}" stroke-width="13" fill="none" stroke-linecap="round" opacity=".9"/>
+  <!-- hip zone highlighted -->
+  <ellipse cx="80" cy="185" rx="21" ry="14" fill="${PRIME}" stroke="${OUTLINE}" stroke-width="1.5" opacity=".85"/>
+  <!-- forearm on floor -->
+  <rect x="168" y="168" width="13" height="52" rx="5" fill="${SKIN}" stroke="${OUTLINE}" stroke-width="1.5" transform="rotate(-12 174 194)"/>
+  <!-- top arm up -->
+  <path d="M152 150 Q156 127 151 107" stroke="${BODY}" stroke-width="12" fill="none" stroke-linecap="round"/>
+  <ellipse cx="150" cy="103" rx="9" ry="7" fill="${SKIN}"/>
+  <!-- head -->
+  <ellipse cx="198" cy="137" rx="17" ry="18" fill="${SKIN}" stroke="${OUTLINE}" stroke-width="1.5"/>
+  <ellipse cx="198" cy="124" rx="15" ry="7" fill="${HAIR}"/>
+  ${label(82,189,'OBLIQUE',BG,8)}
+  ${legend('Obliques · Glutes','Shoulder')}
+`),
+
+hollow: svgWrap(`
+  <line x1="20" y1="237" x2="280" y2="237" stroke="${OUTLINE}" stroke-width="2"/>
+  <!-- legs slightly raised -->
+  <path d="M48 217 Q78 207 118 197" stroke="${PRIME}" stroke-width="21" fill="none" stroke-linecap="round" opacity=".9"/>
+  <ellipse cx="40" cy="220" rx="13" ry="5" fill="${SKIN2}"/>
+  <!-- CORE full trunk highlighted -->
+  <path d="M116 197 Q148 187 183 177" stroke="${PRIME}" stroke-width="27" fill="none" stroke-linecap="round" opacity=".95"/>
+  <!-- shoulders lifted -->
+  <path d="M181 177 Q208 167 225 157" stroke="${SEC}" stroke-width="25" fill="none" stroke-linecap="round"/>
+  <!-- arms overhead -->
+  <path d="M225 157 Q244 142 252 122" stroke="${BODY}" stroke-width="13" fill="none" stroke-linecap="round"/>
+  <path d="M229 160 Q249 146 257 126" stroke="${BODY}" stroke-width="13" fill="none" stroke-linecap="round"/>
+  <ellipse cx="255" cy="118" rx="9" ry="7" fill="${SKIN}"/>
+  <!-- head raised -->
+  <ellipse cx="215" cy="150" rx="16" ry="18" fill="${SKIN}" stroke="${OUTLINE}" stroke-width="1.5"/>
+  <ellipse cx="215" cy="136" rx="14" ry="7" fill="${HAIR}"/>
+  ${label(146,195,'DEEP CORE')}${label(83,210,'HIP FLEX',BG,8)}
+  ${legend('Deep Core · Abs','Hip Flexors')}
+`),
+
+kbdeadlift: svgWrap(`
+  <line x1="20" y1="247" x2="280" y2="247" stroke="${OUTLINE}" stroke-width="2"/>
+  <ellipse cx="106" cy="243" rx="15" ry="6" fill="${SKIN2}"/>
+  <ellipse cx="156" cy="243" rx="15" ry="6" fill="${SKIN2}"/>
+  <rect x="98" y="198" width="17" height="47" rx="7" fill="${BODY}" stroke="${OUTLINE}" stroke-width="1.5"/>
+  <rect x="147" y="198" width="17" height="47" rx="7" fill="${BODY}" stroke="${OUTLINE}" stroke-width="1.5"/>
+  <!-- HAMSTRINGS -->
+  <rect x="96" y="157" width="19" height="43" rx="8" fill="${PRIME}" stroke="${OUTLINE}" stroke-width="1.5" opacity=".9"/>
+  <rect x="147" y="157" width="19" height="43" rx="8" fill="${PRIME}" stroke="${OUTLINE}" stroke-width="1.5" opacity=".9"/>
+  <!-- GLUTES -->
+  <ellipse cx="131" cy="154" rx="38" ry="17" fill="${PRIME}" stroke="${OUTLINE}" stroke-width="2"/>
+  <!-- LOWER BACK -->
+  <rect x="110" y="106" width="40" height="50" rx="10" fill="${PRIME}" stroke="${OUTLINE}" stroke-width="1.5" opacity=".85"/>
+  <!-- chest/torso -->
+  <rect x="108" y="76" width="44" height="32" rx="8" fill="${SEC}" stroke="${OUTLINE}" stroke-width="1.5" opacity=".8"/>
+  <!-- arms holding kb -->
+  <rect x="88" y="82" width="14" height="55" rx="6" fill="${BODY}" stroke="${OUTLINE}" stroke-width="1.5"/>
+  <rect x="160" y="82" width="14" height="55" rx="6" fill="${BODY}" stroke="${OUTLINE}" stroke-width="1.5"/>
+  <!-- kettlebell -->
+  <rect x="114" y="130" width="32" height="26" rx="6" fill="#4a4a4a" stroke="#777" stroke-width="2"/>
+  <path d="M122 130 Q130 118 138 130" stroke="#777" stroke-width="4" fill="none"/>
+  <!-- head -->
+  <ellipse cx="130" cy="56" rx="19" ry="21" fill="${SKIN}" stroke="${OUTLINE}" stroke-width="1.5"/>
+  <ellipse cx="130" cy="40" rx="17" ry="8" fill="${HAIR}"/>
+  ${label(131,158,'GLUTES')}${label(130,133,'LOWER BACK',BG,7.5)}${label(105,178,'HAMS',BG,8)}${label(157,178,'HAMS',BG,8)}
+  ${legend('Hamstrings · Glutes · Back','')}
+`),
+
+stretch: svgWrap(`
+  <line x1="20" y1="242" x2="280" y2="242" stroke="${OUTLINE}" stroke-width="2"/>
+  <!-- child's pose - kneeling, arms forward -->
+  <ellipse cx="58" cy="196" rx="19" ry="17" fill="${SKIN}" stroke="${OUTLINE}" stroke-width="1.5"/>
+  <ellipse cx="58" cy="183" rx="17" ry="8" fill="${HAIR}"/>
+  <!-- arms stretched forward -->
+  <rect x="70" y="187" width="108" height="13" rx="6" fill="${SKIN}" stroke="${OUTLINE}" stroke-width="1.5"/>
+  <ellipse cx="185" cy="193" rx="11" ry="7" fill="${SKIN2}"/>
+  <!-- BACK highlighted -->
+  <path d="M63 207 Q118 202 158 207" stroke="${PRIME}" stroke-width="27" fill="none" stroke-linecap="round" opacity=".8"/>
+  <!-- HIPS/GLUTES -->
+  <ellipse cx="163" cy="200" rx="28" ry="19" fill="${SEC}" stroke="${OUTLINE}" stroke-width="1.5" opacity=".8"/>
+  <!-- legs folded under -->
+  <path d="M153 217 Q172 227 192 237" stroke="${BODY}" stroke-width="19" fill="none" stroke-linecap="round"/>
+  <path d="M166 217 Q184 230 198 239" stroke="${BODY}" stroke-width="17" fill="none" stroke-linecap="round"/>
+  <ellipse cx="198" cy="238" rx="13" ry="6" fill="${SKIN2}"/>
+  ${label(110,210,'LOWER BACK')}${label(163,204,'HIPS',BG,8)}
+  ${legend('Lower Back · Lats','Hips · Hip Flexors')}
+`),
+
+generic: svgWrap(`
+  <!-- standing figure full body -->
+  <ellipse cx="150" cy="55" rx="21" ry="23" fill="${SKIN}" stroke="${OUTLINE}" stroke-width="2"/>
+  <ellipse cx="150" cy="39" rx="19" ry="9" fill="${HAIR}"/>
+  <rect x="125" y="77" width="50" height="58" rx="12" fill="${PRIME}" stroke="${OUTLINE}" stroke-width="2" opacity=".85"/>
+  <rect x="100" y="81" width="19" height="46" rx="8" fill="${SEC}" stroke="${OUTLINE}" stroke-width="1.5"/>
+  <rect x="181" y="81" width="19" height="46" rx="8" fill="${SEC}" stroke="${OUTLINE}" stroke-width="1.5"/>
+  <rect x="117" y="133" width="21" height="56" rx="9" fill="${PRIME}" stroke="${OUTLINE}" stroke-width="1.5" opacity=".85"/>
+  <rect x="162" y="133" width="21" height="56" rx="9" fill="${PRIME}" stroke="${OUTLINE}" stroke-width="1.5" opacity=".85"/>
+  <rect x="115" y="187" width="19" height="48" rx="8" fill="${BODY}" stroke="${OUTLINE}" stroke-width="1.5"/>
+  <rect x="162" y="187" width="19" height="48" rx="8" fill="${BODY}" stroke="${OUTLINE}" stroke-width="1.5"/>
+  <ellipse cx="124" cy="237" rx="15" ry="6" fill="${SKIN2}"/>
+  <ellipse cx="172" cy="237" rx="15" ry="6" fill="${SKIN2}"/>
+  <text x="150" y="253" fill="${PRIME}" font-size="11" font-weight="bold" text-anchor="middle" font-family="Arial,sans-serif">FULL BODY</text>
+`)
+
+};
+
+// ── DATA ──────────────────────────────────────────────────────────────────────
+const DAYS=[
+{id:1,name:"Core Ignition",tags:["Abs","Core","Full Body"],tagTypes:["","orange",""],duration:"~20 min",music:"https://www.youtube.com/results?search_query=hip+hop+workout+mix+2024",exercises_data:[
+  {name:"Dead Bug",muscles:"Deep Core · Transverse Abs",svgKey:"deadbug",sets:3,reps:10,unit:"each side",rest:30,desc:"Lie on your back, arms up, knees at 90°. Slowly lower opposite arm and leg, keeping lower back pressed flat into the floor.",tip:"If your lower back lifts, you've gone too far. Ease back until it stays down.",yt:"https://www.youtube.com/results?search_query=dead+bug+exercise+tutorial"},
+  {name:"Plank Hold",muscles:"Core · Shoulders · Glutes",svgKey:"plank",sets:3,reps:30,unit:"seconds",rest:30,desc:"Forearms on floor, body in a straight line head to heels. Squeeze glutes and abs the whole time.",tip:"Don't let hips sag or pike up. Look at the floor to keep neck neutral.",yt:"https://www.youtube.com/results?search_query=plank+form+tutorial"},
+  {name:"Crunches",muscles:"Rectus Abdominis · Hip Flexors",svgKey:"crunch",sets:3,reps:15,unit:"reps",rest:30,desc:"Hands lightly behind head, lift shoulder blades off floor. Don't pull on your neck.",tip:"Squeeze abs hard at the top — don't just rock back and forth.",yt:"https://www.youtube.com/results?search_query=crunches+proper+form"},
+  {name:"Mountain Climbers",muscles:"Core · Hip Flexors · Shoulders",svgKey:"mountainclimber",sets:3,reps:20,unit:"total",rest:30,desc:"In push-up position, drive knees to chest alternating fast but controlled.",tip:"Keep hips level — they shouldn't bounce up and down with each rep.",yt:"https://www.youtube.com/results?search_query=mountain+climbers+exercise"},
+  {name:"Push-Ups",muscles:"Chest · Triceps · Core",svgKey:"pushup",sets:3,reps:10,unit:"reps",rest:45,desc:"Hands shoulder-width, chest to the floor, full lock-out at the top. Elbows at 45°.",tip:"Drop to knees if needed — still great for chest and triceps.",yt:"https://www.youtube.com/results?search_query=push+up+perfect+form"},
+  {name:"Leg Raises",muscles:"Lower Abs · Hip Flexors",svgKey:"legrise",sets:3,reps:12,unit:"reps",rest:30,desc:"Lie flat, lower back pressed down. Raise both legs to 90° and lower back slowly without touching floor.",tip:"The slow lowering is the hardest part — that's where abs work most.",yt:"https://www.youtube.com/results?search_query=leg+raises+abs+form"},
+  {name:"Glute Bridge",muscles:"Glutes · Hamstrings · Lower Back",svgKey:"glutebridge",sets:3,reps:15,unit:"reps",rest:30,desc:"Lie on back, feet flat. Drive hips up and squeeze glutes hard at the top.",tip:"Strong glutes take pressure off the knee joint. Push through heels, not toes.",yt:"https://www.youtube.com/results?search_query=glute+bridge+form"},
+  {name:"Cool Down Stretch",muscles:"Lower Back · Hips · Lats",svgKey:"stretch",sets:1,reps:60,unit:"seconds",rest:0,desc:"Kneel, lower chest to floor, arms stretched forward. Breathe deeply and release.",tip:"Hold and breathe — feel your lower back release after all that core work.",yt:"https://www.youtube.com/results?search_query=child+pose+stretch+yoga"},
+]},
+{id:2,name:"Upper Power",tags:["Chest","Shoulders","Arms"],tagTypes:["orange","","blue"],duration:"~20 min",music:"https://www.youtube.com/results?search_query=workout+motivation+music+2024",exercises_data:[
+  {name:"Arm Circle Warm-Up",muscles:"Shoulders · Rotator Cuff",svgKey:"generic",sets:1,reps:30,unit:"seconds",rest:0,desc:"Big slow circles forward, then backward. Loosen up shoulders before lifting.",tip:"Don't skip warm-ups. 60 seconds here prevents a week off injured.",yt:"https://www.youtube.com/results?search_query=arm+circle+warmup"},
+  {name:"Push-Ups",muscles:"Chest · Triceps · Shoulders",svgKey:"pushup",sets:4,reps:12,unit:"reps",rest:45,desc:"Hands shoulder-width, chest to floor, full lock-out. Control the lowering phase.",tip:"Try slowing the lowering to 3 seconds — makes them way harder.",yt:"https://www.youtube.com/results?search_query=push+up+perfect+form"},
+  {name:"Pike Push-Ups",muscles:"Shoulders · Triceps",svgKey:"pushup",sets:3,reps:8,unit:"reps",rest:45,desc:"Hips high, hands and feet on floor. Bend elbows to dip your head toward the floor.",tip:"This hits your shoulders like an overhead press. Keep core tight.",yt:"https://www.youtube.com/results?search_query=pike+push+up+shoulders"},
+  {name:"Kettlebell Deadlift",muscles:"Hamstrings · Glutes · Lower Back",svgKey:"kbdeadlift",sets:3,reps:10,unit:"reps",rest:45,desc:"8kg kettlebell between feet. Hinge at hips, flat back, stand tall.",tip:"Knee-friendly — all hips and hamstrings. Keep back flat, look straight ahead.",yt:"https://www.youtube.com/results?search_query=kettlebell+deadlift+form+beginner"},
+  {name:"Tricep Dips (Chair)",muscles:"Triceps · Chest · Shoulders",svgKey:"generic",sets:3,reps:10,unit:"reps",rest:40,desc:"Hands on edge of chair, feet on floor, lower yourself down and push back up.",tip:"Keep elbows pointing backward — not flaring out to the sides.",yt:"https://www.youtube.com/results?search_query=tricep+chair+dips+beginner"},
+  {name:"Plank Shoulder Taps",muscles:"Core · Shoulders · Obliques",svgKey:"plank",sets:3,reps:16,unit:"total taps",rest:30,desc:"In plank, tap each shoulder alternately. Keep hips as still as possible.",tip:"The harder you try to keep hips still, the better the core workout.",yt:"https://www.youtube.com/results?search_query=plank+shoulder+taps"},
+  {name:"Kettlebell Curl",muscles:"Biceps · Forearms",svgKey:"kbdeadlift",sets:3,reps:10,unit:"each arm",rest:40,desc:"One arm at a time, curl the 8kg kettlebell up slowly. Squeeze hard at the top.",tip:"Don't swing — if you have to use your back, the weight is too heavy.",yt:"https://www.youtube.com/results?search_query=kettlebell+curl+bicep"},
+  {name:"Chest + Shoulder Stretch",muscles:"Chest · Shoulders · Biceps",svgKey:"stretch",sets:1,reps:60,unit:"seconds",rest:0,desc:"Clasp hands behind back, lift arms gently. Hold 30s, then cross arm for shoulder.",tip:"Muscles grow during REST — stretching helps blood flow and reduces soreness.",yt:"https://www.youtube.com/results?search_query=chest+shoulder+stretch+cooldown"},
+]},
+{id:3,name:"Stretch & Recover",tags:["Mobility","Stretching","Low Impact"],tagTypes:["blue","blue",""],duration:"~20 min",music:"https://www.youtube.com/results?search_query=chill+lo+fi+morning+stretch+music",exercises_data:[
+  {name:"Cat-Cow Stretch",muscles:"Spine · Lower Back · Core",svgKey:"stretch",sets:1,reps:10,unit:"slow reps",rest:0,desc:"On hands and knees, arch back up (cat) then dip it down (cow). Move with your breath.",tip:"This wakes up your whole spine. Do it every single morning.",yt:"https://www.youtube.com/results?search_query=cat+cow+stretch+tutorial"},
+  {name:"Hip Flexor Lunge",muscles:"Hip Flexors · Quads · Groin",svgKey:"generic",sets:2,reps:45,unit:"sec each",rest:15,desc:"Step forward into a lunge, back knee on floor. Push hips forward gently and hold.",tip:"Huge for knee health — tight hip flexors pull the knee out of alignment.",yt:"https://www.youtube.com/results?search_query=hip+flexor+lunge+stretch"},
+  {name:"World's Greatest Stretch",muscles:"Hips · Thoracic Spine · Hamstrings",svgKey:"generic",sets:2,reps:5,unit:"each side",rest:15,desc:"Lunge forward, plant hand inside foot, rotate upper body and reach to the sky.",tip:"Take your time — 5 reps slowly is worth more than 10 done fast.",yt:"https://www.youtube.com/results?search_query=world+greatest+stretch"},
+  {name:"Hamstring Reach",muscles:"Hamstrings · Lower Back · Calves",svgKey:"stretch",sets:2,reps:40,unit:"sec each",rest:15,desc:"Sit on floor, one leg extended, reach toward your toes. Keep your back as flat as possible.",tip:"Tight hamstrings pull the knee — this stretch is your knee's best friend.",yt:"https://www.youtube.com/results?search_query=seated+hamstring+stretch"},
+  {name:"90/90 Hip Stretch",muscles:"Hip Rotators · Glutes · Piriformis",svgKey:"generic",sets:2,reps:45,unit:"sec each",rest:15,desc:"Both legs bent at 90°, one in front, one to the side. Stay upright and breathe.",tip:"Use a blanket under your bum if tight — helps you sit up straighter.",yt:"https://www.youtube.com/results?search_query=90+90+hip+stretch"},
+  {name:"Glute Bridge",muscles:"Glutes · Hamstrings · Lower Back",svgKey:"glutebridge",sets:3,reps:15,unit:"reps",rest:30,desc:"Feet flat, drive hips up, hold 1 second at top, lower slowly. Squeeze glutes hard.",tip:"Active recovery — still working posterior chain while being kind on your knees.",yt:"https://www.youtube.com/results?search_query=glute+bridge+form"},
+  {name:"Bear Crawl (Slow)",muscles:"Core · Shoulders · Hips",svgKey:"generic",sets:2,reps:30,unit:"seconds",rest:30,desc:"On hands and knees, hover knees 5cm off floor. Crawl forward then backward. Slow and controlled.",tip:"Trains core and shoulder stability at once. The slower the better.",yt:"https://www.youtube.com/results?search_query=bear+crawl+exercise+form"},
+  {name:"Thoracic Rotation",muscles:"Thoracic Spine · Obliques · Lats",svgKey:"generic",sets:2,reps:10,unit:"each side",rest:15,desc:"Lie on side, knees stacked at 90°. Open your top arm back to the floor behind you.",tip:"Breathe out as you rotate. Feels amazing for stiff backs.",yt:"https://www.youtube.com/results?search_query=thoracic+spine+rotation+stretch"},
+  {name:"Legs Up the Wall",muscles:"Hamstrings · Calves · Lower Back",svgKey:"stretch",sets:1,reps:90,unit:"seconds",rest:0,desc:"Lie on your back, rest legs straight up against a wall. Total relaxation.",tip:"Drains lactic acid from your legs. Close your eyes and breathe. You earned it.",yt:"https://www.youtube.com/results?search_query=legs+up+the+wall+yoga"},
+]},
+{id:4,name:"Kettlebell Blast",tags:["Kettlebell","Full Body","Strength"],tagTypes:["orange","","orange"],duration:"~20 min",music:"https://www.youtube.com/results?search_query=heavy+metal+gym+workout+mix",exercises_data:[
+  {name:"KB Deadlift",muscles:"Hamstrings · Glutes · Lower Back · Core",svgKey:"kbdeadlift",sets:4,reps:10,unit:"reps",rest:45,desc:"Kettlebell between feet. Hinge at hips, flat back, stand tall. Drive through heels.",tip:"Perfect for knee health — strong hamstrings support the knee joint.",yt:"https://www.youtube.com/results?search_query=kettlebell+deadlift+form+beginner"},
+  {name:"KB Goblet Squat",muscles:"Quads · Glutes · Core · Adductors",svgKey:"goblet",sets:4,reps:10,unit:"reps",rest:45,desc:"Hold kettlebell at chest, feet shoulder-width. Squat down keeping chest up, then stand.",tip:"Squat to where knees don't hurt. Even a quarter-squat builds strength.",yt:"https://www.youtube.com/results?search_query=kettlebell+goblet+squat+form"},
+  {name:"KB Bent-Over Row",muscles:"Lats · Rhomboids · Biceps · Rear Delt",svgKey:"kbdeadlift",sets:3,reps:10,unit:"each arm",rest:40,desc:"Hinge forward, one hand on chair for support, row kettlebell to your hip.",tip:"Pull elbow back — don't shrug shoulder up. Control the lowering.",yt:"https://www.youtube.com/results?search_query=kettlebell+single+arm+row"},
+  {name:"KB Overhead Press",muscles:"Shoulders · Triceps · Upper Traps",svgKey:"generic",sets:3,reps:8,unit:"each arm",rest:45,desc:"Kettlebell to shoulder height, then press straight up overhead. Brace your core.",tip:"Brace your core hard — a shaky core means a shaky press. Breathe out as you push.",yt:"https://www.youtube.com/results?search_query=kettlebell+press+overhead+beginner"},
+  {name:"KB Swing",muscles:"Glutes · Hamstrings · Core · Shoulders",svgKey:"kbswing",sets:3,reps:12,unit:"reps",rest:45,desc:"Hinge and swing kettlebell back between legs, then drive hips forward to chest height.",tip:"This is NOT a squat — it's a hip snap. Power comes from your glutes, not arms.",yt:"https://www.youtube.com/results?search_query=kettlebell+swing+hip+hinge+beginner"},
+  {name:"KB Halo",muscles:"Shoulders · Triceps · Core",svgKey:"generic",sets:3,reps:10,unit:"each direction",rest:30,desc:"Hold kettlebell by horns at chest, circle it slowly around your head.",tip:"Keep your core tight and don't move your torso. Great shoulder mobility.",yt:"https://www.youtube.com/results?search_query=kettlebell+halo+exercise"},
+  {name:"KB Suitcase Carry",muscles:"Obliques · Core · Traps · Grip",svgKey:"kbdeadlift",sets:2,reps:30,unit:"sec each arm",rest:30,desc:"Hold kettlebell at your side and walk in place. Stay perfectly tall.",tip:"Secretly brilliant for core stability — your whole side works to keep you upright.",yt:"https://www.youtube.com/results?search_query=kettlebell+suitcase+carry+core"},
+  {name:"Cool Down Stretch",muscles:"Quads · Glutes · Calves · Back",svgKey:"stretch",sets:1,reps:90,unit:"seconds",rest:0,desc:"90 seconds on the floor: quads, calves, glutes. Take your time.",tip:"Your legs will thank you tomorrow. Don't skip this on kettlebell days.",yt:"https://www.youtube.com/results?search_query=post+kettlebell+stretch+cooldown"},
+]},
+{id:5,name:"Ab Destroyer",tags:["Abs","Core","Intense"],tagTypes:["","orange","orange"],duration:"~20 min",music:"https://www.youtube.com/results?search_query=intense+workout+trap+music+2024",exercises_data:[
+  {name:"Hollow Hold",muscles:"Deep Core · Hip Flexors · Abs",svgKey:"hollow",sets:3,reps:20,unit:"seconds",rest:30,desc:"Lie on back, arms overhead, lift shoulders and legs slightly off floor. Hold the hollow shape.",tip:"If you feel it in your lower back, press that lower back DOWN into the floor.",yt:"https://www.youtube.com/results?search_query=hollow+body+hold+core"},
+  {name:"Leg Raises",muscles:"Lower Abs · Hip Flexors",svgKey:"legrise",sets:3,reps:12,unit:"reps",rest:30,desc:"Lie flat, lower back pressed down. Raise both legs to 90° and lower back slowly.",tip:"The slow lowering is the hard part — that's where the abs work hardest.",yt:"https://www.youtube.com/results?search_query=leg+raises+abs+form"},
+  {name:"Bicycle Crunches",muscles:"Obliques · Rectus Abdominis",svgKey:"bicycle",sets:3,reps:20,unit:"total",rest:30,desc:"Alternate bringing opposite elbow to knee in a cycling motion. Slow and deliberate.",tip:"Rotate from your torso, not your neck. If neck hurts, you're doing it wrong.",yt:"https://www.youtube.com/results?search_query=bicycle+crunches+oblique"},
+  {name:"V-Sit Hold",muscles:"Upper & Lower Abs · Hip Flexors",svgKey:"hollow",sets:3,reps:20,unit:"seconds",rest:30,desc:"Balance on your tailbone, legs and upper body lifted in a V shape. Arms forward.",tip:"Start with bent knees if straight legs are too hard — still great for abs.",yt:"https://www.youtube.com/results?search_query=v+sit+hold+abs"},
+  {name:"Side Plank",muscles:"Obliques · Glutes · Shoulder",svgKey:"sideplank",sets:2,reps:25,unit:"sec each",rest:30,desc:"On your forearm and side of your foot. Keep your body in a straight line. Hold it.",tip:"Drop to your knee if needed — obliques are key for a strong core.",yt:"https://www.youtube.com/results?search_query=side+plank+form+obliques"},
+  {name:"Mountain Climbers",muscles:"Core · Hip Flexors · Shoulders",svgKey:"mountainclimber",sets:3,reps:30,unit:"seconds",rest:30,desc:"In plank, drive knees to chest alternating fast. Cardio + core in one move.",tip:"Keep your bum DOWN. When hips rise, core work disappears.",yt:"https://www.youtube.com/results?search_query=mountain+climbers+cardio+abs"},
+  {name:"Dead Bug",muscles:"Deep Core · Transverse Abs",svgKey:"deadbug",sets:3,reps:8,unit:"each side",rest:30,desc:"Arms up, knees at 90°. Slowly lower opposite arm and leg while keeping lower back flat.",tip:"Pure deep core work. Slower = harder. Try 3-second lowering.",yt:"https://www.youtube.com/results?search_query=dead+bug+deep+core"},
+  {name:"Push-Ups (Finisher)",muscles:"Chest · Triceps · Shoulders",svgKey:"pushup",sets:2,reps:12,unit:"reps",rest:30,desc:"Upper body finish. Full push-up, no shortcuts.",tip:"Even tired, keep the form clean. Two bad reps are worth less than one good one.",yt:"https://www.youtube.com/results?search_query=push+up+form"},
+  {name:"Full Body Stretch",muscles:"Hamstrings · Hip Flexors · Back",svgKey:"stretch",sets:1,reps:90,unit:"seconds",rest:0,desc:"Hamstrings, hip flexors, and a spinal twist each side. Take your time.",tip:"You just crushed your abs. They come back stronger if you respect the cooldown.",yt:"https://www.youtube.com/results?search_query=full+body+stretch+cooldown+abs"},
+]},
+{id:6,name:"Speed & Agility",tags:["Cardio","Agility","No-Impact"],tagTypes:["orange","blue",""],duration:"~20 min",music:"https://www.youtube.com/results?search_query=fast+tempo+workout+music+edm+2024",exercises_data:[
+  {name:"High Knees (Low Impact)",muscles:"Hip Flexors · Quads · Core",svgKey:"generic",sets:3,reps:30,unit:"seconds",rest:30,desc:"March fast on the spot, driving knees high. No jumping — keep one foot on the floor.",tip:"Knee-friendly cardio. Pump your arms hard to keep heart rate up.",yt:"https://www.youtube.com/results?search_query=low+impact+high+knees+cardio"},
+  {name:"Lateral Shuffle",muscles:"Glutes · Quads · Hip Abductors",svgKey:"generic",sets:3,reps:30,unit:"seconds",rest:30,desc:"Stand low, shuffle side to side. 3 steps left, 3 steps right, athletic stance.",tip:"Trains lateral stability — great for any sport and easy on the knees.",yt:"https://www.youtube.com/results?search_query=lateral+shuffle+agility+drill"},
+  {name:"Speed Skaters",muscles:"Glutes · Quads · Balance",svgKey:"generic",sets:3,reps:20,unit:"total",rest:30,desc:"Leap side to side, landing on one foot and bringing the other behind you.",tip:"Soft landing each time — absorb with bent knees, not straight legs.",yt:"https://www.youtube.com/results?search_query=speed+skaters+exercise"},
+  {name:"Inchworm",muscles:"Hamstrings · Shoulders · Core · Back",svgKey:"generic",sets:3,reps:8,unit:"reps",rest:30,desc:"Stand, fold forward, walk hands to plank, hold 2 sec, walk feet in, stand.",tip:"Agility + flexibility. Go slow and feel every muscle switch on.",yt:"https://www.youtube.com/results?search_query=inchworm+exercise+full+body"},
+  {name:"Squat Jumps (Modified)",muscles:"Quads · Glutes · Calves · Core",svgKey:"goblet",sets:3,reps:10,unit:"reps",rest:40,desc:"Go down to a squat, pause, then jump up. Land softly with bent knees.",tip:"If knees hurt, skip the jump — fast stand-ups from squat. Same power, less impact.",yt:"https://www.youtube.com/results?search_query=squat+jump+low+impact+modification"},
+  {name:"Plank to Downward Dog",muscles:"Shoulders · Hamstrings · Core · Calves",svgKey:"plank",sets:3,reps:12,unit:"reps",rest:30,desc:"Start in plank, push hips up into downward dog, hold 1 sec, return to plank.",tip:"Shoulder, core, and hamstrings all in one flow movement.",yt:"https://www.youtube.com/results?search_query=plank+to+downward+dog+exercise"},
+  {name:"Burpees (No Jump)",muscles:"Full Body · Chest · Core · Legs",svgKey:"generic",sets:3,reps:8,unit:"reps",rest:40,desc:"Squat, place hands, step feet back to plank, step feet in, stand. No jump at top.",tip:"Modified burpees = same conditioning, zero joint stress. Still hard.",yt:"https://www.youtube.com/results?search_query=low+impact+burpee+no+jump"},
+  {name:"Cool Down Walk + Stretch",muscles:"Calves · Hip Flexors · Back",svgKey:"stretch",sets:1,reps:90,unit:"seconds",rest:0,desc:"Walk gently for 30 seconds, then calf stretch and hip flexor stretch.",tip:"After agility training, cooling down prevents next-day soreness.",yt:"https://www.youtube.com/results?search_query=cool+down+stretch+after+cardio"},
+]},
+{id:7,name:"Full Send",tags:["Full Body","Kettlebell","Abs"],tagTypes:["","orange",""],duration:"~20 min",music:"https://www.youtube.com/results?search_query=best+workout+playlist+2024+gym",exercises_data:[
+  {name:"Jumping Jacks Warm-Up",muscles:"Full Body · Cardiovascular",svgKey:"generic",sets:1,reps:60,unit:"seconds",rest:15,desc:"Classic jumping jacks to warm up. Get the heart going and joints loose.",tip:"Warm muscles move better and get injured less. Don't skip this.",yt:"https://www.youtube.com/results?search_query=jumping+jacks+warmup+workout"},
+  {name:"KB Swing",muscles:"Glutes · Hamstrings · Core · Shoulders",svgKey:"kbswing",sets:4,reps:12,unit:"reps",rest:40,desc:"The king of kettlebell moves. Hinge, load hips, drive them forward to swing the bell.",tip:"If you learn one kettlebell move, make it this one. Full posterior chain in 12 reps.",yt:"https://www.youtube.com/results?search_query=kettlebell+swing+tutorial+form"},
+  {name:"Push-Ups",muscles:"Chest · Triceps · Shoulders",svgKey:"pushup",sets:3,reps:12,unit:"reps",rest:40,desc:"Chest to floor, full lock-out, elbows at 45°. Controlled lowering.",tip:"After swings your heart will be pumping — use the 40s rest fully.",yt:"https://www.youtube.com/results?search_query=push+up+workout"},
+  {name:"KB Goblet Squat",muscles:"Quads · Glutes · Core · Adductors",svgKey:"goblet",sets:3,reps:10,unit:"reps",rest:45,desc:"Bell at chest, squat deep (only as far as comfortable), stand explosively.",tip:"Range of motion matters more than depth. Go where form is good.",yt:"https://www.youtube.com/results?search_query=goblet+squat+form"},
+  {name:"Plank Rows",muscles:"Lats · Core · Biceps · Obliques",svgKey:"plank",sets:3,reps:8,unit:"each side",rest:40,desc:"Plank position, row kettlebell to hip alternately. Core stays square.",tip:"Abs + back at the same time. Try not to rotate hips as you row.",yt:"https://www.youtube.com/results?search_query=plank+row+kettlebell"},
+  {name:"Hollow Hold",muscles:"Deep Core · Hip Flexors · Abs",svgKey:"hollow",sets:3,reps:25,unit:"seconds",rest:30,desc:"Low back pressed to floor, arms overhead, legs and shoulders lifted. Hold.",tip:"This is what gymnasts do. It's hard and it works.",yt:"https://www.youtube.com/results?search_query=hollow+body+hold"},
+  {name:"KB Deadlift",muscles:"Hamstrings · Glutes · Lower Back · Core",svgKey:"kbdeadlift",sets:2,reps:12,unit:"reps",rest:40,desc:"Finish strong. Perfect form on every rep — back flat, hips back, stand tall.",tip:"Even at the end, form first. Sloppy reps cause injuries.",yt:"https://www.youtube.com/results?search_query=kettlebell+deadlift+hip+hinge"},
+  {name:"Bicycle Crunches",muscles:"Obliques · Rectus Abdominis",svgKey:"bicycle",sets:2,reps:20,unit:"total",rest:30,desc:"Elbow to opposite knee, controlled rotation. Slow and deliberate.",tip:"Finishing with abs burns them out good. Lean into the burn.",yt:"https://www.youtube.com/results?search_query=bicycle+crunches+form"},
+  {name:"Full Cool Down",muscles:"Full Body · Recovery",svgKey:"stretch",sets:1,reps:120,unit:"seconds",rest:0,desc:"2 minutes of whatever feels good — child's pose, hamstring, hip opener, spinal twist.",tip:"You completed all 7 days. The body adapts in recovery, not the workout.",yt:"https://www.youtube.com/results?search_query=full+body+cooldown+stretch+beginner"},
+]}
+];
+
+// ── AUDIO ─────────────────────────────────────────────────────────────────────
+let AC;
+function getAC(){if(!AC)AC=new(window.AudioContext||window.webkitAudioContext)();return AC;}
+function resumeAudio(){const a=getAC();if(a.state==='suspended')a.resume();}
+function playDoneSound(){
+  const a=getAC();
+  [523.25,659.25,783.99,1046.50].forEach((f,i)=>{
+    const o=a.createOscillator(),g=a.createGain();o.connect(g);g.connect(a.destination);
+    o.type='sine';o.frequency.value=f;const t=a.currentTime+i*.08;
+    g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.22,t+.02);g.gain.exponentialRampToValueAtTime(.001,t+.35);
+    o.start(t);o.stop(t+.35);
+  });
+}
+function playFinishSound(){
+  const a=getAC();
+  [523.25,587.33,659.25,698.46,783.99,880,987.77,1046.50].forEach((f,i)=>{
+    const o=a.createOscillator(),g=a.createGain();o.connect(g);g.connect(a.destination);
+    o.type=i<4?'triangle':'sine';o.frequency.value=f;const t=a.currentTime+i*.06;
+    g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.18,t+.03);g.gain.exponentialRampToValueAtTime(.001,t+.7);
+    o.start(t);o.stop(t+.8);
+  });
+}
+
+// ── CHEER ─────────────────────────────────────────────────────────────────────
+const CHEERS=["LET'S GO! \uD83D\uDCA5","BEAST MODE \uD83D\uDD25","YEAH BOY! \u26A1","SMASHED IT \uD83D\uDCAA","GET SOME! \uD83C\uDFCB\uFE0F","UNSTOPPABLE \uD83D\uDE80","TOO EASY \uD83D\uDE24","KEEP IT UP! \uD83D\uDD25","MACHINE \uD83E\uDD16","THAT'S IT! \u26A1"];
+function showCheer(){
+  const o=document.getElementById('cheerOverlay'),m=document.getElementById('cheerMsg');
+  m.textContent=CHEERS[Math.floor(Math.random()*CHEERS.length)];
+  o.classList.add('active');m.classList.remove('cheer-fade-out');
+  setTimeout(()=>{m.classList.add('cheer-fade-out');setTimeout(()=>o.classList.remove('active'),400);},750);
+}
+
+// ── CONFETTI ──────────────────────────────────────────────────────────────────
+function launchConfetti(dur=1800){
+  const cv=document.getElementById('confettiCanvas'),cx=cv.getContext('2d');
+  cv.width=innerWidth;cv.height=innerHeight;
+  const ps=Array.from({length:90},()=>({x:Math.random()*cv.width,y:-10-Math.random()*100,w:6+Math.random()*8,h:4+Math.random()*5,r:Math.random()*Math.PI*2,dr:(Math.random()-.5)*.2,vy:2+Math.random()*4,vx:(Math.random()-.5)*2,c:['#c8ff00','#ff6b35','#4fc3f7','#fff','#ffeb3b'][Math.floor(Math.random()*5)],a:1}));
+  const s=performance.now();
+  function draw(n){const e=n-s;cx.clearRect(0,0,cv.width,cv.height);ps.forEach(p=>{p.y+=p.vy;p.x+=p.vx;p.r+=p.dr;if(e>dur*.5)p.a=Math.max(0,p.a-.015);cx.save();cx.globalAlpha=p.a;cx.translate(p.x,p.y);cx.rotate(p.r);cx.fillStyle=p.c;cx.fillRect(-p.w/2,-p.h/2,p.w,p.h);cx.restore();});if(e<dur+500)requestAnimationFrame(draw);else cx.clearRect(0,0,cv.width,cv.height);}
+  requestAnimationFrame(draw);
+}
+
+// ── APP STATE ─────────────────────────────────────────────────────────────────
+let currentDay=null,currentExIdx=0,workoutStartTime=null,workoutTimerInterval=null,restInterval=null;
+let completedDays=JSON.parse(localStorage.getItem('mg_completed')||'[]');
+
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
+function showDaySelect(){stopWorkoutTimer();renderDayCards();showScreen('dayselect');}
+
+function renderDayCards(){
+  document.getElementById('daysGrid').innerHTML=DAYS.map(d=>{
+    const done=completedDays.includes(d.id);
+    return`<div class="day-card" onclick="startDay(${d.id})">${done?'<div class="completed-badge">\u2713</div>':''}
+      <div class="day-num">Day ${d.id}</div><div class="day-name">${d.name}</div>
+      <div class="day-tags">${d.tags.map((t,i)=>`<span class="tag ${d.tagTypes[i]}">${t}</span>`).join('')}</div>
+      <div class="day-meta"><span>\u23F1 ${d.duration}</span><span>\uD83D\uDCCB ${d.exercises_data.length} exercises</span></div>
+    </div>`;
+  }).join('');
+}
+
+function startDay(id){
+  currentDay=DAYS.find(d=>d.id===id);currentExIdx=0;workoutStartTime=Date.now();
+  document.getElementById('workoutDayLabel').textContent=`Day ${currentDay.id} \u2014 ${currentDay.name}`;
+  document.getElementById('musicTrack').textContent=`Day ${currentDay.id} Pump-Up Mix`;
+  startWorkoutTimer();renderExercise();showScreen('workout');
+}
+
+function startWorkoutTimer(){
+  stopWorkoutTimer();
+  workoutTimerInterval=setInterval(()=>{const e=Math.floor((Date.now()-workoutStartTime)/1000);document.getElementById('workoutTimer').textContent=`${Math.floor(e/60)}:${String(e%60).padStart(2,'0')}`;},1000);
+}
+function stopWorkoutTimer(){if(workoutTimerInterval)clearInterval(workoutTimerInterval);}
+
+function renderExercise(){
+  const ex=currentDay.exercises_data[currentExIdx],total=currentDay.exercises_data.length;
+  document.getElementById('progressFill').style.width=Math.round((currentExIdx/total)*100)+'%';
+  document.getElementById('exCounter').innerHTML=`<strong>${currentExIdx+1}</strong> / ${total}`;
+  document.getElementById('prevBtn').disabled=currentExIdx===0;
+  document.getElementById('nextBtn').textContent=currentExIdx===total-1?'Finish \uD83C\uDFC6':'Done \u2713';
+  document.getElementById('exerciseDisplay').innerHTML=`
+    <div class="exercise-card">
+      <div class="exercise-visual">
+        ${SVGS[ex.svgKey]||SVGS.generic}
+        <div class="muscles-badge">\uD83D\uDCAA Muscles Working</div>
+        <a href="${ex.yt}" target="_blank" class="yt-badge">\u25B6 How-To Video</a>
+      </div>
+      <div class="exercise-info">
+        <div class="exercise-num">Exercise ${currentExIdx+1} of ${total}</div>
+        <div class="exercise-name">${ex.name}</div>
+        <div class="muscles-worked">\uD83D\uDD25 ${ex.muscles}</div>
+        <p class="exercise-desc">${ex.desc}</p>
+        <div class="exercise-reps">
+          <div class="rep-block"><div class="rep-num">${ex.sets}</div><div class="rep-label">Sets</div></div>
+          <div class="rep-block"><div class="rep-num">${ex.reps}</div><div class="rep-label">${ex.unit}</div></div>
+          <div class="rep-block"><div class="rep-num">${ex.rest}s</div><div class="rep-label">Rest</div></div>
+        </div>
+        <div class="tips-box">\uD83D\uDCA1 ${ex.tip}</div>
+      </div>
+    </div>`;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function nextExercise(){
+  resumeAudio();
+  const btn=document.getElementById('nextBtn'),total=currentDay.exercises_data.length,isLast=currentExIdx>=total-1;
+  btn.classList.remove('flash');void btn.offsetWidth;btn.classList.add('flash');setTimeout(()=>btn.classList.remove('flash'),600);
+  if(isLast){playFinishSound();launchConfetti(3000);showCheer();setTimeout(()=>finishWorkout(),900);return;}
+  playDoneSound();showCheer();
+  const ex=currentDay.exercises_data[currentExIdx];
+  if(ex.rest>0)showRest(ex.rest,currentDay.exercises_data[currentExIdx+1]?.name||'');
+  else{currentExIdx++;renderExercise();}
+}
+function prevExercise(){if(currentExIdx>0){currentExIdx--;renderExercise();}}
+
+function showRest(s,n){
+  let r=s;document.getElementById('restTimer').textContent=r;document.getElementById('nextExName').textContent=n;
+  document.getElementById('restOverlay').classList.add('active');
+  restInterval=setInterval(()=>{r--;document.getElementById('restTimer').textContent=r;if(r<=0)skipRest();},1000);
+}
+function skipRest(){clearInterval(restInterval);document.getElementById('restOverlay').classList.remove('active');currentExIdx++;renderExercise();}
+
+function finishWorkout(){
+  stopWorkoutTimer();const elapsed=Math.floor((Date.now()-workoutStartTime)/1000);
+  if(!completedDays.includes(currentDay.id)){completedDays.push(currentDay.id);localStorage.setItem('mg_completed',JSON.stringify(completedDays));}
+  const m=Math.floor(elapsed/60),s=elapsed%60;
+  document.getElementById('finishMsg').textContent=`${currentDay.name} complete. ${completedDays.length}/7 days done.`;
+  document.getElementById('finishStats').innerHTML=`
+    <div class="stat"><div class="stat-num">${m}:${String(s).padStart(2,'0')}</div><div class="stat-label">Time</div></div>
+    <div class="stat"><div class="stat-num">${currentDay.exercises_data.length}</div><div class="stat-label">Exercises</div></div>
+    <div class="stat"><div class="stat-num">${completedDays.length}</div><div class="stat-label">Days Done</div></div>`;
+  showScreen('finish');
+}
+
+function openMusic(){window.open(currentDay?currentDay.music:'https://www.youtube.com/results?search_query=workout+music+mix+2024','_blank');}
+
+renderDayCards();
+</script>
+</body>
+</html>
